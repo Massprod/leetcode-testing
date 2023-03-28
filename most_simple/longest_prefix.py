@@ -2,6 +2,7 @@
 def longest_prefix(strings: list[str]) -> str:
     # prefix = ""
     # x = 0
+    #strings.sort()
     # check = strings[x]
     # for letter in check:
     #     for _ in strings:
@@ -14,13 +15,12 @@ def longest_prefix(strings: list[str]) -> str:
 
     # both working this one is just more *pretty*
     prefix = ""
+    strings.sort()
     for x in range(len(strings[0])):
-        for words in strings:
-            if strings[0][x] in words[x]:
+        for word in strings:
+            if strings[0][x] in word[x]:
                 continue
             return prefix
         prefix += strings[0][x]
     return prefix
 
-
-print(longest_prefix(["kn", "k", "k"]))
