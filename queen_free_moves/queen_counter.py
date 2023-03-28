@@ -1,5 +1,6 @@
 import numpy
 from numpy import matrix, ndarray
+from copy import deepcopy
 
 
 class QueenSquare:
@@ -8,7 +9,7 @@ class QueenSquare:
         if matrix_length < 1:
             raise ValueError("matrix_length can't be less than 2")
         self.counter = 0
-        self.sq_matrix: list = [["-"] * matrix_length for _ in range(matrix_length)]
+        self.sq_matrix: list[list[str]] = [["-"] * matrix_length for _ in range(matrix_length)]
         self.queen_y: int = 0
         self.queen_x: int = 0
         self.queen_pos: dict = {"Y": self.queen_y,
@@ -22,7 +23,7 @@ class QueenSquare:
                                  "X": [],
                                  "YX": [],
                                  }
-        self.marked_moves: list = []
+        self.marked_moves: list[list[str]] = deepcopy(self.sq_matrix)
 
     def set_queen(self, y: int, x: int, symbol: str = "Q") -> list[list[str]]:
         """Set Queen position in a matrix"""
@@ -82,7 +83,6 @@ class QueenSquare:
 
     def mark_free_moves(self, symbol: str = "X") -> matrix | ndarray:
         """Visualising matrix with available moves as a chosen Symbol"""
-        self.marked_moves = self.sq_matrix
         for key, value in self.free_moves.items():
             for _ in value:
                 self.marked_moves[_[0]][_[1]] = symbol
