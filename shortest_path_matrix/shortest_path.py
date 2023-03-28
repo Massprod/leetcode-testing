@@ -31,12 +31,15 @@ def short_path(matrix: list[list[int]], start_x: int = 0, start_y: int = 0) -> i
         for x in range(start_x + 1, max_x):
             vert = matrix[y - 1][x]
             horiz = matrix[y][x - 1]
+            # diag = matrix[y-1][x-1] - for ‾\ move option, if we're moving from top_left to bot_right
             matrix[y][x] = min(vert, horiz) + matrix[y][x]
     shortest_sum = matrix[max_y - 1][max_x - 1]
+    print(numpy.matrix(matrix))
     return shortest_sum
 
 
 original = create_matrix(height=18, length=15)
+test = copy.deepcopy(original)
 print(numpy.matrix(original))
-my_short = short_path(original)
+my_short = short_path(test)
 print(my_short)
