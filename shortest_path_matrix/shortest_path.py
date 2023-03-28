@@ -11,31 +11,32 @@ def create_matrix(height: int, length: int):
     matrix = [[0] * length for _ in range(height)]
     for _ in matrix:
         for x in range(0, len(_)):
-            _[x] = randint(1, 30)
+            _[x] = randint(1, 3)
     return matrix
 
 
-def short_path(matrix: list[list[int]]) -> int:
+def short_path(matrix: list[list[int]], start_x: int = 0, start_y: int = 0) -> int:
     max_y = len(matrix)
     max_x = len(matrix[0])
+    if not 0 <= start_y < max_y or not 0 <= start_x < max_x:
+        raise ValueError("Starting coordinates: start_y, start_x out of bounds.")
     # sum horizontal
-    for x in range(1, max_x):
-        matrix[0][x] = matrix[0][x] + matrix[0][x - 1]
+    for x in range(start_x + 1, max_x):
+        matrix[start_y][x] = matrix[start_y][x] + matrix[start_y][x - 1]
     # sum vertical
-    for y in range(1, max_y):
-        matrix[y][0] = matrix[y][0] + matrix[y - 1][0]
+    for y in range(start_y + 1, max_y):
+        matrix[y][start_x] = matrix[y][start_x] + matrix[y - 1][start_x]
     # sum empty
-    for y in range(1, max_y):
-        for x in range(1, max_x):
+    for y in range(start_y + 1, max_y):
+        for x in range(start_x + 1, max_x):
             vert = matrix[y - 1][x]
             horiz = matrix[y][x - 1]
             matrix[y][x] = min(vert, horiz) + matrix[y][x]
-    print(numpy.matrix(matrix))
-    return matrix[max_y - 1][max_x - 1]
+    shortest_sum = matrix[max_y - 1][max_x - 1]
+    return shortest_sum
 
 
-original = create_matrix(height=3, length=7)
+original = create_matrix(height=18, length=15)
 print(numpy.matrix(original))
-copy = copy.deepcopy(original)
 my_short = short_path(original)
 print(my_short)
