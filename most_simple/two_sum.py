@@ -119,7 +119,15 @@ def twoSum(nums: list[int], target: int) -> tuple[int, int]:
     #             return key, index
     ## No way to take VALUE without looping, but if I add it after check???
     # BEST YET
+    # as before SORTED list's was faster with reverse read how to REVERSE and restore indexes???
+    # ostatki = {}
+    # for index, value in enumerate(nums):
+    #     if value in ostatki:
+    #         return ostatki[value], index
+    #     ostatki[target - value] = index
+    # FASTER for sorted, but it's not submittable and dunno how to deal with indexes. But correct
     ostatki = {}
+    nums.reverse()
     for index, value in enumerate(nums):
         if value in ostatki:
             return ostatki[value], index
