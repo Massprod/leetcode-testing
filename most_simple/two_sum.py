@@ -109,8 +109,14 @@ def twoSum(nums: list[int], target: int) -> tuple[int, int]:
     #         elif num_value + value == target:
     #             return index, num_index
 
-    ## ostatok?
-
+    ## ostatok? slow as lists
+    ostatki = {}
+    for index, value in enumerate(nums):
+        ostatok = target - value
+        ostatki[index] = value
+        for key, osta in ostatki.items():
+            if ostatok == osta and key != index:
+                return key, index
 
 
 
