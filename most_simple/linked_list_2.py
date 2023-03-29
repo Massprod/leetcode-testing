@@ -58,13 +58,14 @@ def add_two_numbers(l1: Optional[ListNode], l2: Optional[ListNode] = None) -> Op
     # new_list = ListNode(val=new_list_value[0],
     #                     next=ListNode(val=new_list_value[1],
     #                                   next=new_list_value[2]))
-    new_list = LinkedList()
-    cursor = ListNode(new_list_values[0])
-    new_list.head = cursor
+    new_list = ListNode(new_list_values[0])
+    temp = new_list
     for _ in new_list_values[1:]:
-        cursor.next = ListNode(_)
-        cursor = cursor.next
-
+        new_node = ListNode(_)
+        temp.next = new_node
+        print(temp)
+        temp = new_node
+        print(temp)
 
     print(new_list)
 
