@@ -14,13 +14,14 @@ class ListNode:
     def __str__(self):
         return f"[{self.val}] -> {self.next}"
 
-
-class LinkedList:
-    def __init__(self):
-        self.head = None
-
-    def __str__(self):
-        return f"[{self.head}]"
+# Mistake to add something else here.
+# But first time dealing with a linked_Lists and had no idea about cursor/temp position
+# class LinkedList:
+#     def __init__(self):
+#         self.head = None
+#
+#     def __str__(self):
+#         return f"[{self.head}]"
 
 
 def add_two_numbers(l1: Optional[ListNode], l2: Optional[ListNode] = None) -> Optional[ListNode]:
@@ -58,22 +59,15 @@ def add_two_numbers(l1: Optional[ListNode], l2: Optional[ListNode] = None) -> Op
     # new_list = ListNode(val=new_list_value[0],
     #                     next=ListNode(val=new_list_value[1],
     #                                   next=new_list_value[2]))
-    new_list = ListNode(new_list_values[0])
-    temp = new_list
+    new_list = ListNode(new_list_values[0])   # creating head
+    temp = new_list  # setting temporary head as cursor to place new_node
     for _ in new_list_values[1:]:
         new_node = ListNode(_)
         temp.next = new_node
         print(temp)
-        temp = new_node
+        temp = new_node  # setting temporary position for a cursor to add another node
         print(temp)
-
-    print(new_list)
-
     return new_list
-
-
-
-
 
 
 val1 = 2
@@ -83,6 +77,7 @@ val11 = 5
 val22 = 6
 val33 = 4
 
+# maybe redo test_creation if I revisit
 l1 = ListNode(val=val1,
               next=ListNode(val2,
                             next=ListNode(val3)
