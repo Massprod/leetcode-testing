@@ -100,7 +100,20 @@ def twoSum(nums: list[int], target: int) -> tuple[int, int]:
     #             elif index == 0:
     #                 return index, num_index + length
     #             return index, num_index
-    ##
+    ## TRY TO DELETE DICT AND SAVE ON IT?
+    ## slow
+    # for index, value in enumerate(nums):
+    #     for num_index, num_value in enumerate(nums):
+    #         if index is num_index:
+    #             continue
+    #         elif num_value + value == target:
+    #             return index, num_index
+
+    ## ostatok?
+
+
+
+
 
 
 print(twoSum([2, 7, 11, 15], 9))
