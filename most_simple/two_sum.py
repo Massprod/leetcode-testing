@@ -11,7 +11,8 @@ test1 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27
 # test1_target = 19999
 test1_target = 18800
 
-def twoSum(nums: list[int], target: int) -> list[int]:
+
+def twoSum(nums: list[int], target: int) -> tuple[int, int]:
     # leng = False
     # for x in range(len(nums)):
     #     if len(nums) < target:
@@ -54,26 +55,26 @@ def twoSum(nums: list[int], target: int) -> list[int]:
 
 
     # works faster but need to revert indexes
-
-    tet = {}
-    length = len(nums)
-    sorted = all(nums[x] <= nums[x + 1] for x in range(length - 1))
-    for x in range(length):
-        if sorted:
-            tet[-x] = nums[-x]
-        else:
-            tet[x] = nums[x]
-    for index, value in tet.items():
-        for num_index, num_value in tet.items():
-            if index is num_index:
-                continue
-            elif num_value + value == target:
-                print(num_value + value)
-                if sorted:
-                    print(index, num_index)
-                    return [index, length + num_index]
-                return [index, num_index]
-
+    # BEST YET----------
+    # tet = {}
+    # length = len(nums)
+    # is_sorted = all(nums[x] <= nums[x + 1] for x in range(length - 1))
+    # for x in range(length):
+    #     if is_sorted:
+    #         tet[-x] = nums[-x]
+    #     else:
+    #         tet[x] = nums[x]
+    # for index, value in tet.items():
+    #     for num_index, num_value in tet.items():
+    #         if index is num_index:
+    #             continue
+    #         elif num_value + value == target:
+    #             if is_sorted and index != 0:
+    #                 return index + length, num_index + length
+    #             elif is_sorted and index == 0:
+    #                 return index, num_index + length
+    #             return index, num_index
+    # slower than ^^------------
     # tet = {}
     # tet2 = {}
     # for x in range(len(nums)):
@@ -83,7 +84,25 @@ def twoSum(nums: list[int], target: int) -> list[int]:
     #     if ostatok in tet2:
     #         return [tet2[ostatok], index]
     #     tet2[value] = index
-
+    # speed experiments ----------
+    tet = {}
+    length = len(nums)
+    is_sorted = all(nums[x] <= nums[x + 1] for x in range(length - 1))
+    for x in range(length):
+        if is_sorted:
+            tet[-x] = nums[-x]
+        else:
+            tet[x] = nums[x]
+    for index, value in tet.items():
+        for num_index, num_value in tet.items():
+            if index is num_index:
+                continue
+            elif num_value + value == target:
+                if is_sorted and index != 0:
+                    return index + length, num_index + length
+                elif is_sorted and index == 0:
+                    return index, num_index + length
+                return index, num_index
 
 
 print(twoSum([2, 7, 11, 15], 9))
