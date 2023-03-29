@@ -14,6 +14,15 @@ class ListNode:
     def __str__(self):
         return f"[{self.val}] -> {self.next}"
 
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def __str__(self):
+        return f"[{self.head}]"
+
+
 def add_two_numbers(l1: Optional[ListNode], l2: Optional[ListNode] = None) -> Optional[ListNode]:
     print(l1)
     print(l2)
@@ -43,14 +52,23 @@ def add_two_numbers(l1: Optional[ListNode], l2: Optional[ListNode] = None) -> Op
     print(number_2)
     number_3 = number_1 + number_2
     print(number_3)
-    new_list_value = list(str(number_3))
-    new_list_value.reverse()
-    print(new_list_value)
-    new_list = ListNode(val=new_list_value[0],
-                        next=ListNode(val=new_list_value[1],
-                                      next=new_list_value[2]))
+    new_list_values = list(str(number_3))
+    new_list_values.reverse()
+    print(new_list_values)
+    # new_list = ListNode(val=new_list_value[0],
+    #                     next=ListNode(val=new_list_value[1],
+    #                                   next=new_list_value[2]))
+    new_list = LinkedList()
+    cursor = ListNode(new_list_values[0])
+    new_list.head = cursor
+    for _ in new_list_values[1:]:
+        cursor.next = ListNode(_)
+        cursor = cursor.next
+
+
     print(new_list)
 
+    return new_list
 
 
 
@@ -76,4 +94,4 @@ l2 = ListNode(val=val11,
               )
 
 
-add_two_numbers(l1, l2)
+print(add_two_numbers(l1, l2))
