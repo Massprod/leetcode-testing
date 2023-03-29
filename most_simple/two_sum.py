@@ -109,15 +109,21 @@ def twoSum(nums: list[int], target: int) -> tuple[int, int]:
     #         elif num_value + value == target:
     #             return index, num_index
 
-    ## ostatok? slow as lists
+    ## ostatok? slow as lists, how to take value without loop??
+    # ostatki = {}
+    # for index, value in enumerate(nums):
+    #     ostatok = target - value
+    #     ostatki[index] = value
+    #     for key, osta in ostatki.items():
+    #         if ostatok == osta and key != index:
+    #             return key, index
+    ## No way to take VALUE without looping, but if I add it after check???
+    # BEST YET
     ostatki = {}
     for index, value in enumerate(nums):
-        ostatok = target - value
-        ostatki[index] = value
-        for key, osta in ostatki.items():
-            if ostatok == osta and key != index:
-                return key, index
-
+        if value in ostatki:
+            return ostatki[value], index
+        ostatki[target - value] = index
 
 
 
