@@ -12,27 +12,25 @@ def lengthOfLongestSubstring(s: str) -> int:
     if len(string_list) == 0:
         return 0
     lengths = []
-    sub = []
-    test = {}
-    for key, value in enumerate(string_list):
-        test[key] = value
-    indexes = []
     symbols = []
-    for key2, value2 in test.items():
-        if value2 not in symbols:
-            indexes.append(key2)
-            symbols.append(value2)
-            if len(symbols) == len(string_list):
-                sub.append(symbols)
-        elif value2 in symbols:
-            sub.append(symbols)
-            indexes = [key2]
-            symbols = [value2]
-    for _ in sub:
+    symbol = []
+    for x in range(len(string_list)):
+        symbol.append(string_list[x])
+        for y in range(x + 1, len(string_list)):
+            if string_list[y] not in symbol:
+                symbol.append(string_list[y])
+                if y == len(string_list) - 1:
+                    symbols.append(symbol)
+                    symbol = []
+                    break
+            elif string_list[y] in symbol:
+                symbols.append(symbol)
+                symbol = []
+                break
+    for _ in symbols:
         lengths.append(len(_))
-    # print(test)
-    # print(sub)
-    # print(lengths)
+    if len(lengths) == 0:
+        return 1
     return max(lengths)
 
 
@@ -44,3 +42,5 @@ print(lengthOfLongestSubstring(""))
 print(lengthOfLongestSubstring("aa"))
 print(lengthOfLongestSubstring("aabb"))
 print(lengthOfLongestSubstring("au"))
+print(lengthOfLongestSubstring("aab"))
+print(lengthOfLongestSubstring("dvdf"))
