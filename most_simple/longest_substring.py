@@ -7,6 +7,7 @@
 # P and S can be empty strings
 #
 
+# from 6700 ms to 640 ms good upgrade I guess. But I don't want to steal, so pathetic 10,7% beats :(
 def lengthOfLongestSubstring(s: str) -> int:
     speed_test = {}
     for key, value in enumerate(s):
@@ -14,26 +15,25 @@ def lengthOfLongestSubstring(s: str) -> int:
     list_len = len(speed_test)
     if list_len == 0:
         return 0
-    lengths = []
-    symbols = []
+    length = 0
     for x in range(list_len):
         symbol = (speed_test[x])
-        if list_len - x in lengths:
+        if list_len - x == length:
             break
         for y in range(x + 1, list_len):
             if speed_test[y] not in symbol:
                 symbol = symbol + (speed_test[y])
-                if y == list_len - 1:
-                    symbols.append(symbol)
-                    lengths.append(len(symbol))
+                if y == list_len - 1 and length <= len(symbol):
+                    length = len(symbol)
                     break
             elif speed_test[y] in symbol:
-                symbols.append(symbol)
-                lengths.append(len(symbol))
+                if length <= len(symbol):
+                    length = len(symbol)
+                    break
                 break
-    if len(lengths) == 0:
+    if length == 0:
         return 1
-    return max(lengths)
+    return length
 
 
 print(lengthOfLongestSubstring("abcabcbb"))
