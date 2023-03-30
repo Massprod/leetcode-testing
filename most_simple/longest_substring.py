@@ -8,28 +8,28 @@
 #
 
 def lengthOfLongestSubstring(s: str) -> int:
-    string_list = list(s)
-    if len(string_list) == 0:
+    speed_test = {}
+    for key, value in enumerate(s):
+        speed_test[key] = value
+    list_len = len(speed_test)
+    if list_len == 0:
         return 0
     lengths = []
     symbols = []
-    symbol = []
-    for x in range(len(string_list)):
-        symbol.append(string_list[x])
-        if (len(string_list) - x) in lengths:
+    for x in range(list_len):
+        symbol = (speed_test[x])
+        if list_len - x in lengths:
             break
-        for y in range(x + 1, len(string_list)):
-            if string_list[y] not in symbol:
-                symbol.append(string_list[y])
-                if y == len(string_list) - 1:
+        for y in range(x + 1, list_len):
+            if speed_test[y] not in symbol:
+                symbol = symbol + (speed_test[y])
+                if y == list_len - 1:
                     symbols.append(symbol)
                     lengths.append(len(symbol))
-                    symbol = []
                     break
-            elif string_list[y] in symbol:
+            elif speed_test[y] in symbol:
                 symbols.append(symbol)
                 lengths.append(len(symbol))
-                symbol = []
                 break
     if len(lengths) == 0:
         return 1
