@@ -14,4 +14,7 @@ def is_palindrome(x: int) -> bool:
     return True
 
 
-print(is_palindrome(121))
+print(is_palindrome(121121121))
+print(is_palindrome(-202202202))
+print(is_palindrome(-1))
+print(is_palindrome(202202202))
