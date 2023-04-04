@@ -3,14 +3,15 @@
 #
 # Assume the environment does not allow you to store 64-bit integers (signed or unsigned)
 
+# same solution as palindrome but we don't stop at middle of the number
 def reverse(x: int) -> int:
     if -2 ** 31 < x < 2 ** 31 - 1:
         new: int = 0
         if x < 0:
             x *= - 1
             while x > 0:
-                new = int(new * 10 + x % 10)
-                x = x // 10
+                new = int(new * 10 + x % 10)  # x % 10 taking last digit of x, new * 10 add new digit
+                x = x // 10  # remove last digit
             if new > 2 ** 31 - 1 or new < -2 ** 31:
                 return 0
             return new * -1
