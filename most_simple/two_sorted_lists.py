@@ -27,6 +27,8 @@ def merge_two_lists(list1: ListNode, list2: ListNode) -> ListNode:
         head_list2 = head_list2.next
         values_list.append(val)
     values_list.sort()
+    if len(values_list) == 0:
+        return head_list1
     new_sorted = ListNode(values_list[0])
     temp = new_sorted
     for _ in values_list[1:]:
@@ -50,6 +52,5 @@ for _ in test_val2[1:]:
     temp.next = new_node
     temp = new_node
 
-print(head1, "\n", head2)
 
-print(merge_two_lists(ListNode(), ListNode()))
+print(merge_two_lists([], ListNode(val=0)))
