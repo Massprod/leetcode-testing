@@ -40,7 +40,6 @@ def convert(s: str, numRows: int) -> str:
             for _ in matr:
                 _.append("")
     zig_zag = ""
-    print(matrix(matr))
     for _ in matr:
         zig_zag += "".join(_)
     return zig_zag

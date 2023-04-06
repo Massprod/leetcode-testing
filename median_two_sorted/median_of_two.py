@@ -18,7 +18,6 @@ def findMedianSortedArrays(nums1: list[int], nums2: list[int]) -> float:
     return median
 
 
-
 test1 = [1, 3]
 test2 = [2]
 test3 = [3, 4]
