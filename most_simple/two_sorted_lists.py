@@ -10,14 +10,32 @@ class ListNode:
         self.val = val
         self.next = next
 
-
-def merge_two_lists(list1: ListNode, lis2: ListNode) -> ListNode:
-    pass
-
+    def __str__(self):
+        return f"{self.val} -> {self.next}"
 
 
+def merge_two_lists(list1: ListNode, list2: ListNode) -> ListNode:
+    head_list1 = list1
+    values_list = []
+    while head_list1:
+        val = head_list1.val
+        head_list1 = head_list1.next
+        values_list.append(val)
+    head_list2 = list2
+    while head_list2:
+        val = head_list2.val
+        head_list2 = head_list2.next
+        values_list.append(val)
+    values_list.sort()
+    new_sorted = ListNode(values_list[0])
+    temp = new_sorted
+    for _ in values_list[1:]:
+        new_node = ListNode(_)
+        temp.next = new_node
+        temp = new_node
+    return new_sorted
 
-test_val = [1, 2 , 4]
+test_val = [1, 2, 4]
 head1 = ListNode(val=test_val[0])
 temp = head1
 for _ in test_val[1:]:
@@ -32,5 +50,6 @@ for _ in test_val2[1:]:
     temp.next = new_node
     temp = new_node
 
-print(head1, head2)
+print(head1, "\n", head2)
 
+print(merge_two_lists(ListNode(), ListNode()))
