@@ -142,6 +142,10 @@ def my_atoi(s: str) -> int:
         return max_num
 
 
+# Overall it's really easy Task, but I was not careful with rules and expected this to READ ANY STRING
+# and return ANY number in it. Even if we had more than 1 sign to change and no matter what was before DIGIT
+# But for the task we needed to READ string only with certain START and continue if next symbol is DIGIT
+
 
 test1 = "   -42  sdfa"
 test2 = str(-2 ** 31)
