@@ -14,18 +14,73 @@
 # Do not ignore any characters other than the leading whitespace or the rest of the string after the digits.
 
 def my_atoi(s: str) -> int:
+    # to_check = [str(_) for _ in range(0, 10)]
+    # sign = 1
+    # digits = ""
+    # for char in s:
+    #     if char == "-":
+    #         sign *= -1
+    #     elif char not in to_check and len(digits) != 0:
+    #         break
+    #     elif char not in to_check:
+    #         continue
+    #     elif char in to_check:
+    #         digits += char
+    # if len(digits) == 0:
+    #     return 0
+    # num = int(digits) * sign
+    # min_num = -2 ** 31
+    # max_num = 2 ** 31 - 1
+    # if min_num < num < max_num:
+    #     return num
+    # elif num <= min_num:
+    #     return min_num
+    # elif num >= max_num:
+    #     return max_num
+    # rebuild whole
     to_check = [str(_) for _ in range(0, 10)]
     sign = 1
     digits = ""
-    for char in s:
-        if char == "-":
-            sign *= -1
-        elif char not in to_check and len(digits) != 0:
+    start = " "
+    string_dict = {}
+    for key, value in enumerate(s):
+        string_dict[key] = value
+    lenght = len(string_dict)
+    for x in range(lenght):
+        if x == lenght - 1 and string_dict[x] not in to_check:
             break
-        elif char not in to_check:
+        elif x == lenght - 1 and string_dict[x] in to_check:
+            digits += string_dict[x]
+        elif string_dict[x] == start and string_dict[x + 1] != start:
+            for y in range(x + 1, lenght):
+                if string_dict[y] == "-":
+                    sign *= -1
+                elif string_dict[y] == "+":
+                    sign *= 1
+                elif string_dict[y] in to_check:
+                    digits += string_dict[y]
+                elif string_dict[y] not in to_check:
+                    break
+            break
+        elif string_dict[x] in to_check:
+            digits += string_dict[x]
+            for z in range(x + 1, lenght):
+                if string_dict[z] == "-":
+                    sign *= -1
+                elif string_dict[z] == "+":
+                    sign *= 1
+                elif string_dict[z] in to_check:
+                    digits += string_dict[z]
+                elif string_dict[z] not in to_check:
+                    break
+            break
+        elif string_dict[x] == "-":
+            sign *= -1
+        elif string_dict[x] == ".":
+            break
+        elif string_dict[x] not in to_check:
             continue
-        elif char in to_check:
-            digits += char
+
     if len(digits) == 0:
         return 0
     num = int(digits) * sign
@@ -41,6 +96,7 @@ def my_atoi(s: str) -> int:
 
 
 
+
 test1 = "   -42  sdfa"
 test2 = str(-2 ** 31)
 test3 = str(2 ** 31 - 1)
@@ -49,13 +105,26 @@ test5 = "  "
 test6 = "--++11"
 test7 = " -+ 11"
 test8 = "  sadfasdfqwerqwerqw--_11wertwqerqwer"
-test9 = " sdfgsdf000-123000wer1230--"
-print(my_atoi(test1))
-print(my_atoi(test2))
-print(my_atoi(test3))
-print(my_atoi(test4))
-print(my_atoi(test5))
-print(my_atoi(test6))
-print(my_atoi(test7))
-print(my_atoi(test8))
-print(my_atoi(test9))
+test9 = "sdfgsdf000-123000wer1230--"
+test10 = "words and 987"
+# test10 - failed because we START reading after WHITESPACE and if it's not digits we ignore it
+# (don't even thought about ignoring string with digits...)
+test11 = "   -42"
+test12 = "-91283472332"
+# test 12 - failed because I counted option with digits at start and digits after whitespace,
+# in THEM I count "-" or "+" but if sign before this part it was ignored. Was counting before changes
+test13 = ".1"
+# test 13 - failed???
+# print(my_atoi(test1))
+# print(my_atoi(test2))
+# print(my_atoi(test3))
+# print(my_atoi(test4))
+# print(my_atoi(test5))
+# print(my_atoi(test6))
+# print(my_atoi(test7))
+# print(my_atoi(test8))
+# print(my_atoi(test9))
+# print(my_atoi(test10))
+# print(my_atoi(test11))
+# print(my_atoi(test12))
+print(my_atoi(test13))
