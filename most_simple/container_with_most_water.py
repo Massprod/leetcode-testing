@@ -11,12 +11,17 @@
 #     end_point2 = (i, height[i])
 def max_area(height: list[int]) -> int:
     volume = 0
-    lines = {}
-    for x, y in enumerate(height):
+    for x in range(len(height)):
         line_num = x
         line_height = height[x]
-        lines[] =
-
+        for y in range(x + 1, len(height)):
+            check_num = y
+            check_height = height[y]
+            rect_len = check_num - line_num
+            rect_height = min(line_height, check_height)
+            new_volume = rect_len * rect_height
+            if new_volume > volume:
+                volume = new_volume
     return volume
 
 
@@ -25,8 +30,8 @@ test2 = [1, 1]
 test3 = []
 test4 = [0, 0, 2, 1]
 test5 = [1, 2, 1]
-# print(max_area(test1))
-# print(max_area(test2))
-# print(max_area(test3))
+print(max_area(test1))
+print(max_area(test2))
+print(max_area(test3))
 print(max_area(test4))
 print(max_area(test5))
