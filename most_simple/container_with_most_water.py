@@ -9,29 +9,36 @@
 
 #     end_point1 = (i, 0)
 #     end_point2 = (i, height[i])
+# Hint 2:
+# Try to use two-pointers.
+# Set one pointer to the left and one to the right of the array.
+# Always move the pointer that points to the lower line.
 def max_area(height: list[int]) -> int:
     volume = 0
-    for x in range(len(height)):
-        line_num = x
-        line_height = height[x]
-        for y in range(x + 1, len(height)):
-            check_num = y
-            check_height = height[y]
-            rect_len = check_num - line_num
-            rect_height = min(line_height, check_height)
-            new_volume = rect_len * rect_height
-            if new_volume > volume:
-                volume = new_volume
+    min_x = 0
+    max_x = len(height) - 1
+    while max_x >= min_x:
+        right_column = height[max_x]
+        left_column = height[min_x]
+        new_volume = min(right_column, left_column) * (max_x - min_x)
+        volume = max(new_volume, volume)
+        if right_column > left_column:
+            min_x += 1
+        elif left_column > right_column:
+            max_x -= 1
+        elif left_column == right_column:
+            max_x -= 1
     return volume
+
+
+
 
 
 test1 = [1, 8, 6, 2, 5, 4, 8, 3, 7]
 test2 = [1, 1]
-test3 = []
 test4 = [0, 0, 2, 1]
 test5 = [1, 2, 1]
 print(max_area(test1))
 print(max_area(test2))
-print(max_area(test3))
 print(max_area(test4))
 print(max_area(test5))
