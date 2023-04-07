@@ -37,50 +37,98 @@ def my_atoi(s: str) -> int:
     #     return min_num
     # elif num >= max_num:
     #     return max_num
-    # rebuild whole
+    # Working but not with correct rules, leave it anyway
+    # to_check = [str(_) for _ in range(0, 10)]
+    # sign = 1
+    # digits = ""
+    # start = " "
+    # string_dict = {}
+    # for key, value in enumerate(s):
+    #     string_dict[key] = value
+    # lenght = len(string_dict)
+    # for x in range(lenght):
+    #     if x == lenght - 1 and string_dict[x] not in to_check:
+    #         break
+    #     elif x == lenght - 1 and string_dict[x] in to_check:
+    #         digits += string_dict[x]
+    #     elif string_dict[x] == start and string_dict[x + 1] != start:
+    #         for y in range(x + 1, lenght):
+    #             if string_dict[y] == "-":
+    #                 sign *= -1
+    #             elif string_dict[y] == "+":
+    #                 sign *= 1
+    #             elif string_dict[y] in to_check:
+    #                 digits += string_dict[y]
+    #             elif string_dict[y] not in to_check:
+    #                 break
+    #         break
+    #     elif string_dict[x] in to_check:
+    #         digits += string_dict[x]
+    #         for z in range(x + 1, lenght):
+    #             if string_dict[z] == "-":
+    #                 sign *= -1
+    #             elif string_dict[z] == "+":
+    #                 sign *= 1
+    #             elif string_dict[z] in to_check:
+    #                 digits += string_dict[z]
+    #             elif string_dict[z] not in to_check:
+    #                 break
+    #         break
+    #     elif string_dict[x] == "-":
+    #         sign *= -1
+    #     elif string_dict[x] == ".":
+    #         break
+    #     elif string_dict[x] not in to_check:
+    #         continue
+    #
+    # if len(digits) == 0:
+    #     return 0
+    # num = int(digits) * sign
+    # min_num = -2 ** 31
+    # max_num = 2 ** 31 - 1
+    # if min_num < num < max_num:
+    #     return num
+    # elif num <= min_num:
+    #     return min_num
+    # elif num >= max_num:
+    #     return max_num
+
     to_check = [str(_) for _ in range(0, 10)]
-    sign = 1
     digits = ""
-    start = " "
+    whitespace = " "
+    sign = 1
     string_dict = {}
     for key, value in enumerate(s):
         string_dict[key] = value
     lenght = len(string_dict)
     for x in range(lenght):
-        if x == lenght - 1 and string_dict[x] not in to_check:
-            break
-        elif x == lenght - 1 and string_dict[x] in to_check:
-            digits += string_dict[x]
-        elif string_dict[x] == start and string_dict[x + 1] != start:
+        if string_dict[x] == whitespace:
+            continue
+        elif string_dict[x] == "-":
+            sign *= -1
             for y in range(x + 1, lenght):
-                if string_dict[y] == "-":
-                    sign *= -1
-                elif string_dict[y] == "+":
-                    sign *= 1
-                elif string_dict[y] in to_check:
+                if string_dict[y] in to_check:
                     digits += string_dict[y]
-                elif string_dict[y] not in to_check:
+                else:
+                    break
+            break
+        elif string_dict[x] == "+":
+            for y in range(x + 1, lenght):
+                if string_dict[y] in to_check:
+                    digits += string_dict[y]
+                else:
                     break
             break
         elif string_dict[x] in to_check:
             digits += string_dict[x]
-            for z in range(x + 1, lenght):
-                if string_dict[z] == "-":
-                    sign *= -1
-                elif string_dict[z] == "+":
-                    sign *= 1
-                elif string_dict[z] in to_check:
-                    digits += string_dict[z]
-                elif string_dict[z] not in to_check:
+            for y in range(x + 1, lenght):
+                if string_dict[y] in to_check:
+                    digits += string_dict[y]
+                else:
                     break
             break
-        elif string_dict[x] == "-":
-            sign *= -1
-        elif string_dict[x] == ".":
-            break
         elif string_dict[x] not in to_check:
-            continue
-
+            break
     if len(digits) == 0:
         return 0
     num = int(digits) * sign
@@ -92,8 +140,6 @@ def my_atoi(s: str) -> int:
         return min_num
     elif num >= max_num:
         return max_num
-
-
 
 
 
@@ -117,7 +163,10 @@ test13 = ".1"
 # test 13 - failed because I was not correct with reading rules and if cursor not on Digit, Whitespace, Sign
 # we should ignore this string because There's NO leading_whitespaces, sign or digit at [0]
 # Means I should rebuild WHOLE because I was incorrect from the beginning :)
-
+# Solution is much simpler than I was thinking. I was thinking about reading whole STRING with some conditions, but
+# if I was reading more carefully
+# I would get that we BREAK everything if string doesn't start with WHITESPACE, SIGN, DIGIT
+test14 = "+-12"
 print(my_atoi(test1))
 print(my_atoi(test2))
 print(my_atoi(test3))
@@ -131,3 +180,4 @@ print(my_atoi(test10))
 print(my_atoi(test11))
 print(my_atoi(test12))
 print(my_atoi(test13))
+print(my_atoi(test14))
