@@ -23,7 +23,7 @@ def longest_subpal(s: str) -> str:
         pal_list[len(symbol)] = symbol
         if max_len - x <= pal_len:  # skipping all if len exceeds or equal half of max
             break
-        if symbol not in s[:back]:
+        if symbol not in s[:back]:  # skipping if not in left symbols slice
             back -= 1
             continue
         for y in range(x + 1, max_len):
