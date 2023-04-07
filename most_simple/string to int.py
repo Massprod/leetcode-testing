@@ -114,17 +114,20 @@ test12 = "-91283472332"
 # test 12 - failed because I counted option with digits at start and digits after whitespace,
 # in THEM I count "-" or "+" but if sign before this part it was ignored. Was counting before changes
 test13 = ".1"
-# test 13 - failed???
-# print(my_atoi(test1))
-# print(my_atoi(test2))
-# print(my_atoi(test3))
-# print(my_atoi(test4))
-# print(my_atoi(test5))
-# print(my_atoi(test6))
-# print(my_atoi(test7))
-# print(my_atoi(test8))
-# print(my_atoi(test9))
-# print(my_atoi(test10))
-# print(my_atoi(test11))
-# print(my_atoi(test12))
+# test 13 - failed because I was not correct with reading rules and if cursor not on Digit, Whitespace, Sign
+# we should ignore this string because There's NO leading_whitespaces, sign or digit at [0]
+# Means I should rebuild WHOLE because I was incorrect from the beginning :)
+
+print(my_atoi(test1))
+print(my_atoi(test2))
+print(my_atoi(test3))
+print(my_atoi(test4))
+print(my_atoi(test5))
+print(my_atoi(test6))
+print(my_atoi(test7))
+print(my_atoi(test8))
+print(my_atoi(test9))
+print(my_atoi(test10))
+print(my_atoi(test11))
+print(my_atoi(test12))
 print(my_atoi(test13))
