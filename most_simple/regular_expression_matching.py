@@ -78,10 +78,18 @@ test5 = "aab"
 ptest5 = "c*a*b"
 test6 = "mississippi"
 ptest6 = "mis*is*ip*."
-# print(is_match(test0, ptest0))
-# print(is_match(test1, ptest1))
-# print(is_match(test2, ptest2))
-# print(is_match(test3, ptest3))
-# print(is_match(test4, ptest4))
-# print(is_match(test5, ptest5))
-print(is_match(test6, ptest6))
+# test6 fail:
+# Forgot about last symbol in pattern can be ANY(.)
+test7 = "aaa"
+ptest7 = "a*a"
+# test7 fail:
+# Was thinking that we needed to MATCH everything in pattern if we have something left after .* - it's FALSE
+# apparently we should stop and check for ALL
+print(is_match(test0, ptest0))  # false
+print(is_match(test1, ptest1))  # false
+print(is_match(test2, ptest2))  # true
+print(is_match(test3, ptest3))  # true
+print(is_match(test4, ptest4))  # false
+print(is_match(test5, ptest5))  # true
+print(is_match(test6, ptest6))  # true
+print(is_match(test7, ptest7))  # true
