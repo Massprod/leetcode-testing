@@ -30,7 +30,7 @@ def max_area(height: list[int]) -> int:
             max_x -= 1
     return volume
 
-# After failing with BRUTE force solution (obviously), I was trying to user pointer to check every column
+# After failing with BRUTE force solution (obviously), I was trying to use pointer and check every column
 # but skipping HIGHER ones. Dumb move but maybe it could be little faster.
 # Googled solution is simpler and easily understood:
 # because we just COVER most AREA with the highest columns and highest X range
