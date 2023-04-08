@@ -9,57 +9,42 @@
 def is_match(s: str, p: str) -> bool:
     if s == p:
         return True
-    original = list(s)
-    pattern = list(p)
     many = "*"
-    once = "."
+    anys = "."
     valid = ""
     cursor = 0
-    for x in range(0, len(pattern)):
-        if cursor == len(original) and p[x] != many and p[x] != once:
+    max_x = len(p)
+    max_y = len(s)
+    for x in range(max_x):
+        if cursor == max_y:
             return False
-        elif x == (len(pattern) - 1) and p[x] != many:
+        elif p[x] != many:
             check = p[x]
-            if check == once:
-                valid += original[cursor]
+            if check == anys:
+                valid += s[cursor]
                 cursor += 1
-            elif original[cursor] == check:
-                valid += original[cursor]
+            elif s[cursor] == check:
+                valid += s[cursor]
                 cursor += 1
-                break
-
         elif p[x] == many:
             check = p[x - 1]
-            for y in range(cursor, len(original)):
-                if check == once:
-                    valid += original[y]
+            stop = ""
+            if x < max_x - 1:
+                stop = p[x + 1]
+            for y in range(cursor, max_y):
+                if y < max_y - 1 and s[y + 1] == stop and (s[y] == check or check == anys):
+                    valid += s[y]
                     cursor += 1
-                    continue
-                elif original[y] == check:
-                    valid += original[y]
-                    cursor += 1
-                    continue
-                elif original[y] != check:
                     break
-        elif p[x] == once and p[x + 1] == many:
-            check = once
-            for y in range(cursor, len(original)):
-                valid += original[y]
-                cursor += 1
-        elif p[x] == once:
-            valid += original[cursor]
-            cursor += 1
-            continue
-
-        elif x < (len(pattern) - 1) and p[x + 1] != many:
-            check = p[x]
-            if original[cursor] == check:
-                valid += original[cursor]
-                cursor += 1
-            else:
-                break
-
-    if valid == "".join(original):
+                elif check == anys:
+                    valid += s[y]
+                    cursor += 1
+                elif s[y] == check:
+                    valid += s[y]
+                    cursor += 1
+                elif s[y] != check:
+                    break
+    if valid == s:
         return True
     return False
 
@@ -85,11 +70,20 @@ ptest7 = "a*a"
 # test7 fail:
 # Was thinking that we needed to MATCH everything in pattern if we have something left after .* - it's FALSE
 # apparently we should stop and check for ALL
-print(is_match(test0, ptest0))  # false
-print(is_match(test1, ptest1))  # false
-print(is_match(test2, ptest2))  # true
-print(is_match(test3, ptest3))  # true
-print(is_match(test4, ptest4))  # false
-print(is_match(test5, ptest5))  # true
-print(is_match(test6, ptest6))  # true
-print(is_match(test7, ptest7))  # true
+test8 = "mississippi"
+ptest8 = "mis*is*p*."
+# test8 fail:
+# Was ignoring symbols if they are not in a pattern and continue counting
+test9 = "aaa"
+ptest9 = "ab*a*c*a"
+
+# print(is_match(test0, ptest0))  # false
+# print(is_match(test1, ptest1))  # false
+# print(is_match(test2, ptest2))  # true
+# print(is_match(test3, ptest3))  # true
+# print(is_match(test4, ptest4))  # false
+# print(is_match(test5, ptest5))  # true
+# print(is_match(test6, ptest6))  # true
+# print(is_match(test7, ptest7))  # true
+# print(is_match(test8, ptest8))  # false
+print(is_match(test9, ptest9))  # true
