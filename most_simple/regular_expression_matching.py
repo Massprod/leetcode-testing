@@ -7,46 +7,6 @@
 
 
 def is_match(s: str, p: str) -> bool:
-    if s == p:
-        return True
-    many = "*"
-    anys = "."
-    valid = ""
-    cursor = 0
-    max_x = len(p)
-    max_y = len(s)
-    for x in range(max_x):
-        if cursor == max_y:
-            return False
-        elif p[x] != many:
-            check = p[x]
-            if check == anys:
-                valid += s[cursor]
-                cursor += 1
-            elif s[cursor] == check:
-                valid += s[cursor]
-                cursor += 1
-        elif p[x] == many:
-            check = p[x - 1]
-            stop = ""
-            if x < max_x - 1:
-                stop = p[x + 1]
-            for y in range(cursor, max_y):
-                if y < max_y - 1 and s[y + 1] == stop and (s[y] == check or check == anys):
-                    valid += s[y]
-                    cursor += 1
-                    break
-                elif check == anys:
-                    valid += s[y]
-                    cursor += 1
-                elif s[y] == check:
-                    valid += s[y]
-                    cursor += 1
-                elif s[y] != check:
-                    break
-    if valid == s:
-        return True
-    return False
 
 
 test0 = "aba"
@@ -76,7 +36,10 @@ ptest8 = "mis*is*p*."
 # Was ignoring symbols if they are not in a pattern and continue counting
 test9 = "aaa"
 ptest9 = "ab*a*c*a"
-
+test10 = "ab"
+ptest10 = ".*.."
+# After googling this task all I have done before is pointless cuz this Task is like INTRO for recursion
+# and I can't solve it with just 1 loop
 # print(is_match(test0, ptest0))  # false
 # print(is_match(test1, ptest1))  # false
 # print(is_match(test2, ptest2))  # true
@@ -86,4 +49,5 @@ ptest9 = "ab*a*c*a"
 # print(is_match(test6, ptest6))  # true
 # print(is_match(test7, ptest7))  # true
 # print(is_match(test8, ptest8))  # false
-print(is_match(test9, ptest9))  # true
+# print(is_match(test9, ptest9))  # true
+# print(is_match(test10, ptest10))  # true
