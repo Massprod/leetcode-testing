@@ -6,6 +6,7 @@
 # The matching should cover the entire input string (not partial).
 
 def is_match(s: str, p: str) -> bool:
+    # 12,95% 86,51%
     to_check = s
     pattern = p
     any_sign = "."
@@ -28,8 +29,8 @@ def is_match(s: str, p: str) -> bool:
         return False  # otherwise we have a pair which can't be resolved, so it's False
     elif len(pattern) > 3 and pattern[3] == "*" and pattern[0] == pattern[2]:  # if we have 2 wildcards in a row
         return is_match(to_check, pattern[2:])  # we just slice one of them OFF, and check again
-    elif to_check[0] != pattern[0] and pattern[0] != any_sign:  # checking 0 symbols, if they're not equal
-        return is_match(to_check, pattern[2:])  # even if there's [1] and it's wildcard we still slice it from [2] and removing [0][1] because they can't be used
+    elif to_check[0] != pattern[0] and pattern[0] != any_sign:  # checking 0 indexes, if they're not equal
+        return is_match(to_check, pattern[2:])  # even if there's [1] and it's wildcard we still slice it from [2] and removing [0][1] because they can't be used, but they can be None
     return is_match(to_check[1:], pattern) or is_match(to_check, pattern[2:]) or is_match(to_check[1:], pattern[2:])  # left options
     # 1option: to_check[0] == pattern[0] and pattern[1] == wildcard . we slicing element from string and check next symbol to be equal to wildcard
     #  s: aabc, p: a*bc -> s: abc, p: a*bc -> s: bc, p: a*bc . trig 31line. -> s: bc, p: bc -> True
@@ -38,6 +39,7 @@ def is_match(s: str, p: str) -> bool:
     # 3option: to_check[0] == pattern[0] and pattern[1] == wildcard . we slicing element from string and next symbol is not equal to wildcard
     # s: aabc, p: a*bc -> s: abc, p: bc . trig 31line -> s: abc, p: None -> False
     # If one of the options is True, string == pattern
+
 
 test0 = "aba"
 ptest0 = "aa"
