@@ -32,8 +32,12 @@ def is_match(s: str, p: str) -> bool:
         return is_match(to_check, pattern[2:])  # even if there's [1] and it's wildcard we still slice it from [2] and removing [0][1] because they can't be used
     return is_match(to_check[1:], pattern) or is_match(to_check, pattern[2:]) or is_match(to_check[1:], pattern[2:])  # left options
     # 1option: to_check[0] == pattern[0] and pattern[1] == wildcard . we slicing element from string and check next symbol to be equal to wildcard
-    # 2option: to_check[0] != pattern[0] and pattern[1] == wildcard . we slicing from wildcard and string unchanged
+    #  s: aabc, p: a*bc -> s: abc, p: a*bc -> s: bc, p: a*bc . trig 31line. -> s: bc, p: bc -> True
+    # 2option: to_check[0] != pattern[0] and pattern[1] == wildcard . we slicing from wildcard and string unchanged. (wilcard * 0 = True)
+    # s: aabc, p: a*bc -> s: aabc, p: bc . trig 31line -> s: aabc, p: None -> False
     # 3option: to_check[0] == pattern[0] and pattern[1] == wildcard . we slicing element from string and next symbol is not equal to wildcard
+    # s: aabc, p: a*bc -> s: abc, p: bc . trig 31line -> s: abc, p: None -> False
+    # If one of the options is True, string == pattern
 
 test0 = "aba"
 ptest0 = "aa"
