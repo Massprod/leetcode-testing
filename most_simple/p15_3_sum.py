@@ -5,6 +5,7 @@
 
 
 def three_sum(nums: list[int]) -> list[list[int]] | set:
+    # time_limit
     # checked_x = []
     # sums = []
     # nums.sort(reverse=True)
@@ -30,6 +31,7 @@ def three_sum(nums: list[int]) -> list[list[int]] | set:
     #                     sums.append(tempo)
     # return sums
     # rebuild
+    # working sol 19.44%, 93.98%
     nums.sort(reverse=True)
     sums = set()
     checked = set()
@@ -102,3 +104,36 @@ def three_sum(nums: list[int]) -> list[list[int]] | set:
 # value of 1 for other X index...............nc
 # No issue with sorting return value.
 # --------------------------------------------
+
+def stolen_three_sums(nums: list[int]) -> set:
+    # 97.68%, 14.89%
+    sums = set()
+    neg, pos, zero = [], [], []
+    for _ in nums:
+        if _ > 0:
+            pos.append(_)
+        elif _ < 0:
+            neg.append(_)
+        elif _ == 0:
+            zero.append(_)
+    NEG, POS = set(neg), set(pos)
+    if zero:
+        for num in POS:
+            value = num * -1
+            if value in NEG:
+                sums.add((num * -1, 0, num))
+    if len(zero) >= 3:
+        sums.add((0, 0, 0))
+    for x in range(len(pos)):
+        for y in range(x + 1, len(pos)):
+            check = (pos[x] + pos[y]) * -1
+            if check in NEG:
+                sums.add(tuple(sorted((pos[x], pos[y], check))))
+    for x in range(len(neg)):
+        for y in range(x + 1, len(neg)):
+            check = (neg[x] + neg[y]) * -1
+            if check in POS:
+                sums.add(tuple(sorted((neg[x], neg[y], check))))
+    return sums
+
+# Good solution and I need to learn more to stop using simple looping and hit TimeLimits.
