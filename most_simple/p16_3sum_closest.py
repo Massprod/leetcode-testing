@@ -7,6 +7,7 @@
 
 
 def sum_closest(nums: list[int], target: int) -> int:
+    # working sol 5.11%, 13.84%
     nums.sort()
     diffs = {}
     checked = set()
@@ -34,10 +35,10 @@ def sum_closest(nums: list[int], target: int) -> int:
             if three_sum > 0:
                 diff = target - three_sum
                 if diff > 0:
-                    z -= 1
+                    y += 1
                     diffs[abs(diff)] = three_sum
                 elif diff < 0:
-                    y += 1
+                    z -= 1
                     diffs[abs(diff)] = three_sum
                 elif diff == 0:
                     return three_sum
@@ -47,7 +48,7 @@ def sum_closest(nums: list[int], target: int) -> int:
                     y += 1
                     diffs[abs(diff)] = three_sum
                 elif diff < 0:
-                    z += 1
+                    z -= 1
                     diffs[abs(diff)] = three_sum
                 elif diff == 0:
                     return three_sum
@@ -61,20 +62,20 @@ def sum_closest(nums: list[int], target: int) -> int:
                     diffs[abs(diff)] = three_sum
                 elif diff == 0:
                     return three_sum
-    print(diffs)
     min_diff = min(diffs.keys())
     return diffs[min_diff]
 
 
-# test1 = [-1, 2, 1, -4]
-# test1_target = 1
-# test1_out = 2
-# print(sum_closest(test1, test1_target))
-# test2 = [0, 0, 0]
-# test2_target = 1
-# test2_out = 0
-# print(sum_closest(test2, test2_target))
+test1 = [-1, 2, 1, -4]
+test1_target = 1
+test1_out = 2
+print(sum_closest(test1, test1_target))
+test2 = [0, 0, 0]
+test2_target = 1
+test2_out = 0
+print(sum_closest(test2, test2_target))
 test3 = [1, 1, 1, 0]
 test3_target = 100
 test3_out = 3
 print(sum_closest(test3, test3_target))
+# Not correct slicing
