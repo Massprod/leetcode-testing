@@ -7,10 +7,54 @@
 
 
 def sum_closest(nums: list[int], target: int) -> int:
-    pass
-
+    nums.sort()
+    diffs = {}
+    checked = set()
+    max_x = len(nums) - 1
+    for x in range(len(nums)):
+        y = 0
+        z = len(nums) - 1
+        if nums[x] in checked:
+            continue
+        elif x == max_x:
+            y = 0
+            z = x - 1
+        elif x == 0:
+            y = x + 1
+            z = len(nums) - 1
+        checked.add(nums[x])
+        while y < z:
+            if x == y:
+                y += 1
+                continue
+            elif x == z:
+                z -= 1
+                continue
+            three_sum = nums[x] + nums[y] + nums[z]
+            if three_sum > 0:
+                diff = target - three_sum
+                if diff > 0:
+                    z -= 1
+                    diffs[abs(diff)] = three_sum
+                elif diff < 0:
+                    y += 1
+                    diffs[abs(diff)] = three_sum
+            elif three_sum < 0:
+                diff = target - three_sum
+                if diff > 0:
+                    y += 1
+                    diffs[abs(diff)] = three_sum
+                elif diff < 0:
+                    z += 1
+                    diffs[abs(diff)] = three_sum
+            elif three_sum == 0 and target == 0:
+                diff = 0
+                diffs[abs(diff)] = three_sum
+    min_diff = min(diffs.keys())
+    return diffs[min_diff]
 
 
 test1 = [-1, 2, 1, -4]
 test1_target = 1
 test1_out = 2
+print(sum_closest(test1, test1_target))
