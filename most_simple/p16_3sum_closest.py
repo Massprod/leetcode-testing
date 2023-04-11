@@ -39,6 +39,8 @@ def sum_closest(nums: list[int], target: int) -> int:
                 elif diff < 0:
                     y += 1
                     diffs[abs(diff)] = three_sum
+                elif diff == 0:
+                    return three_sum
             elif three_sum < 0:
                 diff = target - three_sum
                 if diff > 0:
@@ -47,14 +49,32 @@ def sum_closest(nums: list[int], target: int) -> int:
                 elif diff < 0:
                     z += 1
                     diffs[abs(diff)] = three_sum
-            elif three_sum == 0 and target == 0:
-                diff = 0
-                diffs[abs(diff)] = three_sum
+                elif diff == 0:
+                    return three_sum
+            elif three_sum == 0:
+                diff = 0 - target
+                if diff > 0:
+                    z -= 1
+                    diffs[abs(diff)] = three_sum
+                elif diff < 0:
+                    y += 1
+                    diffs[abs(diff)] = three_sum
+                elif diff == 0:
+                    return three_sum
+    print(diffs)
     min_diff = min(diffs.keys())
     return diffs[min_diff]
 
 
-test1 = [-1, 2, 1, -4]
-test1_target = 1
-test1_out = 2
-print(sum_closest(test1, test1_target))
+# test1 = [-1, 2, 1, -4]
+# test1_target = 1
+# test1_out = 2
+# print(sum_closest(test1, test1_target))
+# test2 = [0, 0, 0]
+# test2_target = 1
+# test2_out = 0
+# print(sum_closest(test2, test2_target))
+test3 = [1, 1, 1, 0]
+test3_target = 100
+test3_out = 3
+print(sum_closest(test3, test3_target))
