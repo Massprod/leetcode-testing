@@ -64,7 +64,7 @@ def sum_closest(nums: list[int], target: int) -> int:
     #                 return three_sum
     # min_diff = min(diffs.keys())
     # return diffs[min_diff]
-    # second_try (6.3%, 50.75%) slow_afb
+    # second_try (6.3%, 50.75%) slow_afb . not saving extra options but still slow
     nums.sort()
     diff = target - (nums[0] + nums[1] + nums[2])
     lowest = nums[0] + nums[1] + nums[2]
@@ -103,21 +103,29 @@ def sum_closest(nums: list[int], target: int) -> int:
     return lowest
 
 
+# Same looping as WATER_COLUMNS and 3SUM but ith finding distance abs(tempo) or diff in 1solution.
+# Both working and I don't know how to speed them up right_now.....
+
+
 test1 = [-1, 2, 1, -4]
 test1_target = 1
 test1_out = 2
 print(sum_closest(test1, test1_target))
+assert sum_closest(test1, test1_target) == test1_out
 test2 = [0, 0, 0]
 test2_target = 1
 test2_out = 0
 print(sum_closest(test2, test2_target))
+assert sum_closest(test2, test2_target) == test2_out
 test3 = [1, 1, 1, 0]
 test3_target = 100
 test3_out = 3
 print(sum_closest(test3, test3_target))
+assert sum_closest(test3, test3_target) == test3_out
 # Not correct slicing, cuz of that I was skipping some values from left(y) side
 test4 = [0, 1, 2]
 test4_target = 0
 test4_out = 3
 print(sum_closest(test4, test4_target))
+assert sum_closest(test4, test4_target) == test4_out
 # Error because I left LOWEST as 0 and not first sum, and forgot about changing it later.
