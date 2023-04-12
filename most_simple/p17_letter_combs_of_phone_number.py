@@ -8,6 +8,45 @@ from numpy import matrix as mt
 
 
 def total_combs(digits: str) -> list[str]:
+    # working_sol (23.18%, 19.89%) - brute is no Good.
+    # if len(digits) == 0:
+    #     return []
+    # options = {
+    #     "2": ["a", "b", "c"],
+    #     "3": ["d", "e", "f"],
+    #     "4": ["g", "h", "i"],
+    #     "5": ["j", "k", "l"],
+    #     "6": ["m", "n", "o"],
+    #     "7": ["p", "q", "r", "s"],
+    #     "8": ["t", "u", "v"],
+    #     "9": ["w", "x", "y", "z"],
+    # }
+    # if len(digits) == 1:
+    #     return options[digits[0]]
+    # combs = []
+    # to_use = []
+    # for digit in digits:
+    #     to_use.append(options[digit])
+    # for x in range(len(to_use[0])):
+    #     first = to_use[0][x]
+    #     for y in range(len(to_use[1])):
+    #         second = to_use[1][y]
+    #         if len(to_use) == 2:
+    #             to_add = first + second
+    #             combs.append(to_add)
+    #             continue
+    #         for z in range(len(to_use[2])):
+    #             third = to_use[2][z]
+    #             if len(to_use) == 3:
+    #                 to_add = first + second + third
+    #                 combs.append(to_add)
+    #                 continue
+    #             for g in range(len(to_use[3])):
+    #                 fourth = to_use[3][g]
+    #                 to_add = first + second + third + fourth
+    #                 combs.append(to_add)
+    # return combs
+    # working sol - googled (41.43% , 98.2%)
     if len(digits) == 0:
         return []
     options = {
@@ -22,29 +61,12 @@ def total_combs(digits: str) -> list[str]:
     }
     if len(digits) == 1:
         return options[digits[0]]
-    combs = []
-    to_use = []
-    for digit in digits:
-        to_use.append(options[digit])
-    for x in range(len(to_use[0])):
-        first = to_use[0][x]
-        for y in range(len(to_use[1])):
-            second = to_use[1][y]
-            if len(to_use) == 2:
-                to_add = first + second
-                combs.append(to_add)
-                continue
-            for z in range(len(to_use[2])):
-                third = to_use[2][z]
-                if len(to_use) == 3:
-                    to_add = first + second + third
-                    combs.append(to_add)
-                    continue
-                for g in range(len(to_use[3])):
-                    fourth = to_use[3][g]
-                    to_add = first + second + third + fourth
-                    combs.append(to_add)
+    added = total_combs(digits[:-1])
+    to_add = options[digits[-1]]
+    combs = [a + b for a in added for b in to_add]
     return combs
+
+
 
 
 test1 = "23"
