@@ -14,7 +14,7 @@ def total_combs(digits: str) -> list[str]:
         "3": ["d", "e", "f"],
         "4": ["g", "h", "i"],
         "5": ["j", "k", "l"],
-        "6": ["m", "m", "o"],
+        "6": ["m", "n", "o"],
         "7": ["p", "q", "r", "s"],
         "8": ["t", "u", "v"],
         "9": ["w", "x", "y", "z"],
@@ -31,12 +31,9 @@ def total_combs(digits: str) -> list[str]:
             if y == x:
                 continue
             second = digits[y]
-            if first > second:
-                digit = second + first
-                to_use.add(digit)
-            elif second > first:
-                digit = first + second
-                to_use.add(digit)
+            digit = second + first
+            digit = "".join(sorted(digit))
+            to_use.add(digit)
     for num in to_use:
         first_values = options[num[0]]
         second_values = options[num[1]]
@@ -46,13 +43,14 @@ def total_combs(digits: str) -> list[str]:
                 second = second_values[y]
                 comb = first + second
                 combs.append(comb)
+    print(to_use)
     return combs
 
 
 test1 = "23"
 test1_out = ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]
 print(total_combs(test1))
-test2 = "23456789"
+# test2 = "23456789"
 # print(total_combs(test2))
 # combb = combinations(test2, r=2)
 # test3 = set()
@@ -62,7 +60,16 @@ test2 = "23456789"
 # for _ in test3:
 #     assert _ in total_combs(test2)
 
-test3 = ""
-print(total_combs(test3))
-test4 = "2"
-print(total_combs(test4))
+# test3 = ""
+# print(total_combs(test3))
+# test4 = "2"
+# print(total_combs(test4))
+# test5 = "6"
+# print(total_combs(test5))
+# failed test5, cuz made a typo in dict m, m, o -> m, n, o  .......................nc
+test6 = "22"
+print(total_combs(test6))
+# failed tes6, cuz im using SET and instead of using sorted() on str I was brute checking more or less and forgot equal
+test7 = "234"
+print(total_combs(test7))
+# rebuild. cuz we need to check whole number not just combs of 2 digits
