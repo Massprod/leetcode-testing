@@ -61,11 +61,14 @@ def total_combs(digits: str) -> list[str]:
     }
     if len(digits) == 1:
         return options[digits[0]]
-    added = total_combs(digits[:-1])
-    to_add = options[digits[-1]]
-    combs = [a + b for a in added for b in to_add]
+    added = total_combs(digits[:-1])  # recalling functions until we hit len == 1 to get our first option
+    to_add = options[digits[-1]]  # adding our first option to last digit in called recursion DIGITS
+    combs = [a + b for a in added for b in to_add]  # combining them into one list
     return combs
 
+
+# For the future - always go to recursion if there's 2+ for loops needed
+# Made only 2 tasks with recursion and failed to see it here.....
 
 
 
