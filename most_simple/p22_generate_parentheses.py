@@ -2,6 +2,7 @@
 
 
 def gen_parentheses(n: int) -> list[str]:
+    # working_sol (34.30%, 65.51%)
     combos = []
     origin = "("
     counter = ")"
@@ -21,6 +22,10 @@ def gen_parentheses(n: int) -> list[str]:
             tempo.pop()
     back_tracking(temp)
     return combos
+
+# Most of the solution is googled but actually not that hard.
+# Flow of recursion:
+#
 
 
 test1 = 3
