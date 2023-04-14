@@ -5,6 +5,38 @@
 # '*' Matches zero or more of the preceding element.
 # The matching should cover the entire input string (not partial).
 
+
+def clear_is_match(s: str, p: str) -> bool:
+    # Clear version of is_match
+    to_check = s
+    pattern = p
+    any_sign = "."
+    wild = "*"
+    if not pattern:
+        if not to_check:
+            return True
+        return False
+    elif not to_check:
+        if len(pattern) > 1 and pattern[1] == wild:
+            return is_match(to_check, pattern[2:])
+        return False
+    elif len(pattern) == 1:
+        if len(to_check) == 1 and (pattern[0] == any_sign or pattern[0] == to_check[0]):
+            return True
+        return False
+    elif pattern[1] != wild:
+        if pattern[0] == any_sign or pattern[0] == to_check[0]:
+            return is_match(to_check[1:], pattern[1:])
+        return False
+    elif len(pattern) > 3 and pattern[3] == "*" and pattern[0] == pattern[2]:
+        return is_match(to_check, pattern[2:])
+    elif to_check[0] != pattern[0] and pattern[0] != any_sign:
+        return is_match(to_check, pattern[2:])
+    return is_match(to_check[1:], pattern) or is_match(to_check, pattern[2:]) or is_match(to_check[1:], pattern[2:])
+
+# not clear below :)
+
+
 def is_match(s: str, p: str) -> bool:
     # 12,95% 86,51%
     to_check = s
