@@ -11,15 +11,37 @@
 
 def remove_duplicates(nums: list[int]) -> int:
     # working_sol (5.7% , 48.90%)
+    # for _ in nums:
+    #     if nums.count(_) > 1:
+    #         for x in range(nums.count(_) - 1):
+    #             nums.remove(_)
+    # return len(nums)
+    # ----------------------
+    # working_sol (60.59%, 9.21%)
+    uniques = set()
     for _ in nums:
-        if nums.count(_) > 1:
-            for x in range(nums.count(_) - 1):
-                nums.remove(_)
-    return len(nums)
+        uniques.add(_)
+    x = 0
+    uniques = sorted(uniques)
+    for _ in uniques:
+        nums[x] = _
+        x += 1
+    return len(uniques)
 
-# 5.7%?? Rebuild later
+
+# Both solutions work and I might find another, if revisit :)
+# If I understand correctly *in-place* means I can't create another list.
+# But I can change existing by either indexing or removing values.
+# !The remaining elements of nums are not important as well as the size of nums.!
+# !The input is usually overwritten by the output as the algorithm executes.
+# An in-place algorithm updates its input sequence only through replacement or swapping of elements.!
+
 
 test1 = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
 test1_out = 5
 test1_changed = [0, 1, 2, 3, 4, "_", "_", "_", "_", "_"]
 print(remove_duplicates(test1))
+test2 = [-1, 0, 0, 0, 0, 3, 3]
+test2_out = 3
+test2_changed = [-1, 0, 3]
+print(remove_duplicates(test2))
