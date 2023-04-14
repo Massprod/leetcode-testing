@@ -39,6 +39,16 @@ def remove_duplicates(nums: list[int]) -> int:
             nums[pos - 1] = nums[x]
             pos += 1
     return pos
+    # ----------------------
+    # working_sol (41.81%, 94%) - semi_googled solution, cuz I was checking other ways after 3 of mine.
+    # and it's actually pretty close to mine #3. But I failed to count more pretty :) 0.1 mb memory-diff.
+    # pos = 1
+    # length = len(nums)
+    # for x in range(1, length):
+    #     if nums[x - 1] != nums[x]:
+    #         nums[pos] = nums[x]
+    #         pos += 1
+    # return pos
 
 # Both solutions work and I might find another, if revisit :)
 # If I understand correctly *in-place* means I can't create another list.
