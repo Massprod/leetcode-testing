@@ -12,6 +12,7 @@ class ListNode:
 
 
 def swap_pairs(head: ListNode) -> ListNode:
+    # working_sol (56.93%, 10.33%)
     counter = 0
     if not head:
         return head
@@ -26,6 +27,10 @@ def swap_pairs(head: ListNode) -> ListNode:
     if counter % 2 == 0:
         cursor.val = head.val
     return new
+
+
+# Don't have enough practice with LinkedLists, but we're evolving :)
+# Solution is working, but I'm sure there's way to change next to prev without counter.
 
 test1_values = [1, 2, 3, 4, 5, 6, 8, 9, 10]
 test1 = cursor = ListNode(val=test1_values[0])
