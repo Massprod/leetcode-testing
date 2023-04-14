@@ -18,16 +18,27 @@ def remove_duplicates(nums: list[int]) -> int:
     # return len(nums)
     # ----------------------
     # working_sol (60.59%, 9.21%)
-    uniques = set()
-    for _ in nums:
-        uniques.add(_)
-    x = 0
-    uniques = sorted(uniques)
-    for _ in uniques:
-        nums[x] = _
-        x += 1
-    return len(uniques)
-
+    # uniques = set()
+    # for _ in nums:
+    #     uniques.add(_)
+    # x = 0
+    # uniques = sorted(uniques)
+    # for _ in uniques:
+    #     nums[x] = _
+    #     x += 1
+    # return len(uniques)
+    # ----------------------
+    # working_sol (32.8%, 48.90%)
+    pos = 1
+    for x in range(0, len(nums)):
+        if x == len(nums) - 1 and nums[x] != nums[x - 1]:
+            nums[pos - 1] = nums[x]
+        elif x == len(nums) - 1 and nums[x] == nums[x - 1]:
+            nums[pos - 1] = nums[x]
+        elif nums[x] != nums[x + 1]:
+            nums[pos - 1] = nums[x]
+            pos += 1
+    return pos
 
 # Both solutions work and I might find another, if revisit :)
 # If I understand correctly *in-place* means I can't create another list.
