@@ -10,15 +10,24 @@
 
 
 def remove_element(nums: list[int], val: int) -> int:
-    pos = -1
-    for x in range(len(nums)):
+    # working_sol (40.32%, 94.31%)
+    pos = 0
+    length = len(nums)
+    for x in range(length):
         if nums[x] == val:
-            nums[x], nums[pos] = nums[pos], nums[x]
-            pos -= 1
-    return (pos * -1) - 1
+            continue
+        nums[pos] = nums[x]
+        pos += 1
+    return pos
 
 
-test1 = [3,2,2,3]
+test1 = [3, 2, 2, 3]
 test1_out = 2
-test1[-2], test1[0] = test1[0], test1[-2]
-print(remove_element(test1, val=3))
+test1_target = 3
+print(remove_element(test1, val=test1_target))
+print(test1)
+test2 = [0, 1, 2, 2, 3, 0, 4, 2]
+test2_out = 5
+test2_target = 2
+print(remove_element(test2, test2_target))
+print(test2)
