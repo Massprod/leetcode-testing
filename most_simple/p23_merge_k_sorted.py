@@ -13,20 +13,42 @@ class ListNode:
 
 
 def merge_k_sorted(lists: list[ListNode]) -> ListNode:
+    # 100% sure it's working solution, may be slow. But working.
+    # and there's either bug or I don't know leetcode Raises IndexError
+    # on any index call on values list. But prints every index and value....
+    # like !for _ in values: print(_)! is executing no problem
+    # !len(values)! - same, correct len and printed
+    # !but values[0]! == index error. WHAT????
+
+    # values = []
+    # for _ in lists:
+    #     tempor = _
+    #     while tempor:
+    #         values.append(tempor.val)
+    #         tempor = tempor.next
+    # values.sort()
+    # new = ListNode(val=values[0])
+    # cursor = new
+    # for _ in values[1:]:
+    #     new_chain = ListNode(val=_)
+    #     cursor.next = new_chain
+    #     cursor = new_chain
+    # return new
+
+    # Same solution but without calling indexes of a values list
+    # working_sol (98.40%, 13.43%)
     values = []
     for _ in lists:
-        tempor = _
-        while tempor:
-            values.append(tempor.val)
-            tempor = tempor.next
+        while _:
+            values.append(_.val)
+            _ = _.next
     values.sort()
-    new = ListNode(val=values[0])
+    new = ListNode(val=0)
     cursor = new
-    for _ in values[1:]:
-        new_chain = ListNode(val=_)
-        cursor.next = new_chain
-        cursor = new_chain
-    return new
+    for _ in values:
+        cursor.next = ListNode(val=_)
+        cursor = cursor.next
+    return new.next
 
 
 test_values = [[1, 4, 5], [1, 3, 4], [2, 6]]
