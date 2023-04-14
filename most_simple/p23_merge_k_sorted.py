@@ -19,7 +19,7 @@ def merge_k_sorted(lists: list[ListNode]) -> ListNode:
     # like !for _ in values: print(_)! is executing no problem
     # !len(values)! - same, correct len and printed
     # !but values[0]! == index error. WHAT????
-
+    # ------------------
     # values = []
     # for _ in lists:
     #     tempor = _
@@ -34,7 +34,7 @@ def merge_k_sorted(lists: list[ListNode]) -> ListNode:
     #     cursor.next = new_chain
     #     cursor = new_chain
     # return new
-
+    # ------------------
     # Same solution but without calling indexes of a values list
     # working_sol (98.40%, 13.43%)
     values = []
@@ -43,12 +43,11 @@ def merge_k_sorted(lists: list[ListNode]) -> ListNode:
             values.append(_.val)
             _ = _.next
     values.sort()
-    new = ListNode(val=0)
-    cursor = new
+    new = cursor = ListNode(val=0)
     for _ in values:
         cursor.next = ListNode(val=_)
         cursor = cursor.next
-    return new.next
+    return new.next  # don't like this part of returning NEXT in created list. This is why I wanted to add values[0]
 
 
 test_values = [[1, 4, 5], [1, 3, 4], [2, 6]]
