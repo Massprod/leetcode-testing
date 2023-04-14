@@ -52,7 +52,9 @@ def swap_pairs(head: ListNode) -> ListNode:
 # In my solution we can just change counter and skip another Number of values but in googled.
 # We just switch next-to-prev until we reach One with no NEXT pair to switch. Not really better than mine.
 # Maybe after I learn more about linked_lists, will try to rebuild it.
-
+# !without modifying the values in the list's nodes (i.e., only nodes themselves may be changed.)!
+# Correct answer but I failed this condition. I'm not modifying values, but switching them.
+# Still it's changing values not nodes. GG
 
 test1_values = [1, 2, 3, 4, 5, 6, 8, 9, 10]
 test1 = cursor = ListNode(val=test1_values[0])
