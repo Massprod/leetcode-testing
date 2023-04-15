@@ -25,7 +25,9 @@ def first_occur(haystack: str, needle: str) -> int:
 
 # Rushed solution and didn't think about lengths - failed 2 submits for no reason w.e
 # Wanted to solve it with recursion.
-
+# Failed a lot of submission trying to make it work with 1 loop. But after seeing googled solutions.
+# It's not that easy how it looks and better just learn all those algorithms :) But my solution still  stands OK
+# 0.1 mb 5ms speed diff is Fine for me
 
 test1 = "sadbutsad"
 test1_target = "sad"
