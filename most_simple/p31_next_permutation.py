@@ -20,8 +20,20 @@
 
 def next_perm(nums: list[int]) -> None:
     length = len(nums)
-
-
+    x = length - 1  # max_index
+    while x >= 1 and nums[x - 1] >= nums[x]:  # largest value index
+        x -= 1
+    if x <= 0:
+        nums.sort()
+        return
+    y = length - 1
+    while nums[y] <= nums[x - 1]:
+        y -= 1
+    nums[x - 1], nums[y] = nums[y], nums[x - 1]
+    nums[x:] = nums[len(nums) - 1: x - 1: -1]  # reversing nums[x:] slice
+    # len(nums) - 1 - last index
+    # x - 1 - cuz stop - excluded
+    # -1 - step, reverse read
 
 test1 = [1, 2, 3]
 test1_out = [1, 3, 2]
@@ -33,13 +45,32 @@ test2 = [3, 2, 1]
 test2_out = [1, 2, 3]
 next_perm(test2)
 print(test2)
+assert test2 == test2_out
 
 test3 = [1, 1, 5]
 test3_out = [1, 5, 1]
 next_perm(test3)
 print(test3)
+assert test3 == test3_out
 
 test4 = [2, 3, 1]
 test4_out = [3, 1, 2]
 next_perm(test4)
 print(test4)
+assert test4 == test4_out
+
+
+# Condensed mathematical description:
+#
+# Find the largest index i such that array[i − 1] < array[i].
+# (If no such i exists, then this is already the last permutation.)
+#
+# Find the largest index j such that j ≥ i and array[j] > array[i − 1].
+#
+# Swap array[j] and array[i − 1].
+#
+# Reverse the suffix starting at array[i].
+#
+# Overall, this algorithm to compute the next
+# lexicographical permutation has Θ(n) worst-case time complexity,
+# and Θ(1) space complexity. Thus, computing every permutation requires Θ(n! × n) run time.
