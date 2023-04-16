@@ -9,10 +9,39 @@
 # You can return the answer in any order.
 
 
-def sub_indexes():
-    pass
+def sub_indexes(s: str, words: list[str]) -> list[int]:
+    num_words = len(words)
+    len_word = len(words[0])
+    sub_size = len_word * num_words
+    check_words = {}
+    for _ in words:
+        check_words[_] = 1
+
+    def exist(index):
+        used_words = check_words.copy()
+        checked = 0
+        for y in range(index,  index + sub_size, len_word):
+            sliced = s[y: y + len_word]
+            try:
+                if used_words[sliced] == 1:
+                    used_words[sliced] = 0
+                    checked += 1
+            except KeyError:
+                return False
+        if checked == num_words:
+            return True
+        return False
+    hay_length = len(s)
+    last_possible_index = hay_length - sub_size + 1
+    indexes = []
+    for x in range(last_possible_index):
+        if exist(x):
+            indexes.append(x)
+    return indexes
 
 
 test1 = "barfoothefoobarman"
 test1_words = ["foo", "bar"]
 test1_out = [0, 9]
+print(sub_indexes(test1, test1_words))
+assert sub_indexes(test1, test1_words) == test1_out
