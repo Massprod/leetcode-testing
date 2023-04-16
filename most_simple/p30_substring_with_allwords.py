@@ -46,6 +46,13 @@ def sub_indexes(s: str, words: list[str]) -> list[int]:
             indexes.append(x)
     return indexes
 
+# Recursion practice didn't go for nothing.
+# We can delete hay_length, last_possible_index and use less memory?
+# But I prefer more readable(meaningful) values.
+# Learn more about big O and count time_space complexity for problems in a future.
+# Right now I can count anything harder than O(n**2) which simple double loop.
+# Solving is not enough if I can't explain why it's better or worse solutions,
+# and there's not always going to be info on commits.
 
 test1 = "barfoothefoobarman"
 test1_words = ["foo", "bar"]
