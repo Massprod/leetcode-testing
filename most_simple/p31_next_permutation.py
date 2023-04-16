@@ -19,6 +19,7 @@
 
 
 def next_perm(nums: list[int]) -> None:
+    # working_sol (87.24%, 97.43%)
     length = len(nums)
     x = length - 1  # max_index
     while x >= 1 and nums[x - 1] >= nums[x]:  # largest value index
