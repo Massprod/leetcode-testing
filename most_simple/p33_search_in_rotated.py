@@ -47,6 +47,13 @@ def search_rotated(nums: list[int], target: int) -> int:
                 return x
     return -1
 
+# Failed 2 attempts, cuz rushed and didn't think about simple options:
+#   1 fail - if we didn't find any target in not rotated list | simple return of -1
+#   2 fail - if len(nums) == 1 no reasons to use loop | return -1 at start
+#   3 could be fail - len(nums) == 0. we can't loop through | return -1 at start
+# Always check pre commit. Even when it's look ultra simple.
+
+
 
 # if rotated -> nums[-1] always lower than nums[0]
 # else nums[0] always lower than nums[-1]
