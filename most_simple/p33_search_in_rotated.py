@@ -12,6 +12,7 @@
 
 
 def search_rotated(nums: list[int], target: int) -> int:
+    # working_sol (33.23%, 10.94%)
     if len(nums) == 0:
         return -1
     elif len(nums) == 1:
@@ -44,6 +45,7 @@ def search_rotated(nums: list[int], target: int) -> int:
         for x in range(len(nums)):
             if nums[x] == target:
                 return x
+    return -1
 
 
 # if rotated -> nums[-1] always lower than nums[0]
