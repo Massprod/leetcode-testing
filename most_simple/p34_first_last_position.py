@@ -7,7 +7,12 @@
 
 
 def first_last(nums: list[int], target: int) -> list[int]:
+    # working_sol (14.55%, 35.53%)
     if len(nums) == 0:
+        return [-1, -1]
+    if len(nums) == 1:
+        if nums[0] == target:
+            return [0, 0]
         return [-1, -1]
     if nums[-1] < target:
         return [-1, -1]
@@ -15,7 +20,7 @@ def first_last(nums: list[int], target: int) -> list[int]:
         return [-1, -1]
     x, y = 0, (len(nums) - 1)
     start, end = -1, -1
-    while x < y and (start == -1 or end == -1):
+    while x <= y and (start == -1 or end == -1):
         if nums[x] == target and start == -1:
             start = x
             continue
@@ -56,3 +61,21 @@ test3 = []
 test3_target = 0
 test3_out = [-1, -3]
 print(first_last(test3, test3_target))
+
+# Bet they made bad description to catch len == 1. Suppose we can have START and END at the same index.
+test4 = [1]
+test4_target = 1
+test4_out = [0, 0]
+print(first_last(test4, test4_target))
+
+test5 = [1, 10]
+test5_target = 1
+test5_out = [0, 0]
+print(first_last(test5, test5_target))
+
+# Yep. Incorrect description: START, END can be same index and there's no words about it,
+# or it's a first time encounter for me, and it's a classic practice to assume: start == end.
+test6 = [1, 2, 3]
+test6_target = 2
+test6_out = [1, 1]
+print(first_last(test6, test6_target))
