@@ -7,7 +7,7 @@
 
 
 def first_last(nums: list[int], target: int) -> list[int]:
-    # working_sol (14.55%, 35.53%)
+    # working_sol (41.61%, 35.53%)
     if len(nums) == 0:
         return [-1, -1]
     if len(nums) == 1:
@@ -41,6 +41,11 @@ def first_last(nums: list[int], target: int) -> list[int]:
             y -= 1
     return [start, end]
 
+# Time complexity: O(log n) -> conquer and divide always (log n).
+# Space complexity: O(1) -> not creating any new arrays, just simple 4 values: 1 + 1 + 1 +1.
+
+# Yep. Assumed correctly, there's traps for len == 1 and START, END can be the same index.
+# This speed thing is disgusting. First commit 13% and just repeating it gets me 41,61%.
 
 # Is this even correct task description?
 # What if we have only ONE index for a target, can a START index and END index be the same,
