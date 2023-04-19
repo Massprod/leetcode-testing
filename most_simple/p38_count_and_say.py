@@ -20,6 +20,7 @@
 # recursion???
 
 def count_say(n: int) -> str:
+    # working_sol (64.44%, 98.25%) time: O(n**2) | space: O(1)
     def say(word: str) -> str:
         occurs = 0
         num = word[0]
@@ -31,7 +32,7 @@ def count_say(n: int) -> str:
                 if x == length - 1:
                     new_say += str(occurs) + str(num)
                 continue
-            if word[x] != word[x - 1]:
+            if word[x] != word[x - 1]:  # could be using ELIF instead of continue, but w.e
                 new_say += str(occurs) + str(num)
                 occurs = 1
                 num = word[x]
@@ -45,6 +46,10 @@ def count_say(n: int) -> str:
     for _ in range(n - 1):
         say_string = say(say_string)
     return say_string
+
+# Time complexity: O(n**2) -> there's 2 loops, one executes N time and another inside executes N times.
+# --------------------------
+# Space complexity: O(1) -> creating one new string and repeating it in a new call. Number of strings fixed.
 
 
 test1 = 1
