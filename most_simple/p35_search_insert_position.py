@@ -4,6 +4,7 @@
 # You must write an algorithm with O(log n) runtime complexity.
 
 def search_insert(nums: list[int], target: int) -> int:
+    # working_sol (56.8%, 70.38%) time: O(log n) | space: O(1)
     length = len(nums)
     if length == 0:
         return 0
@@ -21,7 +22,7 @@ def search_insert(nums: list[int], target: int) -> int:
         if nums[y] == target:
             return y
         if target > nums[x]:
-            if target < nums[x + 1] and target != nums[x +1]:
+            if target < nums[x + 1] and target != nums[x + 1]:
                 return x + 1
         if target < nums[y]:
             if target > nums[y - 1] and target != nums[y - 1]:
@@ -29,6 +30,13 @@ def search_insert(nums: list[int], target: int) -> int:
         if nums[x] < target < nums[y]:
             x += 1
             y -= 1
+
+# Time complexity: O(log n) -> only using one conquer_divide loop, which always O(log n).
+# Space complexity: O(1) -> creating only 1 new constant LENGTH, not changing anything.
+
+# Cringe fails. Only because I didn't think about most simple problems that can occur and revisit code.
+# Considered failing at under, over limit's and ignored len == 1, target == nums[0]....
+# I need to stop rushing solutions looking easy af.
 
 
 test1 = [1, 3, 5, 6]
