@@ -7,12 +7,15 @@ def search_insert(nums: list[int], target: int) -> int:
     length = len(nums)
     if length == 0:
         return 0
+    if length == 1:
+        if nums[0] == target:
+            return 0
     if nums[-1] < target:
         return length
     if nums[0] > target:
         return 0
     x, y = 0, (length - 1)
-    while x < y:
+    while x <= y:
         if nums[x] == target:
             return x
         if nums[y] == target:
@@ -42,3 +45,25 @@ test3 = [1, 3, 5, 6]
 test3_target = 7
 test3_out = 4
 print(search_insert(test3, test3_target))
+
+test4 = [1]
+test4_target = 1
+test4_out = 0
+print(search_insert(test4, test4_target))
+# test4 failed - cuz I rushed and didn't consider len == 1 with value equal to target
+
+test5 = [1]
+test5_target = 0
+test5_out = 0
+print(search_insert(test5, test5_target))
+
+test6 = [1]
+test6_target = 2
+test6_out = 1
+print(search_insert(test6, test6_target))
+
+test7 = [1, 3, 5]
+test7_target = 3
+test7_out = 1
+print(search_insert(test7, test7_target))
+# test7 failed - limited x != y......
