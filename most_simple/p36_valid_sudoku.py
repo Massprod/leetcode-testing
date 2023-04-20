@@ -17,8 +17,24 @@ def valid_sudoku(board: list[list[str]]) -> bool:
     columns = {}
     for _ in range(9):
         columns[_] = []
+    cubes = {}
+    for _ in range(9):
+        cubes[_] = []
+    cube = 0
     for y in range(len(board)):
+        if 0 <= y < 3:
+            cube = 0
+        if 3 <= y < 6:
+            cube = 3
+        if 6 <= y < 9:
+            cube = 6
         for x in range(len(board)):
+            if x % 3 == 0 and x != 0:
+                cube += 1
+            if board[y][x] not in cubes[cube] or board[y][x] == ".":
+                cubes[cube].append(board[y][x])
+            else:
+                return False
             if board[y][x] not in rows[y] or board[y][x] == ".":
                 rows[y].append(board[y][x])
             else:
@@ -31,6 +47,9 @@ def valid_sudoku(board: list[list[str]]) -> bool:
     #     print(value, end="\n")
     # print("------------------")
     # for key, value in columns.items():
+    #     print(value, end="\n")
+    # print("------------------")
+    # for key, value in cubes.items():
     #     print(value, end="\n")
     return True
 
@@ -49,7 +68,6 @@ test1 = [
 test1_out = True
 print(valid_sudoku(test1))
 
-
 test2 = [
     ["8", "3", ".", ".", "7", ".", ".", ".", "."],
     ["6", ".", ".", "1", "9", "5", ".", ".", "."],
@@ -63,4 +81,20 @@ test2 = [
 ]
 test2_out = False
 print(valid_sudoku(test2))
+
+test3 = [
+    [".", ".", ".", ".", "5", ".", ".", "1", "."],
+    [".", "4", ".", "3", ".", ".", ".", ".", "."],
+    [".", ".", ".", ".", ".", "3", ".", ".", "1"],
+    ["8", ".", ".", ".", ".", ".", ".", "2", "."],
+    [".", ".", "2", ".", "7", ".", ".", ".", "."],
+    [".", "1", "5", ".", ".", ".", ".", ".", "."],
+    [".", ".", ".", ".", ".", "2", ".", ".", "."],
+    [".", "2", ".", "9", ".", ".", ".", ".", "."],
+    [".", ".", "4", ".", ".", ".", ".", ".", "."]
+]
+test3_out = False
+# test3 - fail - cuz I rushed and forgot about 3x3 cubes.....most important part :)
+# Tired today so w.e
+print(valid_sudoku(test3))
 
