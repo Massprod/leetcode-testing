@@ -11,6 +11,7 @@
 
 
 def valid_sudoku(board: list[list[str]]) -> bool:
+    # working_sol (9.16%, 69.14%)  time: O(n**2) | space: O(n)
     rows = {}
     for _ in range(9):
         rows[_] = []
@@ -53,6 +54,15 @@ def valid_sudoku(board: list[list[str]]) -> bool:
     #     print(value, end="\n")
     return True
 
+# Time complexity: O(n**2) -> simple case of double for_loop with iteration through every index
+# Space complexity : O(n) -> 1+1+1 dictionaries of n size.
+
+# Really slow solution and I think we can use fewer dictionaries to store sudoku.
+# But I have already seen p 37 and there's going to be filling of correct number into circles and row.
+# I was solving according to this. Now with all rows, columns and cubes data
+# we can populate them without duplicates (hope so).
+# Once again cringe fail but at least at this day I was worn out.
+
 
 test1 = [
     ["5", "3", ".", ".", "7", ".", ".", ".", "."],
@@ -67,6 +77,7 @@ test1 = [
 ]
 test1_out = True
 print(valid_sudoku(test1))
+assert test1_out == valid_sudoku(test1)
 
 test2 = [
     ["8", "3", ".", ".", "7", ".", ".", ".", "."],
@@ -81,6 +92,7 @@ test2 = [
 ]
 test2_out = False
 print(valid_sudoku(test2))
+assert test2_out == valid_sudoku(test2)
 
 test3 = [
     [".", ".", ".", ".", "5", ".", ".", "1", "."],
@@ -97,4 +109,5 @@ test3_out = False
 # test3 - fail - cuz I rushed and forgot about 3x3 cubes.....most important part :)
 # Tired today so w.e
 print(valid_sudoku(test3))
+assert test3_out == valid_sudoku(test3)
 
