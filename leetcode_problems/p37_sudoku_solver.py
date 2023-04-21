@@ -10,7 +10,7 @@
 
 
 def solve_sudoku(board: list[list[str]]) -> None:
-    # working_sol (55.46%, 58.35%)  time: O(
+    # working_sol (55.46%, 58.35%)  time: O(9**(n*n)) | space: O(n*n)
     rows = {}
     for _ in range(9):
         rows[_] = []
@@ -86,10 +86,17 @@ def solve_sudoku(board: list[list[str]]) -> None:
 
     populate()
     for z in range(len(empty["coordinates"])):
-        coor = empty["coordinates"][z]
+        empty_coor = empty["coordinates"][z]
         new_value = empty["end"][z]
-        board[coor[0]][coor[1]] = new_value
+        board[empty_coor[0]][empty_coor[1]] = new_value
 
+
+# Time complexity: O(9**(n*n)) -> worst case calling populate() 9 times, with n*n times repeating populate() inside.
+# Space complexity: O(n*n) -> 1d + 1d + 1d + 1d + 1l. Creating 4 new dictionaries and creating n size lists inside.
+
+# Mistakes: I made correct version almost at the start, but with a lack of recursion experience, was trying to get -
+# correct matrix as output just from reaching k == len(empty["coordinates"])....
+# For the future, when we're using recursion, we need to record our correct *path* or multiple *paths*.
 
 test1 = [
     ["5", "3", ".", ".", "7", ".", ".", ".", "."],

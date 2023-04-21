@@ -11,7 +11,7 @@
 
 
 def valid_sudoku(board: list[list[str]]) -> bool:
-    # working_sol (9.16%, 69.14%)  time: O(n**2) | space: O(n)
+    # working_sol (9.16%, 69.14%)  time: O(n**2) | space: O(n*n)
     rows = {}
     for _ in range(9):
         rows[_] = []
@@ -55,7 +55,7 @@ def valid_sudoku(board: list[list[str]]) -> bool:
     return True
 
 # Time complexity: O(n**2) -> simple case of double for_loop with iteration through every index
-# Space complexity : O(n) -> 1+1+1 dictionaries of n size.
+# Space complexity : O(n*n) -> 1+1+1 dictionaries of n size with n size list's as values.
 
 # Really slow solution and I think we can use fewer dictionaries to store sudoku.
 # But I have already seen p 37 and there's going to be filling of correct number into circles and row.
