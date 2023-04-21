@@ -20,7 +20,10 @@ def solve_sudoku(board: list[list[str]]) -> None:
     for _ in range(9):
         cubes[_] = []
     cube = 0
-    empty = {"coordinates": []}
+    empty = {"coordinates": [],
+             "path": [],
+             "end": [],
+             }
     for y in range(len(board)):
         if 0 <= y < 3:
             cube = 0
@@ -31,18 +34,19 @@ def solve_sudoku(board: list[list[str]]) -> None:
         for x in range(len(board)):
             if x % 3 == 0 and x != 0:
                 cube += 1
-            if board[y][x] not in cubes[cube]:
-                cubes[cube].append(board[y][x])
-            if board[y][x] not in rows[y]:
-                rows[y].append(board[y][x])
-            if board[y][x] not in columns[x]:
-                columns[x].append(board[y][x])
             if board[y][x] == ".":
                 empty["coordinates"].append((y, x))
+            if board[y][x] not in cubes[cube] and board[y][x] != ".":
+                cubes[cube].append(board[y][x])
+            if board[y][x] not in rows[y] and board[y][x] != ".":
+                rows[y].append(board[y][x])
+            if board[y][x] not in columns[x] and board[y][x] != ".":
+                columns[x].append(board[y][x])
 
     def populate(k: int = 0):
         if k == len(empty["coordinates"]):
-            return True
+            empty["end"] = empty["path"].copy()
+            return
         for value in range(1, 10):
             value = str(value)
             coor = empty["coordinates"][k]
@@ -71,14 +75,19 @@ def solve_sudoku(board: list[list[str]]) -> None:
                 rows[row].append(value)
                 columns[column].append(value)
                 cubes[cur_cube].append(value)
+                empty["path"].append(value)
                 board[row][column] = value
                 populate(k + 1)
                 rows[row].pop()
+                empty["path"].pop()
                 columns[column].pop()
                 cubes[cur_cube].pop()
+
     populate()
-    for _ in board:
-        print(_, end="\n")
+    for z in range(len(empty["coordinates"])):
+        coor = empty["coordinates"][z]
+        new_value = empty["end"][z]
+        board[coor[0]][coor[1]] = new_value
 
 
 test1 = [
@@ -104,3 +113,6 @@ test1_out = [
     ["3", "4", "5", "2", "8", "6", "1", "7", "9"],
 ]
 solve_sudoku(test1)
+assert test1 == test1_out
+for _ in test1:
+    print(_, end="\n")
