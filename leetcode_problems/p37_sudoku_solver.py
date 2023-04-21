@@ -40,46 +40,43 @@ def solve_sudoku(board: list[list[str]]) -> None:
             if board[y][x] == ".":
                 empty["coordinates"].append((y, x))
 
-    def populate(sudoku: list[list[str]], k: int = 0):
-        if k == len(empty["coordinates"]) - 1:
-            return
+    def populate(k: int = 0):
+        if k == len(empty["coordinates"]):
+            return True
         for value in range(1, 10):
+            value = str(value)
             coor = empty["coordinates"][k]
             row = coor[0]
             column = coor[1]
-            cube = 0
+            cur_cube = 0
             if 0 <= row < 3:
-                cube = 0
+                cur_cube = 0
                 if 3 <= column < 6:
-                    cube = 1
+                    cur_cube = 1
                 if 6 <= column < 9:
-                    cube = 2
+                    cur_cube = 2
             if 3 <= row < 6:
-                cube = 3
+                cur_cube = 3
                 if 3 <= column < 6:
-                    cube = 4
+                    cur_cube = 4
                 if 6 <= column < 9:
-                    cube = 5
+                    cur_cube = 5
             if 6 <= row < 9:
-                cube = 6
+                cur_cube = 6
                 if 3 <= column < 6:
-                    cube = 7
+                    cur_cube = 7
                 if 6 <= column < 9:
-                    cube = 8
-            if value not in rows[row] and value not in columns[column] and value not in cubes[cube]:
+                    cur_cube = 8
+            if value not in rows[row] and value not in columns[column] and value not in cubes[cur_cube]:
                 rows[row].append(value)
                 columns[column].append(value)
-                cubes[cube].append(value)
-                sudoku[row][column] = value
-                populate(sudoku, k + 1)
+                cubes[cur_cube].append(value)
+                board[row][column] = value
+                populate(k + 1)
                 rows[row].pop()
                 columns[column].pop()
-                cubes[cube].pop()
-                print("--------------------")
-                for _ in sudoku:
-                    print(_, end="\n\n")
-
-    populate(board)
+                cubes[cur_cube].pop()
+    populate()
     for _ in board:
         print(_, end="\n")
 
@@ -106,5 +103,4 @@ test1_out = [
     ["2", "8", "7", "4", "1", "9", "6", "3", "5"],
     ["3", "4", "5", "2", "8", "6", "1", "7", "9"],
 ]
-
-print(solve_sudoku(test1))
+solve_sudoku(test1)
