@@ -20,6 +20,7 @@ def solve_sudoku(board: list[list[str]]) -> None:
     for _ in range(9):
         cubes[_] = []
     cube = 0
+    empty = {"coordinates": []}
     for y in range(len(board)):
         if 0 <= y < 3:
             cube = 0
@@ -30,21 +31,57 @@ def solve_sudoku(board: list[list[str]]) -> None:
         for x in range(len(board)):
             if x % 3 == 0 and x != 0:
                 cube += 1
-            if board[y][x] not in cubes[cube] or board[y][x] == ".":
+            if board[y][x] not in cubes[cube]:
                 cubes[cube].append(board[y][x])
-            if board[y][x] not in rows[y] or board[y][x] == ".":
+            if board[y][x] not in rows[y]:
                 rows[y].append(board[y][x])
-            if board[y][x] not in columns[x] or board[y][x] == ".":
+            if board[y][x] not in columns[x]:
                 columns[x].append(board[y][x])
-    for key, value in rows.items():
-        print(value, end="\n")
-    print("------------------")
-    for key, value in columns.items():
-        print(value, end="\n")
-    print("------------------")
-    for key, value in cubes.items():
-        print(value, end="\n")
-    return True
+            if board[y][x] == ".":
+                empty["coordinates"].append((y, x))
+
+    def populate(sudoku: list[list[str]], k: int = 0):
+        if k == len(empty["coordinates"]) - 1:
+            return
+        for value in range(1, 10):
+            coor = empty["coordinates"][k]
+            row = coor[0]
+            column = coor[1]
+            cube = 0
+            if 0 <= row < 3:
+                cube = 0
+                if 3 <= column < 6:
+                    cube = 1
+                if 6 <= column < 9:
+                    cube = 2
+            if 3 <= row < 6:
+                cube = 3
+                if 3 <= column < 6:
+                    cube = 4
+                if 6 <= column < 9:
+                    cube = 5
+            if 6 <= row < 9:
+                cube = 6
+                if 3 <= column < 6:
+                    cube = 7
+                if 6 <= column < 9:
+                    cube = 8
+            if value not in rows[row] and value not in columns[column] and value not in cubes[cube]:
+                rows[row].append(value)
+                columns[column].append(value)
+                cubes[cube].append(value)
+                sudoku[row][column] = value
+                populate(sudoku, k + 1)
+                rows[row].pop()
+                columns[column].pop()
+                cubes[cube].pop()
+                print("--------------------")
+                for _ in sudoku:
+                    print(_, end="\n\n")
+
+    populate(board)
+    for _ in board:
+        print(_, end="\n")
 
 
 test1 = [
