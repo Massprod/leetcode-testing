@@ -10,6 +10,7 @@
 
 
 def solve_sudoku(board: list[list[str]]) -> None:
+    # working_sol (55.46%, 58.35%)  time: O(
     rows = {}
     for _ in range(9):
         rows[_] = []
