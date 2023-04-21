@@ -46,8 +46,8 @@ def solve_sudoku(board: list[list[str]]) -> None:
 
     def populate(k: int = 0):
         if k == len(empty["coordinates"]):
-            empty["end"] = empty["path"].copy()
-            return
+            # empty["end"] = empty["path"].copy()
+            return True
         for value in range(1, 10):
             value = str(value)
             coor = empty["coordinates"][k]
@@ -78,21 +78,26 @@ def solve_sudoku(board: list[list[str]]) -> None:
                 cubes[cur_cube].append(value)
                 empty["path"].append(value)
                 board[row][column] = value
-                populate(k + 1)
+                if populate(k + 1):
+                    return True
                 rows[row].pop()
                 empty["path"].pop()
                 columns[column].pop()
                 cubes[cur_cube].pop()
 
     populate()
-    for z in range(len(empty["coordinates"])):
-        empty_coor = empty["coordinates"][z]
-        new_value = empty["end"][z]
-        board[empty_coor[0]][empty_coor[1]] = new_value
+    # for z in range(len(empty["coordinates"])):
+    #     empty_coor = empty["coordinates"][z]
+    #     new_value = empty["end"][z]
+    #     board[empty_coor[0]][empty_coor[1]] = new_value
 
 
 # Time complexity: O(9**(n*n)) -> worst case calling populate() 9 times, with n*n times repeating populate() inside.
 # Space complexity: O(n*n) -> 1d + 1d + 1d + 1d + 1l. Creating 4 new dictionaries and creating n size lists inside.
+
+# Ok. I forgot about INPLACE change, we can't populate after loop :)
+# All problem I had with that is breaking from a  loop without changing correct SUDOKU.
+# Fixed just with returning True on every call if we reach correct path. Now it's INPLACE solution
 
 # Mistakes: I made correct version almost at the start, but with a lack of recursion experience, was trying to get -
 # correct matrix as output just from reaching k == len(empty["coordinates"])....
