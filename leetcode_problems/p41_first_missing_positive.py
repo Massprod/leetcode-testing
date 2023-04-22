@@ -2,7 +2,10 @@
 #
 # You must implement an algorithm that runs in O(n) time and uses constant extra space.
 
+# Add metrics in a future % is good but numbers should be here. Maybe revisit other's will see.
+
 def first_positive(nums: list[int]) -> int:
+    # working_sol (52.42%, 46.58%) -> (372ms, 27.9mb)
     min_pos = 1
     nums.sort()
     for x in range(len(nums)):
