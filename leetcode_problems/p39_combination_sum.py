@@ -11,7 +11,7 @@
 # combinations with backtrack like in p22??
 
 def comb_sum(candidates: list[int], target: int) -> list[list[int]]:
-    # first_working_sol (5%, 21.25%)  time: O(n**
+    # first_working_sol (5%, 21.25%)  time: O(n**(n*n)) | space: O(n*n)
     combos = []
     tempo = []
 
@@ -29,11 +29,13 @@ def comb_sum(candidates: list[int], target: int) -> list[list[int]]:
             combinations(sliced, temp)
             temp.pop()
 
-    for _ in candidates:
-        tempo.append(_)
-        combinations(candidates, tempo)
-        tempo.pop()
+    combinations(candidates, tempo)
     return combos
+
+
+# Time complexity: O(n**(n*n)) -> for every n element in candidates recursion with n*n - branches
+# Space complexity: O(n*n) -> n lists in list for each combination, worst case -> we have all candidates
+#                             returns with correct summ.
 
 
 test1 = [2, 3, 6, 7]
