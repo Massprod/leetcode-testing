@@ -27,10 +27,12 @@ def comb_sums(candidates: list[int], target: int) -> list[list[int]]:
             combinations(sliced[y + 1:], temp)
             temp.pop()
 
-    for x in range(len(candidates)):
-        tempo.append(candidates[x])
-        combinations(candidates[x + 1:], tempo)
-        tempo.pop()
+    if sum(candidates) < target:
+        return combos
+    if min(candidates) > target:
+        return combos
+    if combinations(candidates, tempo):
+        return combos
     return combos
 
 
@@ -60,8 +62,16 @@ assert len(answer2) == len(test2_out)
 for _ in answer2:
     assert _ in test2_out
 
-# test3 - failed -> time_limit | apparently I need speed :)
+# test3 - failed -> time_limit | apparently I need speed :) but I can't ignore that 1 can be used every time.
 test3 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 test3_target = 27
 test3_out = []
 print(comb_sums(test3, test3_target))
+
+# test4 - failed -> time_limit | combos = list(30x1), how can I stop iteration?
+test4 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+test4_target = 30
+test4_out = []
+print(comb_sums(test4, test4_target))
