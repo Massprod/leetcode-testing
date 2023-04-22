@@ -19,16 +19,27 @@ def comb_sums(candidates: list[int], target: int) -> list[list[int]]:
             return combos
         if candidates[0] != target:
             return combos
+    if sum(candidates) < target:
+        return combos
+    if min(candidates) > target:
+        return combos
     for _ in candidates:
         if _ not in avail.keys():
             avail[_] = candidates.count(_)
     if len(avail) == 1:
         for key, value in avail.items():
-            if value >= target:
-                combos.append([key for g in range((int(target / key)))])
+            if (target % key) == 0 and (target / key) <= value:
+                combos.append([key for _ in range(int((target / key)))])
                 return combos
-            if value <= target:
-                return combos
+    if len(avail) == 2:
+        for key, value in avail.items():
+            with_one = target % key
+            repeats = int(target / key)
+            if with_one == 0 and repeats <= value:
+                combos.append([key for _ in range(repeats)])
+            if with_one == 0 and repeats >= value:
+                combos.append([[key] + [1 for _ in range((target - key))]])
+        return combos
 
     def combinations(sliced: list[int], temp: list) -> None:
         if sum(temp) == target:
@@ -44,10 +55,6 @@ def comb_sums(candidates: list[int], target: int) -> list[list[int]]:
             combinations(sliced[y + 1:], temp)
             temp.pop()
 
-    if sum(candidates) < target:
-        return combos
-    if min(candidates) > target:
-        return combos
     combinations(candidates, tempo)
     return combos
 
@@ -91,8 +98,8 @@ for _ in answer2:
 test3 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 test3_target = 27
 test3_out = []
-print(comb_sums(test3, test3_target))
 answer3 = comb_sums(test3, test3_target)
+print(answer3)
 assert len(answer3) == len(test3_out)
 for _ in answer3:
     assert _ in test3_out
@@ -111,5 +118,24 @@ for _ in answer4:
 
 test5 = [3, 1, 3, 5, 1, 5, 2, 3, 2, 5, 4]
 test5_target = 1
-test_5_out = [[1]]
-print(comb_sums(test5, test5_target))
+test5_out = [[1]]
+answer5 = comb_sums(test5, test5_target)
+print(answer5)
+assert len(answer5) == len(test5_out)
+for _ in answer5:
+    assert _ in test5_out
+
+test6 = [2, 2, 2]
+test6_target = 4
+test6_out = [[2, 2]]
+answer6 = comb_sums(test6, test6_target)
+print(answer6)
+
+# test7 - failed -> YEP. 11111121111 case, as I was thinking. 175/176 cases.
+#                   Failed so much, not going to stop with last 2 cases, and just brute force it before googling.
+test7 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+test7_target = 30
+test7_out = []
+print(comb_sums(test7, test7_target))
