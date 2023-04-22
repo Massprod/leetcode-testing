@@ -10,9 +10,9 @@
 # w.e speed not a goal here
 
 def comb_sums(candidates: list[int], target: int) -> list[list[int]]:
+    # working_sol (46.67%, 48.90%)  time: O(n**(n*n)) | space: O(n*n)
     combos = []
-    tempo = []
-    avail = {}
+    candidates.sort()
     if len(candidates) == 1:
         if candidates[0] == target:
             combos.append([candidates[0]])
@@ -23,42 +23,36 @@ def comb_sums(candidates: list[int], target: int) -> list[list[int]]:
         return combos
     if min(candidates) > target:
         return combos
-    for _ in candidates:
-        if _ not in avail.keys():
-            avail[_] = candidates.count(_)
-    if len(avail) == 1:
-        for key, value in avail.items():
-            if (target % key) == 0 and (target / key) <= value:
-                combos.append([key for _ in range(int((target / key)))])
-                return combos
-    if len(avail) == 2:
-        for key, value in avail.items():
-            with_one = target % key
-            repeats = int(target / key)
-            if with_one == 0 and repeats <= value:
-                combos.append([key for _ in range(repeats)])
-            if with_one == 0 and repeats >= value:
-                combos.append([[key] + [1 for _ in range((target - key))]])
-        return combos
 
-    def combinations(sliced: list[int], temp: list) -> None:
-        if sum(temp) == target:
-            to_add = temp.copy()
-            to_add.sort()
-            if to_add not in combos:
-                combos.append(to_add)
+    def combinations(path: list[int], start: int = 0, summ: int = 0) -> None:
+        if summ == target:
+            path.sort()
+            if path not in combos:
+                combos.append(path)
                 return
-        if sum(temp) > target:
+        if summ > target:
             return
-        for y in range(len(sliced)):
-            temp.append(sliced[y])
-            combinations(sliced[y + 1:], temp)
-            temp.pop()
+        for x in range(start, len(candidates)):
+            if x > start and candidates[x] == candidates[x - 1]:
+                continue
+            combinations(path + [candidates[x]], x + 1, summ + candidates[x])
 
-    combinations(candidates, tempo)
+    combinations([])
     return combos
 
 
+# Time complexity: O(n**(n*n) -> for every n element in candidates recursion with n*n - branches.
+# Space complexity: O(n*n) -> n lists in list for each combination.
+
+# Slicing not just going through indexes is slower and I couldn't find a method to skip with same values.
+# ! if x > start and candidates[x] == candidates[x - 1]:
+#       continue    !
+# This ^^^^ part I couldn't implement with slicing because everytime we slice we're losing [x - 1],
+# and slicing takes time to create a new list's -> maybe rebuild p39, slicing -> indexes.
+# Allows us to skip same values recursion calls, after taking first values from it.
+# Only taking x < start which is first value within slice candidates[x + 1:] and other calls skipped.
+
+# -----------------------------------------------
 # I don't get how can we speed up a search.
 #   - we can't stop on encountering same value - True
 #   - we can stop if the same value used 30 times and still 70 left -> leads us to same combos, how can I check this?
