@@ -24,8 +24,9 @@ def comb_sums(candidates: list[int], target: int) -> list[list[int]]:
             return
         for y in range(len(sliced)):
             temp.append(sliced[y])
-            combinations(sliced[y+1:], temp)
+            combinations(sliced[y + 1:], temp)
             temp.pop()
+
     for x in range(len(candidates)):
         tempo.append(candidates[x])
         combinations(candidates[x + 1:], tempo)
@@ -58,3 +59,9 @@ answer2 = comb_sums(test2, test2_target)
 assert len(answer2) == len(test2_out)
 for _ in answer2:
     assert _ in test2_out
+
+# test3 - failed -> time_limit | apparently I need speed :)
+test3 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+test3_target = 27
+test3_out = []
+print(comb_sums(test3, test3_target))
