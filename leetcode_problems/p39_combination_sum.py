@@ -11,7 +11,7 @@
 # combinations with backtrack like in p22??
 
 def comb_sum(candidates: list[int], target: int) -> list[list[int]]:
-    # first_working_sol (5%, 21.25%)  time: O(n**(n*n)) | space: O(n*n)
+    # first_working_sol (5%, 21.25%)  time: O(n**(n*n)) | space: O(n*n) -> 2400ms
     combos = []
     tempo = []
 
@@ -37,24 +37,54 @@ def comb_sum(candidates: list[int], target: int) -> list[list[int]]:
 # Space complexity: O(n*n) -> n lists in list for each combination, worst case -> we have all candidates
 #                             returns with correct summ.
 
+def sp_comb_sum(candidates: list[int], target: int) -> list[list[int]]:
+    # working_sol -> 1518ms
+    combos = []
+    candidates.sort()
+    if len(candidates) == 1:
+        if candidates[0] == target:
+            combos.append([candidates[0]])
+            return combos
+        if candidates[0] != target:
+            return combos
+    if candidates[0] > target:
+        return combos
+
+    def combinations(path: list[int], summ: int = 0) -> None:
+        if summ == target:
+            path.sort()
+            if path not in combos:
+                combos.append(path)
+                return
+        if summ > target:
+            return
+        for x in range(len(candidates)):
+            combinations(path + [candidates[x]], summ + candidates[x])
+
+    combinations([])
+    return combos
+
 
 test1 = [2, 3, 6, 7]
 test1_target = 7
 test1_out = [[2, 2, 3], [7]]
 print(comb_sum(test1, test1_target))
 assert comb_sum(test1, test1_target) == test1_out
+assert sp_comb_sum(test1, test1_target) == test1_out
 
 test2 = [2, 3, 5]
 test2_target = 8
 test2_out = [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
 print(comb_sum(test2, test2_target))
 assert comb_sum(test2, test2_target) == test2_out
+assert sp_comb_sum(test2, test2_target) == test2_out
 
 test3 = [2]
 test3_target = 1
 test3_out = []
 print(comb_sum(test3, test3_target))
 assert comb_sum(test3, test3_target) == test3_out
+assert sp_comb_sum(test3, test3_target) == test3_out
 
 # Test4 - failed, -> I was using sort to check if there's duplicate already existing in COMBOS.
 #                   Stupid enough to SORT temp where's values going to be removed by POP() and it's always right_most
@@ -77,3 +107,6 @@ for _ in test4_out:  # You may return the combinations in any order.
     _.sort()
 print(comb_sum(test4, test4_target))
 assert test4_out == comb_sum(test4, test4_target)
+answer4 = sp_comb_sum(test4, test4_target)
+for _ in answer4:
+    assert _ in test4_out
