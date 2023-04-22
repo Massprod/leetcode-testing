@@ -3,8 +3,7 @@
 # where the chosen numbers sum to target. You may return the combinations in any order.
 #
 # The same number may be chosen from candidates an unlimited number of times. Two combinations are unique if the
-# frequency
-#  of at least one of the chosen numbers is different.
+# frequency of at least one of the chosen numbers is different.
 #
 # The test cases are generated such that the number of unique combinations that sum
 # up to target is less than 150 combinations for the given input.
@@ -12,6 +11,7 @@
 # combinations with backtrack like in p22??
 
 def comb_sum(candidates: list[int], target: int) -> list[list[int]]:
+    # first_working_sol (5%, 21.25%)  time: O(n**
     combos = []
     tempo = []
 
@@ -71,5 +71,7 @@ test4_out = [
     [3, 3, 2, 2, 2, 2, 2, 2],
     [2, 2, 2, 2, 2, 2, 2, 2, 2]
 ]
+for _ in test4_out:  # You may return the combinations in any order.
+    _.sort()
 print(comb_sum(test4, test4_target))
 assert test4_out == comb_sum(test4, test4_target)
