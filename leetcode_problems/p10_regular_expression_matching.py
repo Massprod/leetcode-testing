@@ -26,13 +26,16 @@ def clear_is_match(s: str, p: str) -> bool:
         return False
     elif pattern[1] != wild:
         if pattern[0] == any_sign or pattern[0] == to_check[0]:
-            return is_match(to_check[1:], pattern[1:])
+            return clear_is_match(to_check[1:], pattern[1:])
         return False
     elif len(pattern) > 3 and pattern[3] == "*" and pattern[0] == pattern[2]:
-        return is_match(to_check, pattern[2:])
+        return clear_is_match(to_check, pattern[2:])
     elif to_check[0] != pattern[0] and pattern[0] != any_sign:
-        return is_match(to_check, pattern[2:])
-    return is_match(to_check[1:], pattern) or is_match(to_check, pattern[2:]) or is_match(to_check[1:], pattern[2:])
+        return clear_is_match(to_check, pattern[2:])
+    return clear_is_match(to_check[1:], pattern) \
+        or clear_is_match(to_check, pattern[2:]) \
+        or clear_is_match(to_check[1:], pattern[2:])
+
 
 # not clear below :)
 
@@ -52,7 +55,8 @@ def is_match(s: str, p: str) -> bool:
             return is_match(to_check, pattern[2:])  # we call it with slice from wildcard
         return False  # otherwise same break as before
     elif len(pattern) == 1:  # if only 1 symbol is left to check
-        if len(to_check) == 1 and (pattern[0] == any_sign or pattern[0] == to_check[0]):  # we checking it for correct pattern or any_sign
+        if len(to_check) == 1 and (pattern[0] == any_sign
+                                   or pattern[0] == to_check[0]):  # we checking it for correct pattern or any_sign
             return True  # if it's correct, it's means all symbols in pattern and original string is checked
         return False  # otherwise  some symbols unchecked and len's is 0
     elif pattern[1] != wild:  # checking second symbol in pattern to be NOT wildcard
@@ -62,14 +66,20 @@ def is_match(s: str, p: str) -> bool:
     elif len(pattern) > 3 and pattern[3] == "*" and pattern[0] == pattern[2]:  # if we have 2 wildcards in a row
         return is_match(to_check, pattern[2:])  # we just slice one of them OFF, and check again
     elif to_check[0] != pattern[0] and pattern[0] != any_sign:  # checking 0 indexes, if they're not equal
-        return is_match(to_check, pattern[2:])  # even if there's [1] and it's wildcard we still slice it from [2] and removing [0][1] because they can't be used, but they can be None
-    return is_match(to_check[1:], pattern) or is_match(to_check, pattern[2:]) or is_match(to_check[1:], pattern[2:])  # left options
-    # 1option: to_check[0] == pattern[0] and pattern[1] == wildcard . we slicing element from string and check next symbol to be equal to wildcard
-    #  s: aabc, p: a*bc -> s: abc, p: a*bc -> s: bc, p: a*bc . trig 31line. -> s: bc, p: bc -> True
-    # 2option: to_check[0] != pattern[0] and pattern[1] == wildcard . we slicing from wildcard and string unchanged. (wilcard * 0 = True)
-    # s: aabc, p: a*bc -> s: aabc, p: bc . trig 31line -> s: aabc, p: None -> False
-    # 3option: to_check[0] == pattern[0] and pattern[1] == wildcard . we slicing element from string and next symbol is not equal to wildcard
-    # s: aabc, p: a*bc -> s: abc, p: bc . trig 31line -> s: abc, p: None -> False
+        return is_match(to_check, pattern[2:])  # even if there's [1] and it's wildcard we still slice it from [2]
+        # and removing [0][1] because they can't be used, but they can be None
+    return is_match(to_check[1:], pattern) \
+        or is_match(to_check, pattern[2:]) \
+        or is_match(to_check[1:], pattern[2:])  # left options
+    # 1option: to_check[0] == pattern[0] and pattern[1] == wildcard .
+    # we slicing element from string and check next symbol to be equal to wildcard
+    #  s: aabc, p: a*bc -> s: abc, p: a*bc -> s: bc, p: a*bc . trig 68line. -> s: bc, p: bc -> True
+    # 2option: to_check[0] != pattern[0] and pattern[1] == wildcard .
+    # we slicing from wildcard and string unchanged. (wildcard * 0 = True)
+    # s: aabc, p: a*bc -> s: aabc, p: bc . trig 68line -> s: aabc, p: None -> False
+    # 3option: to_check[0] == pattern[0] and pattern[1] == wildcard .
+    # we slicing element from string and next symbol is not equal to wildcard
+    # s: aabc, p: a*bc -> s: abc, p: bc . trig 68line -> s: abc, p: None -> False
     # If one of the options is True, string == pattern
 
 
