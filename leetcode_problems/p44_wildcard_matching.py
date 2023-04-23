@@ -6,6 +6,7 @@
 # The matching should cover the entire input string (not partial).
 
 def wildcard_match(s: str, p: str) -> bool:
+    # working_sol (87.71%, 95.3%) -> (54ms, 13.9mb)
     str_cursor = 0
     str_len = len(s)
     pat_cursor = 0
@@ -19,7 +20,7 @@ def wildcard_match(s: str, p: str) -> bool:
             str_cursor += 1
             pat_cursor += 1
             continue
-        if pat_cursor < pat_len and s[str_cursor] == p[pat_cursor] and p[pat_cursor] == any_sign:
+        if pat_cursor < pat_len and p[pat_cursor] == any_sign and s[str_cursor] != p[pat_cursor]:
             str_cursor += 1
             pat_cursor += 1
             continue
@@ -65,3 +66,11 @@ test4_pattern = "*a"
 test4_out = True
 print(wildcard_match(test4, test4_pattern))
 assert wildcard_match(test4, test4_pattern) == test4_out
+
+# test5 - failed -> cursor value in pattern shouldn't be equal to string cursor, but can be any_sign,
+#                   and I was checking for equality.
+test5 = "ab"
+test5_pattern = "?*"
+test5_out = True
+print(wildcard_match(test5, test5_pattern))
+assert wildcard_match(test5, test5_pattern) == test5_out
