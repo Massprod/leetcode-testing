@@ -9,8 +9,9 @@
 # int(num) -> suppose it's direct
 # first way comes up to me, is to use ASCII. ord(num) -> built in function, but maybe not allowed?
 
+
 def multiply_ascii(num1: str, num2: str) -> str:
-    # working_sol (54.53%, 18.15%) -> (39ms, 14mb) time: O(n) | space: O(n)
+    # working_sol (84.1%, 57.90%) -> (32ms, 13.8mb) time: O(n) | space: O(n)
     to_check = {
         "0": 48,
         "1": 49,
@@ -84,6 +85,8 @@ def multiply_ascii_no_str(num1: str, num2: str) -> str:
 # Time complexity: O(n) -> linear scaling with len() of input.
 # Space complexity: O(n) -> creating 3 lists of the same size as input.
 # Guess, now it's not using anything: no ord(), no str() -> somewhat reproducing them, actually.
+
+# Every time, I submit same solution it's 54%(39ms) -> 84%(32ms)  memory: 18.15%(14mb) -> 57.90%(13.8mb) | changes..
 
 
 test1_1 = "2"
