@@ -6,7 +6,7 @@
 # The matching should cover the entire input string (not partial).
 
 def wildcard_match(s: str, p: str) -> bool:
-    # working_sol (87.71%, 95.3%) -> (54ms, 13.9mb)
+    # working_sol (87.71%, 95.3%) -> (54ms, 13.9mb)  time: O(n) | space: O(1)
     str_cursor = 0
     str_len = len(s)
     pat_cursor = 0
@@ -42,6 +42,12 @@ def wildcard_match(s: str, p: str) -> bool:
         return False
     return True
 
+# Time complexity: O(n) -> looping once through whole input (pattern + string -> 1n + 1n), linear scale with input.
+# Space complexity: O(1) -> no matter what input size, we're using same constants.
+
+# Most tricky part of this task, is to skip WILDCARD and check for a left available options.
+# Because we can skip WILDCARDS, we're just ignoring them and looping through a left options with a pat_cursor.
+
 
 test1 = "aa"
 test1_pattern = "a"
@@ -74,3 +80,9 @@ test5_pattern = "?*"
 test5_out = True
 print(wildcard_match(test5, test5_pattern))
 assert wildcard_match(test5, test5_pattern) == test5_out
+
+
+test6 = "abcd"
+test6_pattern = "ab*cd*"
+test6_out = True
+print(wildcard_match(test6, test6_pattern))
