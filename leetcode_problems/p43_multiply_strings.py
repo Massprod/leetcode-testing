@@ -10,6 +10,7 @@
 # first way comes up to me, is to use ASCII. ord(num) -> built in function, but maybe not allowed?
 
 def multiply_ascii(num1: str, num2: str) -> str:
+    # working_sol (54.53%, 18.15%) -> (39ms, 14mb) time: O(n) | space: O(n)
     to_check = {
         "0": 48,
         "1": 49,
@@ -35,8 +36,13 @@ def multiply_ascii(num1: str, num2: str) -> str:
     for y in range(len(second)):
         second_int += second[y] * 10 ** ((len(second) - 1) - y)
     product = first_int * second_int
-    print("% s" % product)
     return str(product)
+
+# Time complexity: O(n) -> linear scaling with len() of input.
+# Space complexity: O(n) -> creating 2 lists of the same size as input.
+
+# We're not allowed to ! convert the inputs to integer directly !
+# But what about product to str? Try to rebuild without using str()
 
 
 test1_1 = "2"
