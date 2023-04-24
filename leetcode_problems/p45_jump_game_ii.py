@@ -12,23 +12,27 @@
 
 def jump(nums: list[int]) -> int:
     end = len(nums) - 1
+    if len(nums) == 1:
+        return 0
     if nums[0] >= end:
         return 1
 
-    def best_jump(pool: list[int], start_ind: int = 0, steps: int = 1):
-        steps += 1
+    def best_jump(pool: list[int], start_ind: int = 0, jumps: int = 0):
+        jumps += 1
         best_land_index = -1
-        for x in range(start_ind + 1, pool[start_ind] + 1):
+        for x in range(start_ind + 1, start_ind + pool[start_ind] + 1):
             land_index = pool[x] + x
-            print(pool[start_ind])
             if land_index >= end:
-                return steps
+                if jumps == 1:
+                    return jumps + 1
+                return jumps
             if land_index >= best_land_index:
                 best_land_index = land_index
                 continue
             while pool[land_index] == 0:
                 land_index -= 1
-        best_jump(pool, best_land_index, steps)
+        jumps += 1
+        return best_jump(pool, best_land_index, jumps)
     return best_jump(nums)
 
 
@@ -40,3 +44,34 @@ test2 = [2, 3, 0, 1, 4]
 test2_out = 2
 print(jump(test2))
 
+test3 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+test3_out = 11
+print(jump(test3))
+
+test4 = [1, 3, 2, 2, 2, 9]
+test4_out = 3
+print(jump(test4))
+
+test5 = [8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+test5_out = 3
+print(jump(test5))
+
+test6 = [5, 1, 1, 1, 1, 1, 1]
+test6_out = 2
+print(jump(test6))
+
+# test7 - failed - I was thinking about this 0 situation at the start, and forgot to add....
+#                  There's always a correct solution, and we can jump on PLACE.
+test7 = [0]
+test7_out = 0
+print(jump(test7))
+
+# test8 - failed - Ok. Dumb enough to not consider jump on place with any value :)
+#                  len(nums) == 1 -> allways 0 jumps
+test8 = [1]
+test8_out = 0
+print(jump(test8))
+
+test9 = [1, 1, 1, 1, 1]
+test9_out = 4
+print(jump(test9))
