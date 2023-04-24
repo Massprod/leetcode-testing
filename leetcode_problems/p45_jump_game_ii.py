@@ -40,6 +40,14 @@ def jump(nums: list[int]) -> int:
 # Space complexity: O(n) -> only constants and input array for recursion stack.
 
 # Pff. Literally solved most hard part within a 40m and failed to count jumps, cuz tried to jump twice.
+# Right now we're using best_start, which I add to count step by step not double jumps.
+# Mistake:
+#   pos1 -> pos2 == adding jumps + 1 and after calculating best way to jump from pos2 -> pos3
+#   adding jumps + 1 and calling recursion from pos3 not pos2 ^like it's doing now^. !jumps + 2 in One sequence!
+#   I was expecting to count like this is not going to be a problem.
+#   But in reality it is. Because there's a chance that we can get such pos2 that equal to our end.
+#   In this case we can't jump from this position, and I was already expecting this position as jump_pad. Extra +1.
+#   Either I need more experience, or better just do tasks like that with 1 step in a future.
 
 
 test1 = [2, 3, 1, 1, 4]
