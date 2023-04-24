@@ -11,7 +11,7 @@
 # Brute forcing again?
 
 def jump(nums: list[int]) -> int:
-    # working_sol (93.75%, 7.77%) -> (121ms, 20.5mb)  time: O(n * log n) -> space: O(n*n)
+    # working_sol (93.75%, 7.77%) -> (121ms, 20.5mb)  time: O(n * log n) -> space: O(n)
     end = len(nums) - 1
     if len(nums) == 1:
         return 0
@@ -34,7 +34,12 @@ def jump(nums: list[int]) -> int:
         return best_jump(pool, best_start, jumps + 1)
     return best_jump(nums)
 
-#
+# Time complexity: O(n * log n) -> we're looping through whole input array and checking available
+#                                  jump indexes for every index, worst case checking 3/4 extra.
+#                                  (not sure about log n, maybe it's actually n * n)
+# Space complexity: O(n) -> only constants and input array for recursion stack.
+
+# Pff. Literally solved most hard part within a 40m and failed to count jumps, cuz tried to jump twice.
 
 
 test1 = [2, 3, 1, 1, 4]
