@@ -11,7 +11,7 @@
 # Brute forcing again?
 
 def jump(nums: list[int]) -> int:
-    # working_sol (93.75%, 7.77%) -> (121ms, 20.5mb)  time: O(n * log n) -> space: O(n)
+    # working_sol (93.75%, 7.77%) -> (121ms, 20.5mb)  time: O(n * log n) | space: O(n)
     end = len(nums) - 1
     if len(nums) == 1:
         return 0
