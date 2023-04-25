@@ -3,6 +3,7 @@
 
 
 def permute_unique(nums: list[int]) -> list[list[int]]:
+    # working_sol (9.18%, 44.71%) -> (1085ms, 14.4mb)  time: O(n!) | space: O(n!)
     permutes = []
     origin = nums
 
@@ -19,9 +20,15 @@ def permute_unique(nums: list[int]) -> list[list[int]]:
     rec_permute(origin)
     return permutes
 
+# Time complexity: O(n*n!) -> calling recursion for n elements in given input,
+#                             and for each element recursion for n! times.
+# Space complexity: O(n!) -> creating lists with n! lists in it, n! <- all combinations of input list.
+
+# Surprisingly didn't hit time_limit :)
 
 # I guess there's a speed catch. Going to try commit same solution, checking every possible permute.
 # But just ignoring which have been already added.
+
 
 test1 = [1, 1, 2]
 test1_out = [
