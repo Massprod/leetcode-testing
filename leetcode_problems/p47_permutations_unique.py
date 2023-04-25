@@ -2,15 +2,15 @@
 # return all possible unique permutations in any order.
 
 
-def permute_unique(nums: list[int]) -> list[list[int]]:
+def permute_unique(nums: list[int]) -> list[list[int]] | set:
     # working_sol (9.18%, 44.71%) -> (1085ms, 14.4mb)  time: O(n!) | space: O(n!)
-    permutes = []
+    # working_sol (28.16%, 44.71%) -> (261ms, 14.5mb) -> with set(tuple) instead of a list[list[int]] as return
+    permutes = set()
     origin = nums
 
     def rec_permute(to_check: list[int], start_ind: int = 0):
         if start_ind == len(to_check):
-            if to_check not in permutes:
-                permutes.append(to_check.copy())
+            permutes.add(tuple(to_check.copy()))
             return
         for x in range(start_ind, len(to_check)):
             to_check[x], to_check[start_ind] = to_check[start_ind], to_check[x]
@@ -23,6 +23,9 @@ def permute_unique(nums: list[int]) -> list[list[int]]:
 # Time complexity: O(n*n!) -> calling recursion for n elements in given input,
 #                             and for each element recursion for n! times.
 # Space complexity: O(n!) -> creating lists with n! lists in it, n! <- all combinations of input list.
+
+# Well. Most simple trick to speed things up is to use SET() instead of a LIST(),
+# but as always there's no mentioning of sets. But there's list[list[int]] as return by default.
 
 # Surprisingly didn't hit time_limit :)
 
@@ -40,7 +43,7 @@ test = permute_unique(test1)
 print(test)
 for _ in test:
     assert len(test1_out) == len(test)
-    assert _ in test1_out
+    assert list(_) in test1_out
 
 test2 = [1, 2, 3]
 test2_out = [
@@ -55,4 +58,4 @@ test = permute_unique(test2)
 print(test)
 for _ in test:
     assert len(test2_out) == len(test)
-    assert _ in test2_out
+    assert list(_) in test2_out
