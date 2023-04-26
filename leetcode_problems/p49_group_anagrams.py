@@ -7,9 +7,9 @@ def group_anagrams(strs: list[str]) -> list[list[str]]:
     ords = {}
     anagrams = []
     for word in strs:
-        summ = 0
+        summ = ""
         for letter in word:
-            summ += ord(letter)
+            summ += str(ord(letter))
         if summ in ords.keys():
             ords[summ].append(word)
         else:
@@ -28,12 +28,18 @@ def group_anagrams(strs: list[str]) -> list[list[str]]:
 
 test1 = ["eat", "tea", "tan", "ate", "nat", "bat"]
 test1_out = [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]]
-print(group_anagrams(test1))
+# print(group_anagrams(test1))
 
 test2 = [""]
 test2_out = [[""]]
-print(group_anagrams(test2))
+# print(group_anagrams(test2))
 
 test3 = ["a"]
 test3_out = [["a"]]
-print(group_anagrams(test3))
+# print(group_anagrams(test3))
+
+# test4 - failed -> different ascii can summ up to same value. I wanted to do it without extra checks,
+#                   but now we need to extra check keys in dict.
+test4 = ["cab", "tin", "pew", "duh", "may", "ill", "buy", "bar", "max", "doc"]
+test4_out = [["max"], ["buy"], ["doc"], ["may"], ["ill"], ["duh"], ["tin"], ["bar"], ["pew"], ["cab"]]
+print(group_anagrams(test4))
