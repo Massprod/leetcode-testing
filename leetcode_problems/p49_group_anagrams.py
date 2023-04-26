@@ -8,7 +8,8 @@ def group_anagrams(strs: list[str]) -> list[list[str]]:
     anagrams = []
     for word in strs:
         summ = ""
-        for letter in word:
+        check = "".join(sorted(word))
+        for letter in check:
             summ += str(ord(letter))
         if summ in ords.keys():
             ords[summ].append(word)
@@ -19,24 +20,28 @@ def group_anagrams(strs: list[str]) -> list[list[str]]:
         anagrams.append(value)
     return anagrams
 
+# Main reason why I wanted to use ascii is to skip looping extra time to check current str exists in dict.
+# Sums can be equal, so it doesn't work, and now we're extra looping word to sort it.
+# Either I drop ascii idea or leaving it like this, cuz we cant check ascii in INT,
+# and we need sort it for a str filter. Because extra sorting is slow.
 
-# strs[i] consists of lowercase English letters.
 # Let's just try to count ascii of whole word and filter with dict.
 # What I can be missing? What about upper cases?
 # Ohh -> ! strs[i] consists of lowercase English letters. !
 # If there were uppercase's it could be a fail, cuz A and a different ascii but same letter for the anagram.
 
+
 test1 = ["eat", "tea", "tan", "ate", "nat", "bat"]
 test1_out = [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]]
-# print(group_anagrams(test1))
+print(group_anagrams(test1))
 
 test2 = [""]
 test2_out = [[""]]
-# print(group_anagrams(test2))
+print(group_anagrams(test2))
 
 test3 = ["a"]
 test3_out = [["a"]]
-# print(group_anagrams(test3))
+print(group_anagrams(test3))
 
 # test4 - failed -> different ascii can summ up to same value. I wanted to do it without extra checks,
 #                   but now we need to extra check keys in dict.
