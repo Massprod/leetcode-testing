@@ -4,6 +4,7 @@
 # typically using all the original letters exactly once.
 
 def group_anagrams(strs: list[str]) -> list[list[str]]:
+    # working_sol (21.46%, 81.97%) -> (118ms, 17.2mb)  time:
     ords = {}
     anagrams = []
     for word in strs:
@@ -20,15 +21,17 @@ def group_anagrams(strs: list[str]) -> list[list[str]]:
         anagrams.append(value)
     return anagrams
 
+
+
 # Main reason why I wanted to use ascii is to skip looping extra time to check current str exists in dict.
 # Sums can be equal, so it doesn't work, and now we're extra looping word to sort it.
 # Either I drop ascii idea or leaving it like this, cuz we cant check ascii in INT,
-# and we need sort it for a str filter. Because extra sorting is slow.
+# and we need to sort it for a str filter. Because extra sorting is slow.
 
 # Let's just try to count ascii of whole word and filter with dict.
 # What I can be missing? What about upper cases?
 # Ohh -> ! strs[i] consists of lowercase English letters. !
-# If there were uppercase's it could be a fail, cuz A and a different ascii but same letter for the anagram.
+# If there were uppercase's it could be a fail, cuz 'A' and 'a' different ascii but same letter for the anagram.
 
 
 test1 = ["eat", "tea", "tan", "ate", "nat", "bat"]
