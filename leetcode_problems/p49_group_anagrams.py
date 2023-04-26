@@ -21,7 +21,10 @@ def group_anagrams(strs: list[str]) -> list[list[str]]:
         anagrams.append(value)
     return anagrams
 
-
+# Time complexity:  O(n*(m*(log m))) -> for every element with length - m, we're sorting this element <- log m
+#                                        and looping whole m to create summ_str <- m | m*(log m) <- in the end.
+# Space complexity: O(n) -> dictionary with lists of the same size as input array, and anagrams array with lists
+#                           sum of these lists is equal to input. 1n + 1n = 2n -> O(n).
 
 # Main reason why I wanted to use ascii is to skip looping extra time to check current str exists in dict.
 # Sums can be equal, so it doesn't work, and now we're extra looping word to sort it.
