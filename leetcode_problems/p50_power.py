@@ -1,7 +1,7 @@
 # Implement pow(x, n), which calculates x raised to the power n (i.e., xn).
 
 def my_power(x: float, n: int) -> float:
-    # working_sol (13.27%, 10.9%) -> (39ms, 16.3mb)
+    # working_sol (13.27%, 10.9%) -> (39ms, 16.3mb)  time: O(n) | space: O(n)
     if n == 0:
         return 1
 
@@ -15,6 +15,9 @@ def my_power(x: float, n: int) -> float:
     if n < 0:
         return 1 / rec_pow(x, abs(n))
     return rec_pow(x, abs(n))
+
+# Time complexity: O(n) -> linear scaling, only recursion calls.
+# Space complexity: O(n) -> storing all recursions data
 
 
 #   x ** n == x * ((x ** 2) ** ((n - 1) / 2 ))  <- if n is odd
