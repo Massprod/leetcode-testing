@@ -1,19 +1,25 @@
 # Implement pow(x, n), which calculates x raised to the power n (i.e., xn).
 
 def my_power(x: float, n: int) -> float:
+    # working_sol (13.27%, 10.9%) -> (39ms, 16.3mb)
     if n == 0:
         return 1
-    base = x
-    for _ in range(abs(n) - 1):
-        base *= x
+
+    def rec_pow(base: float, exp: int):
+        if exp == 0:
+            return 1
+        if exp % 2 == 0:
+            return rec_pow(base * base, exp // 2)
+        else:
+            return base * rec_pow(base * base, (exp - 1) // 2)
     if n < 0:
-        return 1 / base
-    return base
+        return 1 / rec_pow(x, abs(n))
+    return rec_pow(x, abs(n))
 
 
 #   x ** n == x * ((x ** 2) ** ((n - 1) / 2 ))  <- if n is odd
 #   x ** n == (x ** 2) ** n / 2   <- if n is even
-# Why did I expect this as the simplest task? W.e didn't know that ^
+# Why did I expect this as the simplest task? W.e didn't know that ^ | n <- exponent
 
 # Brain-lag? Why do I even use sign for?
 # Unique moment with x ** 0 == 1 <- always
