@@ -10,6 +10,7 @@ from copy import deepcopy
 
 
 def place_n_queens(n: int) -> list[list[str]]:
+    # working_sol (5.2%, 6.17%) -> (5338ms, 17mb)  time: (n ** (n * n)) | space: O(n * n)
     ch_board = [["." for _ in range(n)] for _ in range(n)]
     row_placements = {}
     busy_box = {}
@@ -51,8 +52,17 @@ def place_n_queens(n: int) -> list[list[str]]:
     backtrack_count(busy_box, 0, 0, ch_board)
     return all_placements
 
+# Time complexity: O(n ** (n * n)) -> for every n row (we're having rows == input(n)) calling recursion, and for every
+#                                     x value in this recursion, calling another recursion.
+#                                     Recursion tree with size of n and n * n branches.
+# Space complexity: O(n * n) -> list with n * n values, and dictionary for every recursion call.
+#                               n + n * n -> worst O(n * n)
+
+# Omega slow and complicated solution, but I don't want to google
+# before I hit hard wall or complete it, at least like this.
 
 # Well. Didn't expect old_busy = deepcopy(busy) <- to work but it did :)
+
 # Either I need to save and recover dict with busy coordinates or clear them,
 # but I cant clear them, cuz we will rewrite busy coordinates from top points.
 # Only way I see is saving prev X coordinates and recreate busy_box on every call
@@ -63,16 +73,17 @@ def place_n_queens(n: int) -> list[list[str]]:
 
 test1 = 4
 test1_out = [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]]
-# test = place_n_queens(test1)
-# print(test)
-# for _ in test:
-#     print(_)
+test = place_n_queens(test1)
+for _ in test:
+    print(_, "1")
+    assert _ in test1_out
 
 test2 = 1
 test2_out = [["Q"]]
-# test = place_n_queens(test2)
-# for _ in test:
-#     print(_)
+test = place_n_queens(test2)
+for _ in test:
+    print(_, "2")
+    assert _ in test2_out
 
 # test3 - failed - cuz I was recording only solution with 1 way from top -> bottom,
 #                  but there's multiple with same start at the top. I need to use backtracking or find a way to record
@@ -85,11 +96,13 @@ test3_out = [["Q....", "..Q..", "....Q", ".Q...", "...Q."], ["Q....", "...Q.", "
              ["....Q", ".Q...", "...Q.", "Q....", "..Q.."], ["....Q", "..Q..", "Q....", "...Q.", ".Q..."]]
 test = place_n_queens(test3)
 for _ in test:
-    print(_)
+    print(_, "3")
     assert _ in test3_out
+    assert len(test) == len(test3_out)
 
 test4 = 6
-test4_out = []  # there's no solution for n == 3, 6..., or I don't see it
-# test = place_n_queens(test4)
-# for _ in test:
-#     print(_)
+test4_out = []  # there's no solution for n == 3, 6..., or I don't see it <- there's 4 solutions, mistakes_made
+test = place_n_queens(test4)
+for _ in test:
+    print(_)
+    print(len(test))
