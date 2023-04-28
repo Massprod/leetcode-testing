@@ -18,7 +18,7 @@ def place_n_queens(n: int) -> list[list[str]]:
             busy_box[(free_y, free_x)] = False
 
     def check_pos(pos_y: int, pos_x: int, clear: bool = False) -> bool:
-        if not busy_box[(pos_y, pos_x)] or clear:
+        if not busy_box[(pos_y, pos_x)] or (clear is True):
             for _ in range(n):
                 if clear:
                     busy_box[(pos_y, _)] = False
@@ -29,22 +29,16 @@ def place_n_queens(n: int) -> list[list[str]]:
                     busy_box[(_, pos_x)] = False
                 else:
                     busy_box[(_, pos_x)] = True
-            try:
-                for _ in range(1, n):
-                    if clear:
-                        busy_box[(pos_y + _, pos_x + _)] = False
-                    else:
-                        busy_box[(pos_y + _, pos_x + _)] = True
-            except KeyError:
-                pass
-            try:
-                for _ in range(1, n):
-                    if clear:
-                        busy_box[(pos_y + _, pos_x - _)] = False
-                    else:
-                        busy_box[(pos_y + _, pos_x - _)] = True
-            except KeyError:
-                pass
+            for _ in range(1, n):
+                if clear:
+                    busy_box[(pos_y + _, pos_x + _)] = False
+                else:
+                    busy_box[(pos_y + _, pos_x + _)] = True
+            for _ in range(1, n):
+                if clear:
+                    busy_box[(pos_y + _, pos_x - _)] = False
+                else:
+                    busy_box[(pos_y + _, pos_x - _)] = True
             return True
         else:
             return False
@@ -52,11 +46,10 @@ def place_n_queens(n: int) -> list[list[str]]:
     all_placements = []
 
     def backtrack_count(start_y: int, start_x: int, board: list[list[str]], q_count: int = 0) -> None:
-        print(ch_board)
         if q_count == n:
             placement = []
-            for _ in all_placements:
-                placement.append("".join(row_placements))
+            for _ in row_placements:
+                placement.append("".join(row_placements[_]))
             all_placements.append(placement)
             return
         for _ in range(start_x, n):
