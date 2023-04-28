@@ -57,7 +57,7 @@ def place_n_queens(n: int) -> list[list[str]]:
                         row_placements[y] = copy[y]
                         row_placements[y][x] = "Q"
                         break
-        if q_count == 4:
+        if q_count == n:
             variants = len(all_placements)
             all_placements.append([])
             for _ in range(n):
@@ -66,6 +66,9 @@ def place_n_queens(n: int) -> list[list[str]]:
     return all_placements
 
 
+# I was hard_coding, but it worked :)
+# 100% this is not a good_looking solution and I can make it better, but today isn't a day for this.
+
 # 1 -> there's always one Queen at any row.
 # 2 -> always going from top to bottom -> we can ignore top coordinates and check only: (y+1)(x+1) | (y+1)(x-1)
 
@@ -73,9 +76,23 @@ def place_n_queens(n: int) -> list[list[str]]:
 test1 = 4
 test1_out = [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]]
 test = place_n_queens(test1)
-print(test)
-# for _ in test:
-#     print(_)
+for _ in test:
+    print(_)
 
 test2 = 1
 test2_out = [["Q"]]
+test = place_n_queens(test2)
+for _ in test:
+    print(_)
+
+test3 = 5
+test3_out = "???"
+test = place_n_queens(test3)
+for _ in test:
+    print(_)
+
+test4 = 6
+test4_out = []  # there's no solution for n == 3, 6..., or I don't see it
+test = place_n_queens(test4)
+for _ in test:
+    print(_)
