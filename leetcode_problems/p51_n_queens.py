@@ -17,51 +17,43 @@ def place_n_queens(n: int) -> list[list[str]]:
         for free_x in range(n):
             busy_box[(free_y, free_x)] = False
 
-    def check_pos(pos_y: int, pos_x: int, clear: bool = False) -> bool:
-        if not busy_box[(pos_y, pos_x)] or (clear is True):
+    def check_pos(busy_b: dict, pos_y: int, pos_x: int) -> dict | bool:
+        if not busy_b[(pos_y, pos_x)]:
             for _ in range(n):
-                if clear:
-                    busy_box[(pos_y, _)] = False
-                else:
-                    busy_box[(pos_y, _)] = True
+                busy_b[(pos_y, _)] = True
             for _ in range(n):
-                if clear:
-                    busy_box[(_, pos_x)] = False
-                else:
-                    busy_box[(_, pos_x)] = True
+                busy_b[(_, pos_x)] = True
             for _ in range(1, n):
-                if clear:
-                    busy_box[(pos_y + _, pos_x + _)] = False
-                else:
-                    busy_box[(pos_y + _, pos_x + _)] = True
+                busy_b[(pos_y + _, pos_x + _)] = True
             for _ in range(1, n):
-                if clear:
-                    busy_box[(pos_y + _, pos_x - _)] = False
-                else:
-                    busy_box[(pos_y + _, pos_x - _)] = True
-            return True
+                busy_b[(pos_y + _, pos_x - _)] = True
+            return busy_b
         else:
             return False
 
     all_placements = []
 
-    def backtrack_count(start_y: int, start_x: int, board: list[list[str]], q_count: int = 0) -> None:
+    def backtrack_count(busy: dict, start_y: int, start_x: int, board: list[list[str]], q_count: int = 0) -> None:
         if q_count == n:
             placement = []
             for _ in row_placements:
                 placement.append("".join(row_placements[_]))
             all_placements.append(placement)
             return
+        old_busy = deepcopy(busy)
         for _ in range(start_x, n):
-            if check_pos(start_y, _):
+            if new_busy := check_pos(old_busy, start_y, _):
                 row_placements[start_y] = board[start_y]
                 row_placements[start_y][_] = "Q"
-                backtrack_count(start_y + 1, start_x, board, q_count + 1)
+                backtrack_count(new_busy, start_y + 1, start_x, board, q_count + 1)
                 row_placements[start_y][_] = "."
-                check_pos(start_y, _, clear=True)
-    backtrack_count(0, 0, ch_board)
+                old_busy = busy
+    backtrack_count(busy_box, 0, 0, ch_board)
     return all_placements
 
+# Either I need to save and recover dict with busy coordinates or clear them,
+# but I cant clear them, cuz we will rewrite busy coordinates from top points.
+# Only way I see is saving prev X coordinates and recreate busy_box on every call
 
 # 1 -> there's always one Queen at any row.
 # 2 -> always going from top to bottom -> we can ignore top coordinates and check only: (y+1)(x+1) | (y+1)(x-1)
