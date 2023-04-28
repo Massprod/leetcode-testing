@@ -47,10 +47,12 @@ def place_n_queens(n: int) -> list[list[str]]:
                 row_placements[start_y][_] = "Q"
                 backtrack_count(new_busy, start_y + 1, start_x, board, q_count + 1)
                 row_placements[start_y][_] = "."
-                old_busy = busy
+                old_busy = deepcopy(busy)
     backtrack_count(busy_box, 0, 0, ch_board)
     return all_placements
 
+
+# Well. Didn't expect old_busy = deepcopy(busy) <- to work but it did :)
 # Either I need to save and recover dict with busy coordinates or clear them,
 # but I cant clear them, cuz we will rewrite busy coordinates from top points.
 # Only way I see is saving prev X coordinates and recreate busy_box on every call
@@ -61,8 +63,8 @@ def place_n_queens(n: int) -> list[list[str]]:
 
 test1 = 4
 test1_out = [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]]
-test = place_n_queens(test1)
-print(test)
+# test = place_n_queens(test1)
+# print(test)
 # for _ in test:
 #     print(_)
 
@@ -81,9 +83,10 @@ test3_out = [["Q....", "..Q..", "....Q", ".Q...", "...Q."], ["Q....", "...Q.", "
              ["..Q..", "Q....", "...Q.", ".Q...", "....Q"], ["..Q..", "....Q", ".Q...", "...Q.", "Q...."],
              ["...Q.", "Q....", "..Q..", "....Q", ".Q..."], ["...Q.", ".Q...", "....Q", "..Q..", "Q...."],
              ["....Q", ".Q...", "...Q.", "Q....", "..Q.."], ["....Q", "..Q..", "Q....", "...Q.", ".Q..."]]
-# test = place_n_queens(test3)
-# for _ in test:
-#     print(_)
+test = place_n_queens(test3)
+for _ in test:
+    print(_)
+    assert _ in test3_out
 
 test4 = 6
 test4_out = []  # there's no solution for n == 3, 6..., or I don't see it
