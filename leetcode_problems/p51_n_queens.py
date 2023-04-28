@@ -13,21 +13,36 @@ def place_n_queens(n: int) -> list[list[str]]:
     ch_board = [["." for _ in range(n)] for _ in range(n)]
     row_placements = {}
     busy_box = {}
+    for free_y in range(n):
+        for free_x in range(n):
+            busy_box[(free_y, free_x)] = False
 
-    def check_pos(pos_y: int, pos_x: int) -> bool:
-        if not busy_box[(pos_y, pos_x)]:
+    def check_pos(pos_y: int, pos_x: int, clear: bool = False) -> bool:
+        if not busy_box[(pos_y, pos_x)] or clear:
             for _ in range(n):
-                busy_box[(pos_y, _)] = True
+                if clear:
+                    busy_box[(pos_y, _)] = False
+                else:
+                    busy_box[(pos_y, _)] = True
             for _ in range(n):
-                busy_box[(_, pos_x)] = True
+                if clear:
+                    busy_box[(_, pos_x)] = False
+                else:
+                    busy_box[(_, pos_x)] = True
             try:
                 for _ in range(1, n):
-                    busy_box[(pos_y + _, pos_x + _)] = True
+                    if clear:
+                        busy_box[(pos_y + _, pos_x + _)] = False
+                    else:
+                        busy_box[(pos_y + _, pos_x + _)] = True
             except KeyError:
                 pass
             try:
                 for _ in range(1, n):
-                    busy_box[(pos_y + _, pos_x - _)] = True
+                    if clear:
+                        busy_box[(pos_y + _, pos_x - _)] = False
+                    else:
+                        busy_box[(pos_y + _, pos_x - _)] = True
             except KeyError:
                 pass
             return True
@@ -35,39 +50,25 @@ def place_n_queens(n: int) -> list[list[str]]:
             return False
 
     all_placements = []
-    starting_x = 0
-    starting_y = 0
-    while starting_x < n:
-        copy = deepcopy(ch_board)
-        q_count = 0
-        for free_y in range(n):
-            for free_x in range(n):
-                busy_box[(free_y, free_x)] = False
-        if q_count == 0:
-            for _ in busy_box:
-                busy_box[_] = False
-        if check_pos(starting_y, starting_x):
-            q_count += 1
-            row_placements[starting_y] = copy[starting_y]
-            row_placements[starting_y][starting_x] = "Q"
-            for y in range(n):
-                for x in range(n):
-                    if check_pos(y, x):
-                        q_count += 1
-                        row_placements[y] = copy[y]
-                        row_placements[y][x] = "Q"
-                        break
+
+    def backtrack_count(start_y: int, start_x: int, board: list[list[str]], q_count: int = 0) -> None:
+        print(ch_board)
         if q_count == n:
-            variants = len(all_placements)
-            all_placements.append([])
-            for _ in range(n):
-                all_placements[variants].append("".join(row_placements[_]))
-        starting_x += 1
+            placement = []
+            for _ in all_placements:
+                placement.append("".join(row_placements))
+            all_placements.append(placement)
+            return
+        for _ in range(start_x, n):
+            if check_pos(start_y, _):
+                row_placements[start_y] = board[start_y]
+                row_placements[start_y][_] = "Q"
+                backtrack_count(start_y + 1, start_x, board, q_count + 1)
+                row_placements[start_y][_] = "."
+                check_pos(start_y, _, clear=True)
+    backtrack_count(0, 0, ch_board)
     return all_placements
 
-
-# I was hard_coding, but it worked :)
-# 100% this is not a good_looking solution and I can make it better, but today isn't a day for this.
 
 # 1 -> there's always one Queen at any row.
 # 2 -> always going from top to bottom -> we can ignore top coordinates and check only: (y+1)(x+1) | (y+1)(x-1)
@@ -76,12 +77,13 @@ def place_n_queens(n: int) -> list[list[str]]:
 test1 = 4
 test1_out = [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]]
 test = place_n_queens(test1)
+print(test)
 # for _ in test:
 #     print(_)
 
 test2 = 1
 test2_out = [["Q"]]
-test = place_n_queens(test2)
+# test = place_n_queens(test2)
 # for _ in test:
 #     print(_)
 
@@ -94,12 +96,12 @@ test3_out = [["Q....", "..Q..", "....Q", ".Q...", "...Q."], ["Q....", "...Q.", "
              ["..Q..", "Q....", "...Q.", ".Q...", "....Q"], ["..Q..", "....Q", ".Q...", "...Q.", "Q...."],
              ["...Q.", "Q....", "..Q..", "....Q", ".Q..."], ["...Q.", ".Q...", "....Q", "..Q..", "Q...."],
              ["....Q", ".Q...", "...Q.", "Q....", "..Q.."], ["....Q", "..Q..", "Q....", "...Q.", ".Q..."]]
-test = place_n_queens(test3)
-for _ in test:
-    print(_)
+# test = place_n_queens(test3)
+# for _ in test:
+#     print(_)
 
 test4 = 6
 test4_out = []  # there's no solution for n == 3, 6..., or I don't see it
-test = place_n_queens(test4)
+# test = place_n_queens(test4)
 # for _ in test:
 #     print(_)
