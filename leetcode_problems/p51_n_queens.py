@@ -76,17 +76,24 @@ def place_n_queens(n: int) -> list[list[str]]:
 test1 = 4
 test1_out = [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]]
 test = place_n_queens(test1)
-for _ in test:
-    print(_)
+# for _ in test:
+#     print(_)
 
 test2 = 1
 test2_out = [["Q"]]
 test = place_n_queens(test2)
-for _ in test:
-    print(_)
+# for _ in test:
+#     print(_)
 
+# test3 - failed - cuz I was recording only solution with 1 way from top -> bottom,
+#                  but there's multiple with same start at the top. I need to use backtracking or find a way to record
+#                  midways and move through all x's in y loop.
 test3 = 5
-test3_out = "???"
+test3_out = [["Q....", "..Q..", "....Q", ".Q...", "...Q."], ["Q....", "...Q.", ".Q...", "....Q", "..Q.."],
+             [".Q...", "...Q.", "Q....", "..Q..", "....Q"], [".Q...", "....Q", "..Q..", "Q....", "...Q."],
+             ["..Q..", "Q....", "...Q.", ".Q...", "....Q"], ["..Q..", "....Q", ".Q...", "...Q.", "Q...."],
+             ["...Q.", "Q....", "..Q..", "....Q", ".Q..."], ["...Q.", ".Q...", "....Q", "..Q..", "Q...."],
+             ["....Q", ".Q...", "...Q.", "Q....", "..Q.."], ["....Q", "..Q..", "Q....", "...Q.", ".Q..."]]
 test = place_n_queens(test3)
 for _ in test:
     print(_)
@@ -94,5 +101,5 @@ for _ in test:
 test4 = 6
 test4_out = []  # there's no solution for n == 3, 6..., or I don't see it
 test = place_n_queens(test4)
-for _ in test:
-    print(_)
+# for _ in test:
+#     print(_)
