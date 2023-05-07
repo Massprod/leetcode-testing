@@ -14,6 +14,8 @@ def max_sub_array(nums: list[int]) -> int:
     max_sum = 0
     while left_cursor <= right_cursor:
         temp_sum = sum(nums[left_cursor: right_cursor + 1])
+        if max_sum == 0 and temp_sum != 0:
+            max_sum = temp_sum
         if temp_sum > max_sum:
             max_sum = temp_sum
         if left_cursor == right_cursor:
@@ -41,3 +43,13 @@ print(max_sub_array(test2))
 test3 = [5, 4, -1, 7, 8]
 test3_out = 23
 print(max_sub_array(test3))
+
+# test4 - failed -> I made default max_sum as 0, either I should have used minimum value -10^4 or ???
+test4 = [-2, -1]
+test4_out = -1
+print(max_sub_array(test4))
+
+# test5 - failed -> max_value on one side which I wanted to skip with checking (-+1) indexes, but it's not working.
+test5 = [1, 2, -1, -2, 2, 1, -2, 1, 4, -5, 4]
+test5_out = 6
+print(max_sub_array(test5))
