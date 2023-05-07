@@ -24,6 +24,13 @@ def max_sub_array(nums: list[int]) -> int:
 # Time complexity: O(n) -> one whole loop through input array.
 # Space complexity: O(1) -> only input used, no extras.
 
+# Googled Kadane's algorithm, which is actually a solution.
+# I was trying to use most simple conquer_divide, and it's not a case here. It can be solved with conquer_divide,
+# and speed O(log n), but I don't think I'm capable of doing it myself and maybe revisit later.
+# Cuz google or gpt can be done anytime. I need to do it myself, otherwise it's pointless.
+# Right now is better to move, at least I made it with Kadane.
+# (without Kadane it could be done easily with summing every index one_by_one for every slice 100% time_limit tho.)
+
 
 test1 = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
 test1_out = 6
