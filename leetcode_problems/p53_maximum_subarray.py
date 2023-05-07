@@ -20,11 +20,13 @@ def max_sub_array(nums: list[int]) -> int:
             max_sum = temp_sum
         if left_cursor == right_cursor:
             break
-        elif nums[left_cursor] < nums[right_cursor]:
-            left_cursor += 1
-        elif nums[left_cursor] > nums[right_cursor]:
+        left_sum = sum(nums[left_cursor: right_cursor])
+        right_sum = sum(nums[left_cursor + 1: right_cursor + 1])
+        if left_sum > right_sum:
             right_cursor -= 1
-        elif nums[left_cursor] == nums[right_cursor]:
+        if left_sum < right_sum:
+            left_cursor += 1
+        if left_sum == right_sum:
             if nums[left_cursor + 1] > nums[right_cursor - 1]:
                 right_cursor -= 1
             else:
