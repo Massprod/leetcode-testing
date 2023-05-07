@@ -20,17 +20,17 @@ def max_sub_array(nums: list[int]) -> int:
             max_sum = temp_sum
         if left_cursor == right_cursor:
             break
-        left_sum = sum(nums[left_cursor: right_cursor])
-        right_sum = sum(nums[left_cursor + 1: right_cursor + 1])
-        if left_sum > right_sum:
+        left_step = nums[left_cursor] + nums[left_cursor + 1]
+        right_step = nums[right_cursor] + nums[right_cursor - 1]
+        if left_step > right_step:
             right_cursor -= 1
-        if left_sum < right_sum:
+        if left_step < right_step:
             left_cursor += 1
-        if left_sum == right_sum:
+        if left_step == right_step:
             if nums[left_cursor + 1] > nums[right_cursor - 1]:
-                right_cursor -= 1
-            else:
                 left_cursor += 1
+            else:
+                right_cursor -= 1
     return max_sum
 
 
