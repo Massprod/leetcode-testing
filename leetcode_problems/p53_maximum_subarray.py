@@ -1,5 +1,10 @@
 # Given an integer array nums, find the subarray
 # with the largest sum, and return its sum.
+# ^^^^
+# Already been solving tasks with max_sum but for 3 nums, there's used all nums in some range.
+# Because of that, we can't skip values and need to check every possible index.
+# 100% sure I need to use conquer and divide but with recursion or just while loop?
+# Time limit or not, first going to try loop.
 
 def max_sub_array(nums: list[int]) -> int:
     if len(nums) == 1:
@@ -11,18 +16,18 @@ def max_sub_array(nums: list[int]) -> int:
         temp_sum = sum(nums[left_cursor: right_cursor + 1])
         if temp_sum > max_sum:
             max_sum = temp_sum
+        if left_cursor == right_cursor:
+            break
         elif nums[left_cursor] < nums[right_cursor]:
             left_cursor += 1
         elif nums[left_cursor] > nums[right_cursor]:
             right_cursor -= 1
         elif nums[left_cursor] == nums[right_cursor]:
-            right_cursor -= 1
+            if nums[left_cursor + 1] > nums[right_cursor - 1]:
+                right_cursor -= 1
+            else:
+                left_cursor += 1
     return max_sum
-
-# Already been solving tasks with max_sum but for 3 nums, there's used all nums in some range.
-# Because of that, we can't skip values and need to check every possible index.
-# 100% sure I need to use conquer and divide but with recursion or just while loop?
-# Time limit or not, first going to try loop.
 
 
 test1 = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
