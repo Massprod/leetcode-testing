@@ -6,6 +6,7 @@ from copy import deepcopy
 
 
 def queen_variants(n: int) -> int:
+    # working_sol (5.2%, 6.17%) -> (5338ms, 17mb)  time: (n ** (n * n)) | space: O(n * n)
     ch_board = [["." for _ in range(n)] for _ in range(n)]
     row_placements = {}
     busy_box = {}
@@ -48,8 +49,16 @@ def queen_variants(n: int) -> int:
     backtrack_count(busy_box, 0, 0, ch_board)
     return len(all_placements)
 
+# Time complexity: O(n ** (n * n)) -> for every n row (we're having rows == input(n)) calling recursion, and for every
+#                                     x value in this recursion, calling another recursion.
+#                                     Recursion tree with size of n and n * n branches.
+# Space complexity: O(n * n) -> list with n * n values, and dictionary for every recursion call.
+#                               n + n * n -> worst O(n * n)
+
+# Well obviously it's worked, same as p51 and really slow, but I don't want to google just yet.
+# Because im sure there's going to be some mirror task after which I will revisit this one.
+# --------------
 # There's no time limit in description and I want to try my variant as first. 5k ms :)
-#
 
 
 test1 = 4
