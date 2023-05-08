@@ -29,8 +29,6 @@ def jump(nums: list[int]) -> int:
                 best_land_index = land_index
                 best_start = x
                 continue
-            while pool[land_index] == 0:
-                land_index -= 1
         return best_jump(pool, best_start, jumps + 1)
     return best_jump(nums)
 
