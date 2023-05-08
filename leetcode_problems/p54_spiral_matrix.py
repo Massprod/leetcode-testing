@@ -27,10 +27,11 @@ def spiral_read(matrix: list[list[int]]) -> list[int]:
     min_y = 0
     spiral = [matrix[y][x]]
     while steps < all_steps:
-        if turn % 3 == 0 and turn >= 3:
+        if turn % 3 == 0 and turn == 3:
             min_y += 1
             max_y -= 1
-        if turn % 4 == 0 and turn >= 4:
+            turn += 1
+        if turn % 5 == 0 and turn == 5:
             min_x += 1
             max_x -= 1
             turn = 0
@@ -55,6 +56,7 @@ def spiral_read(matrix: list[list[int]]) -> list[int]:
             dx = 1
         steps += 1
     return spiral
+
 
 # 1 <= m, n <= 10  <-- 100% no empty list's as matrix, so I will ignore that input.
 #                       or it's better to set empty return?
@@ -108,3 +110,13 @@ test8 = []
 test8_out = []
 assert spiral_read(test8) == test8_out
 print(spiral_read(test8))
+
+# test9 - failed -> I was trying to solve this spiral_reading without changing input_matrix,
+#                   main problem is where's to take TURNs, first I made a working way for matrix's
+#                   I tested with only 1 value after taking TURN.
+#                   But if there was more than 1 value TURN was made early and failing route.
+#                   Changed turn counter for 3, 5 values, now they're more distinguished and working as intended.
+test9 = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
+test9_out = [1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10]
+assert spiral_read(test9) == test9_out
+print(spiral_read(test9))
