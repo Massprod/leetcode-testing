@@ -1,7 +1,8 @@
 # Given an m x n matrix, return all elements of the matrix in spiral order.
 # Clockwise.
 
-def spiral_read(matrix: list[list[int]]) -> list[int]:
+def spiral_read(matrix: list[list[int]]) -> list[int] | list[list[int]]:
+    # working_sol (24.53%, 5.56%) -> (39ms, 16.3mb)  time: O(n) | space: O(n)
     if len(matrix) == 0:
         return matrix
     x = 0
@@ -57,10 +58,14 @@ def spiral_read(matrix: list[list[int]]) -> list[int]:
         steps += 1
     return spiral
 
-
+# Time complexity: O(n) -> looping through whole input once.
+# Space complexity: O(n) -> a lot of constants, but there's only ONE new array with size of an input.
+#                         ! If I remember correctly, there's way to solve it with (2) for (loops) without extra consts.
+#                           Don't 100% recall it and wanted to try my solution, without changing input. !
+# -------------------------------
 # 1 <= m, n <= 10  <-- 100% no empty list's as matrix, so I will ignore that input.
 #                       or it's better to set empty return?
-# -------------------
+# -------------------------------
 # Failed with single column and won't be failed with single row, but its unique cases.
 # Better to just return whole single column or row without even coming to a while loop.
 # -------------------------------
