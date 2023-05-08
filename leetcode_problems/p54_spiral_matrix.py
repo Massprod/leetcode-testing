@@ -2,6 +2,8 @@
 # Clockwise.
 
 def spiral_read(matrix: list[list[int]]) -> list[int]:
+    if len(matrix) == 0:
+        return matrix
     x = 0
     dx = 1
     y = 0
@@ -54,7 +56,9 @@ def spiral_read(matrix: list[list[int]]) -> list[int]:
         steps += 1
     return spiral
 
-
+# 1 <= m, n <= 10  <-- 100% no empty list's as matrix, so I will ignore that input.
+#                       or it's better to set empty return?
+# -------------------
 # Failed with single column and won't be failed with single row, but its unique cases.
 # Better to just return whole single column or row without even coming to a while loop.
 # -------------------------------
@@ -94,3 +98,13 @@ test6 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 test6_out = [1, 2, 3, 6, 9, 8, 7, 4, 5]
 assert spiral_read(test6) == test6_out
 print(spiral_read(test6))
+
+test7 = [[1]]
+test7_out = [1]
+assert spiral_read(test7) == test7_out
+print(spiral_read(test7))
+
+test8 = []
+test8_out = []
+assert spiral_read(test8) == test8_out
+print(spiral_read(test8))
