@@ -2,6 +2,9 @@
 # and return an array of the non-overlapping intervals that cover all the intervals in the input.
 
 def merge(intervals: list[list[int]]) -> list[list[int]]:
+    new_intervals = []
+    new_intervals = [_ for _ in intervals if _ not in new_intervals]
+
     def can_be_merged(merges: list[list[int]], start: int, end: int, start_index: int) -> dict:
         merge_values: list = []
         for y in range(len(merges)):
@@ -37,10 +40,11 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
             end_val: int = intervals[x][1]
             if result := can_be_merged(intervals, start_val, end_val, x):
                 intervals[x] = result["new_limits"]
-                [intervals.remove(_) for _ in result["to_remove"] if intervals.index(_) != x]
+                [intervals.remove(_) for _ in result["to_remove"] if _ != result["new_limits"]]
         except IndexError:
             break
     return intervals
+
 
 # Changed delete route, now we're deleting every value in "to_remove", including duplicates.
 # -------------------------------------
@@ -105,6 +109,10 @@ print(merge(test5))
 #                   one of them removed and another is still here.
 test6 = [[0, 0], [1, 2], [5, 5], [2, 4], [3, 3], [5, 6], [5, 6], [4, 6], [0, 0], [1, 2], [0, 2], [4, 5]]
 test6_out = [[0, 6]]
+print(merge(test6))
 for _ in merge(test6):
     assert _ in test6_out
-print(merge(test6))
+
+test7 = [[2, 3], [4, 5], [6, 7], [8, 9], [1, 10]]
+test7_out = [[1, 10]]
+print(merge(test7))
