@@ -2,9 +2,8 @@
 # and return an array of the non-overlapping intervals that cover all the intervals in the input.
 
 def merge(intervals: list[list[int]]) -> list[list[int]]:
-
     def can_be_merged(merges: list[list[int]], start: int, end: int, start_index: int) -> dict:
-        merge_values = []
+        merge_values: list = []
         for y in range(len(merges)):
             if y == start_index:
                 continue
@@ -22,7 +21,11 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
                 merge_values.append(merges[y])
                 start = min(start, check_start)
                 end = max(end, check_end)
-        merge_data = {
+            elif check_start <= start <= end <= check_end:
+                merge_values.append(merges[y])
+                start = min(start, check_start)
+                end = max(end, check_end)
+        merge_data: dict = {
             "to_remove": merge_values,
             "new_limits": [start, end]
         }
@@ -30,17 +33,17 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
 
     for x in range(len(intervals)):
         try:
-            start_val = intervals[x][0]
-            end_val = intervals[x][1]
+            start_val: int = intervals[x][0]
+            end_val: int = intervals[x][1]
             if result := can_be_merged(intervals, start_val, end_val, x):
                 intervals[x] = result["new_limits"]
-                for value in result["to_remove"]:
-                    intervals.remove(value)
+                [intervals.remove(_) for _ in result["to_remove"] if intervals.index(_) != x]
         except IndexError:
             break
     return intervals
 
-
+# Changed
+# -------------------------------------
 # Changed to check every index in range(0, len(intervals)) -> now we don't need to sort and waste time on it.
 # Also changed replacing new_limits before we delete, to avoid missing indexes to replace with.
 # -------------------------------------
@@ -97,3 +100,11 @@ test5_out = [[0, 5]]
 for _ in merge(test5):
     assert _ in test5_out
 print(merge(test5))
+
+# test6 - failed -> Im removing elements, and didn't consider they can have DUPLICATES [1, 2] and [1, 2]
+#                   one of them removed and another is still here.
+test6 = [[0, 0], [1, 2], [5, 5], [2, 4], [3, 3], [5, 6], [5, 6], [4, 6], [0, 0], [1, 2], [0, 2], [4, 5]]
+test6_out = [[0, 6]]
+for _ in merge(test6):
+    assert _ in test6_out
+print(merge(test6))
