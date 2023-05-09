@@ -48,6 +48,8 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
 #                         don't repeat any checks and single left_to_right path.
 # Space complexity O(1) -> only constant's and changing input array inplace.
 
+# Committed solution without additional function, cuz we can put everything inside for_loop.
+# But there's no speed or memory win here, so leaving it like this is fine.
 # ----------------------------
 # Ok. First of all, I solved this on my first_commit, but it was too slow.
 # Second I tried to delete, replace elements without sorting and stuck on this for a while.
