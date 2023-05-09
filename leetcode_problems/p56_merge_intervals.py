@@ -42,7 +42,7 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
             break
     return intervals
 
-# Changed
+# Changed delete route, now we're deleting every value in "to_remove", including duplicates.
 # -------------------------------------
 # Changed to check every index in range(0, len(intervals)) -> now we don't need to sort and waste time on it.
 # Also changed replacing new_limits before we delete, to avoid missing indexes to replace with.
