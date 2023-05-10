@@ -9,6 +9,7 @@
 
 
 def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:
+    # working_sol (5.65%, 6.73%) -> (116ms, 20mb)  time: O(n) | space: O(1)
     def place(to_place: list[list[int]], new_interval: list[int]) -> int:
         start: int = new_interval[0]
         end: int = new_interval[1]
@@ -90,6 +91,14 @@ def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]
     return intervals
 
 
+# Time complexity: O(n) -> in worst case we're looping once through whole input_array.
+#                          Checking place_index from [0] to [-1], after we found correct index,
+#                          we're continuing loop from this index to either [-1]
+#                          or just some BREAK value which can't be merged -> only one loop through in summary.
+# Space complexity: O(1) -> changing input array in_place and only creating constants.
+#                           There's a lot of constants and I can rebuild it without recursion, but maybe in a future.
+
+# ------------------------------------
 # place() -> searching for a index where we can insert new_interval.
 # can_merge() -> simple merging every value until we hit something we can't merge into.
 #  Guess trick in this task is to place new_interval in the start or end of intervals,
