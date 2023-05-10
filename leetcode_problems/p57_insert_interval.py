@@ -113,17 +113,17 @@ def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]
 test1_intervals = [[1, 3], [6, 9]]
 test1_new_interval = [2, 5]
 test1_out = [[1, 5], [6, 9]]
-print(insert(test1_intervals, test1_new_interval))
+assert test1_out == insert(test1_intervals, test1_new_interval)
 
 test2_intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]
 test2_new_interval = [4, 8]
 test2_out = [[1, 2], [3, 10], [12, 16]]
-print(insert(test2_intervals, test2_new_interval))
+assert test2_out == insert(test2_intervals, test2_new_interval)
 
 test3_intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]
 test3_new_interval = [17, 18]
 test3_out = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16], [17, 18]]
-print(insert(test3_intervals, test3_new_interval))
+assert test3_out == insert(test3_intervals, test3_new_interval)
 
 # test4 - failed -> because I consider less than [0] or more than [-1] values, but didn't think about empty intervals,
 #                 ! 0 <= intervals.length <= 104
@@ -131,19 +131,19 @@ print(insert(test3_intervals, test3_new_interval))
 test4_intervals = []
 test4_new_interval = [5, 7]
 test4_out = [[5, 7]]
-print(insert(test4_intervals, test4_new_interval))
+assert test4_out == insert(test4_intervals, test4_new_interval)
 
 # test5 - failed -> bruh. I used walrus_sign to assign place_index and forgot about index == 0 case,
 #                   and 0 is always FALSE, we're getting index = 0 and instantly skipping IF statement.
 #                   Walrus is a tricky_one in these situations, I should remember it.
 test5_intervals = [[1, 5], [6, 8]]
 test5_new_interval = [5, 6]
-test5_out = [1, 8]
-print(insert(test5_intervals, test5_new_interval))
+test5_out = [[1, 8]]
+assert test5_out == insert(test5_intervals, test5_new_interval)
 
 # test6 - failed -> fail to see case where's new_interval can't be merged and not going to be a new [0] or [-1]
 #                   but somewhere between.
 test6_intervals = [[3, 5], [12, 15]]
 test6_new_interval = [6, 6]
 test6_out = [[3, 5], [6, 6], [12, 15]]
-print(insert(test6_intervals, test6_new_interval))
+assert test6_out == insert(test6_intervals, test6_new_interval)
