@@ -69,12 +69,27 @@ def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]
                 to_merge[start_index] = [start, end]
                 continue
             return
+
+    new_start = newInterval[0]
+    new_end = newInterval[1]
+    if new_end < intervals[0][0]:
+        intervals.insert(0, newInterval)
+        return intervals
+    if new_start > intervals[-1][1]:
+        intervals.append(newInterval)
+        return intervals
     if place_index := place(intervals, newInterval):
         can_merge(intervals, place_index)
         return intervals
+
     return intervals
 
-
+# place() -> searching for a index where we can insert new_interval.
+# can_merge() -> simple merging every value until we hit something we can't merge into.
+#  Guess trick in this task is to place new_interval in the start or end of intervals,
+#  because it's not corresponds with values inside intervals.
+# There's only one NEW_INTERVAL and 3 ways to place it: before [0], after [-1], somewhere between [0] - [-1].
+# ------------------------------------
 # Mirror for p56, but now we first need to find place from where to start merging.
 # Going from left_to_right (ascending) and first time we encounter something we can merge new_interval with,
 # just call ! can_merge() ! from p56 with this start index.
@@ -90,3 +105,7 @@ test2_new_interval = [4, 8]
 test2_out = [[1, 2], [3, 10], [12, 16]]
 print(insert(test2_intervals, test2_new_interval))
 
+test3_intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]
+test3_new_interval = [17, 18]
+test3_out = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16], [17, 18]]
+print(insert(test3_intervals, test3_new_interval))
