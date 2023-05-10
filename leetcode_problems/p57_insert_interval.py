@@ -69,7 +69,9 @@ def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]
                 to_merge[start_index] = [start, end]
                 continue
             return
-
+    if len(intervals) == 0:
+        intervals.append(newInterval)
+        return intervals
     new_start = newInterval[0]
     new_end = newInterval[1]
     if new_end < intervals[0][0]:
@@ -109,3 +111,11 @@ test3_intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]
 test3_new_interval = [17, 18]
 test3_out = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16], [17, 18]]
 print(insert(test3_intervals, test3_new_interval))
+
+# test4 - failed -> because I consider less than [0] or more than [-1] values, but didn't think about empty intervals,
+#                 ! 0 <= intervals.length <= 104
+#                   newInterval.length == 2 ! <- always CHECK constraints...
+test4_intervals = []
+test4_new_interval = [5, 7]
+test4_out = [[5, 7]]
+print(insert(test4_intervals, test4_new_interval))
