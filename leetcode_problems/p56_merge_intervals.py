@@ -2,7 +2,7 @@
 # and return an array of the non-overlapping intervals that cover all the intervals in the input.
 
 def merge(intervals: list[list[int]]) -> list[list[int]]:
-    # working_sol (7.90%, 17.18%) -> (174ms, 20.4mb)  time: O(n) | space: O(1)
+    # working_sol (7.90%, 17.18%) -> (174ms, 20.4mb)  time: O(n * log n) | space: O(1)
     intervals.sort()
 
     def can_merge(to_merge: list[list[int]], start_index: int) -> None:
@@ -44,8 +44,8 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
             break
     return intervals
 
-# Time complexity O(n) -> we're sorting (log n), and only looping ONCE through whole input,
-#                         don't repeat any checks and single left_to_right path.
+# Time complexity O(n * log n) -> sorting -> (n * log n) -> and only looping ONCE through whole input O(n),
+#                                 don't repeat any checks and single left_to_right path.
 # Space complexity O(1) -> only constant's and changing input array inplace.
 
 # Committed solution without additional function, cuz we can put everything inside for_loop.
@@ -64,42 +64,56 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
 
 test1 = [[1, 3], [2, 6], [8, 10], [15, 18]]
 test1_out = [[1, 6], [8, 10], [15, 18]]
-for _ in merge(test1):
+test = merge(test1)
+assert len(test) == len(test1_out)
+for _ in test:
     assert _ in test1_out
 print(merge(test1))
 
 test2 = [[1, 4], [4, 5]]
 test2_out = [[1, 5]]
-for _ in merge(test2):
+test = merge(test2)
+assert len(test) == len(test2_out)
+for _ in test:
     assert _ in test2_out
 print(merge(test2))
 
 test3 = [[1, 5], [4, 9], [9, 18], [5, 6], [2, 3], [4, 4], [0, 0]]
 test3_out = [[1, 18], [0, 0]]
-for _ in merge(test3):
+test = merge(test3)
+assert len(test) == len(test3_out)
+for _ in test:
     assert _ in test3_out
 print(merge(test3))
 
 test4 = [[0, 0], [0, 5], [4, 9], [4, 4], [100, 100], [5, 100]]
 test4_out = [[0, 100]]
-for _ in merge(test4):
+test = merge(test4)
+assert len(test) == len(test4_out)
+for _ in test:
     assert _ in test4_out
 print(merge(test4))
 
 test5 = [[1, 4], [0, 5]]
 test5_out = [[0, 5]]
-for _ in merge(test5):
+test = merge(test5)
+assert len(test) == len(test5_out)
+for _ in test:
     assert _ in test5_out
 print(merge(test5))
 
 test6 = [[0, 0], [1, 2], [5, 5], [2, 4], [3, 3], [5, 6], [5, 6], [4, 6], [0, 0], [1, 2], [0, 2], [4, 5]]
 test6_out = [[0, 6]]
-for _ in merge(test6):
+test = merge(test6)
+assert len(test) == len(test6_out)
+for _ in test:
     assert _ in test6_out
 print(merge(test6))
 
 test7 = [[2, 3], [4, 5], [6, 7], [8, 9], [1, 10]]
 test7_out = [[1, 10]]
-for _ in merge(test7):
+test = merge(test7)
+assert len(test) == len(test7_out)
+for _ in test:
     assert _ in test7_out
 print(merge(test7))
