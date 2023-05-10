@@ -77,8 +77,8 @@ def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]
     if len(intervals) == 0:
         intervals.append(newInterval)
         return intervals
-    new_start = newInterval[0]
-    new_end = newInterval[1]
+    new_start: int = newInterval[0]
+    new_end: int = newInterval[1]
     if new_end < intervals[0][0]:  # place before
         intervals.insert(0, newInterval)
         return intervals
