@@ -9,13 +9,84 @@
 
 
 def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:
-    pass
+
+    def place(to_place: list[list[int]], new_interval: list[int]) -> int:
+        start: int = new_interval[0]
+        end: int = new_interval[1]
+        for g in range(len(to_place)):
+            check_start: int = to_place[g][0]
+            check_end: int = to_place[g][1]
+            if start <= check_start <= end <= check_end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_place[g] = [start, end]
+                return g
+            elif check_start <= start <= check_end <= end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_place[g] = [start, end]
+                return g
+            elif start <= check_start <= check_end <= end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_place[g] = [start, end]
+                return g
+            elif check_start <= start <= end <= check_end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_place[g] = [start, end]
+                return g
+
+    def can_merge(to_merge: list[list[int]], start_index: int) -> None:
+        start: int = to_merge[start_index][0]
+        end: int = to_merge[start_index][1]
+        y: int = start_index + 1
+        while y < len(to_merge):
+            check_start: int = to_merge[y][0]
+            check_end: int = to_merge[y][1]
+            if start <= check_start <= end <= check_end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_merge.pop(y)
+                to_merge[start_index] = [start, end]
+                continue
+            elif check_start <= start <= check_end <= end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_merge.pop(y)
+                to_merge[start_index] = [start, end]
+                continue
+            elif start <= check_start <= check_end <= end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_merge.pop(y)
+                to_merge[start_index] = [start, end]
+                continue
+            elif check_start <= start <= end <= check_end:
+                start = min(start, check_start)
+                end = max(end, check_end)
+                to_merge.pop(y)
+                to_merge[start_index] = [start, end]
+                continue
+            return
+    if place_index := place(intervals, newInterval):
+        can_merge(intervals, place_index)
+        return intervals
+    return intervals
+
+
+# Mirror for p56, but now we first need to find place from where to start merging.
+# Going from left_to_right (ascending) and first time we encounter something we can merge new_interval with,
+# just call ! can_merge() ! from p56 with this start index.
 
 
 test1_intervals = [[1, 3], [6, 9]]
 test1_new_interval = [2, 5]
 test1_out = [[1, 5], [6, 9]]
+print(insert(test1_intervals, test1_new_interval))
 
-test2_intervals = [[1, 2], [3, 5], [6, 7], [8, 10]]
+test2_intervals = [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]]
 test2_new_interval = [4, 8]
 test2_out = [[1, 2], [3, 10], [12, 16]]
+print(insert(test2_intervals, test2_new_interval))
+
