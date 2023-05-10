@@ -9,13 +9,15 @@
 
 
 def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:
-
     def place(to_place: list[list[int]], new_interval: list[int]) -> int:
         start: int = new_interval[0]
         end: int = new_interval[1]
         for g in range(len(to_place)):
             check_start: int = to_place[g][0]
             check_end: int = to_place[g][1]
+            if end < check_start and start > to_place[g - 1][1]:  # place inside
+                to_place.insert(g, [start, end])
+                return -1
             if start <= check_start <= end <= check_end:
                 start = min(start, check_start)
                 end = max(end, check_end)
@@ -36,6 +38,7 @@ def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]
                 end = max(end, check_end)
                 to_place[g] = [start, end]
                 return g
+        return -1
 
     def can_merge(to_merge: list[list[int]], start_index: int) -> None:
         start: int = to_merge[start_index][0]
@@ -69,22 +72,23 @@ def insert(intervals: list[list[int]], newInterval: list[int]) -> list[list[int]
                 to_merge[start_index] = [start, end]
                 continue
             return
+
     if len(intervals) == 0:
         intervals.append(newInterval)
         return intervals
     new_start = newInterval[0]
     new_end = newInterval[1]
-    if new_end < intervals[0][0]:
+    if new_end < intervals[0][0]:  # place before
         intervals.insert(0, newInterval)
         return intervals
-    if new_start > intervals[-1][1]:
+    if new_start > intervals[-1][1]:  # place after
         intervals.append(newInterval)
         return intervals
-    if place_index := place(intervals, newInterval):
+    if (place_index := place(intervals, newInterval)) >= 0:  # place inside or merge_walk
         can_merge(intervals, place_index)
         return intervals
-
     return intervals
+
 
 # place() -> searching for a index where we can insert new_interval.
 # can_merge() -> simple merging every value until we hit something we can't merge into.
@@ -119,3 +123,18 @@ test4_intervals = []
 test4_new_interval = [5, 7]
 test4_out = [[5, 7]]
 print(insert(test4_intervals, test4_new_interval))
+
+# test5 - failed -> bruh. I used walrus_sign to assign place_index and forgot about index == 0 case,
+#                   and 0 is always FALSE, we're getting index = 0 and instantly skipping IF statement.
+#                   Walrus is a tricky_one in these situations, I should remember it.
+test5_intervals = [[1, 5], [6, 8]]
+test5_new_interval = [5, 6]
+test5_out = [1, 8]
+print(insert(test5_intervals, test5_new_interval))
+
+# test6 - failed -> fail to see case where's new_interval can't be merged and not going to be a new [0] or [-1]
+#                   but somewhere between.
+test6_intervals = [[3, 5], [12, 15]]
+test6_new_interval = [6, 6]
+test6_out = [[3, 5], [6, 6], [12, 15]]
+print(insert(test6_intervals, test6_new_interval))
