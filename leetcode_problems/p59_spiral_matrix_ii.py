@@ -1,5 +1,6 @@
 # Given a positive integer n, generate an n x n matrix filled with elements from 1 to n2 in spiral order.
 # 1 <= n <= 20
+
 def generate_matrix(n: int) -> list[list[int]]:
     # working_sol (14.40%, 17.46%) -> (46ms, 16.3mb)  time: O( ) | space: O( )
     matrix: list[list[int]] = [[-1 for _ in range(n)] for _ in range(n)]
@@ -59,7 +60,6 @@ def generate_matrix(n: int) -> list[list[int]]:
 #   and replace placeholder with given values.
 # Placeholder is simpler, but slower. Creating and after looping, not just creating and populating together.
 # Try placeholder first.
-
 
 
 test1 = 3
