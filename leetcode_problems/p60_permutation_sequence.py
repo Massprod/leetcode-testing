@@ -25,7 +25,7 @@ def get_permutation(n: int, k: int) -> str:
             to_check[x], to_check[start_ind] = to_check[start_ind], to_check[x]
     rec_permute(to_permute, 0)
     permutes.sort()
-    k_permute: str = ""
+    k_permute = ""
     for _ in permutes[k - 1]:
         k_permute += str(_)
     return k_permute
