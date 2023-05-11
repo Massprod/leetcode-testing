@@ -11,11 +11,13 @@
 
 def get_permutation(n: int, k: int) -> str:
     to_permute: list[int] = [_ for _ in range(1, n + 1)]
+    permutes_set: set = set()
     permutes: list[list[int]] = []
 
     def rec_permute(to_check: list[int], start_ind: int = 0):
         if start_ind == len(to_check):
-            permutes.append(to_check.copy())
+            # permutes.append(to_check.copy())
+            permutes_set.add(tuple(to_check.copy()))
             return
         for x in range(start_ind, len(to_check)):
             if to_check[x] == to_check[start_ind] and start_ind != x:
@@ -25,6 +27,7 @@ def get_permutation(n: int, k: int) -> str:
             to_check[x], to_check[start_ind] = to_check[start_ind], to_check[x]
     rec_permute(to_permute, 0)
     k_permute: str = ""
+    permutes = list(permutes_set)
     permutes.sort()
     for _ in permutes[k-1]:
         k_permute += str(_)
@@ -71,4 +74,12 @@ print(get_permutation(test4_n, test4_k))
 test5_n = 3
 test5_k = 5
 test5_out = "312"
+assert test5_out == get_permutation(test5_n, test5_k)
 print(get_permutation(test5_n, test5_k))
+
+# test6 - failed -> Yep. Time_limit, cuz there's no way it's just repeating of p47, and I need to find way to stop
+#                   recursion at some moment. Already tried to simple count of adding unique_permutes and stop at k.
+test6_n = 9
+test6_k = 206490
+test6_out = "619754832"
+print(get_permutation(test6_n, test6_k))
