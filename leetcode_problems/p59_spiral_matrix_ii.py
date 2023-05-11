@@ -1,6 +1,7 @@
 # Given a positive integer n, generate an n x n matrix filled with elements from 1 to n2 in spiral order.
 # 1 <= n <= 20
 def generate_matrix(n: int) -> list[list[int]]:
+    # working_sol (14.40%, 17.46%) -> (46ms, 16.3mb)  time: O( ) | space: O( )
     matrix: list[list[int]] = [[-1 for _ in range(n)] for _ in range(n)]
     all_steps: int = n * n
     max_y = max_x = len(matrix[0]) - 1  # always square matrix n * n
@@ -44,11 +45,21 @@ def generate_matrix(n: int) -> list[list[int]]:
         steps += 1
     return matrix
 
-
+# Time complexity: O(n) -> there's only 2 loops, first to create matrix of n * n size.
+#                          Second going through whole created matrix and populating it with values from 1 to n ** 2.
+#                          O(n + n) -> O(2n) -> O(n)
+# Space complexity: O(n * n) -> constants and one list with lists inside -> O(consts + (n * n))
+#                              ! cringe calculations, cuz there's, formulas for it, but I still didn't learn them.
+#                                Basic idea should be correct !
+# --------------------------
+# Solution with populating and creating in the same time is a lot harder, and I don't have time for this now.
+# Actually there's going to be more matrix's stuff, and maybe I will encounter something familiar, for now it's enough.
+# --------------------------
 # There's basic 2 ways I see here, populate from empty list, and made (n * n) matrix and populate it with placeholder,
 #   and replace placeholder with given values.
 # Placeholder is simpler, but slower. Creating and after looping, not just creating and populating together.
 # Try placeholder first.
+
 
 
 test1 = 3
@@ -78,4 +89,3 @@ test = generate_matrix(test3)
 assert test == test3_out
 for _ in test:
     print(_)
-
