@@ -12,17 +12,25 @@ import math
 
 
 def get_permutation(n: int, k: int) -> str:
+    # working_sol (34.14, 20.55%) -> (45ms, 16.4mb)  time: O(n ** n) | space: O(n)
     numbers = [_ for _ in range(1, n + 1)]
     permutation = ''
     k -= 1  # for 0 - based indexing
     for x in range(n):
         n -= 1
         fact = math.factorial(n)
-        index = int(k / fact)
+        index = int(k / fact)  # // <- if I want to divide without remainder, btw :)
         k = k % fact
         permutation += str(numbers[index])
         numbers.pop(index)
     return permutation
+
+# Time complexity: O(n ** n) -> creating list of input_n size -> O(n) -> looping input_n times -> O(n) ->
+#                               -> for every loop_iteration calculating factorial O(n) + deleting list_element O(n) ->
+#                               -> O(n ** n) -> for every value in number 2loops inside.
+#                               ! loop inside a loop == O(n ** n) !
+# Space complexity: O(n) -> string and one extra list of input_n size.
+
 
 # Ok. Brute solution is fine, but there's no way to make it faster without rebuild.
 # Google_time:
@@ -44,7 +52,8 @@ def get_permutation(n: int, k: int) -> str:
 # Especially:
 #   ! The first position of an n length sequence is occupied by each of the numbers from 1 to n
 #     exactly n! / n that is (n-1)! number of times and in ascending order. !
-
+# Guess every time I meet HARD solution, it's just better to google :)
+# Cuz there's always some tricky part with math, you just can't get it by yourself, and strict time_limit.
 
 test1_n = 3
 test1_k = 3
