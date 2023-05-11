@@ -11,13 +11,11 @@
 
 def get_permutation(n: int, k: int) -> str:
     to_permute: list[int] = [_ for _ in range(1, n + 1)]
-    permutes_set: set = set()
     permutes: list[list[int]] = []
 
     def rec_permute(to_check: list[int], start_ind: int = 0):
         if start_ind == len(to_check):
-            # permutes.append(to_check.copy())
-            permutes_set.add(tuple(to_check.copy()))
+            permutes.append(to_check.copy())
             return
         for x in range(start_ind, len(to_check)):
             if to_check[x] == to_check[start_ind] and start_ind != x:
@@ -26,10 +24,9 @@ def get_permutation(n: int, k: int) -> str:
             rec_permute(to_check, start_ind + 1)
             to_check[x], to_check[start_ind] = to_check[start_ind], to_check[x]
     rec_permute(to_permute, 0)
-    k_permute: str = ""
-    permutes = list(permutes_set)
     permutes.sort()
-    for _ in permutes[k-1]:
+    k_permute: str = ""
+    for _ in permutes[k - 1]:
         k_permute += str(_)
     return k_permute
 
@@ -83,3 +80,11 @@ test6_n = 9
 test6_k = 206490
 test6_out = "619754832"
 print(get_permutation(test6_n, test6_k))
+
+# test7 - failed -> Time_limit, if I stop permutations at some point my solution isn't going to work,
+#                   cuz there's either other solution with correct order of permutations or IDK.
+#                   Because it's obviously going to work with full list of all_unique_permutations in ascending order.
+test7_n = 9
+test7_k = 219601
+test7_out = "647123589"
+print(get_permutation(test7_n, test7_k))
