@@ -21,6 +21,7 @@ def create_linked(to_link: list[int]) -> ListNode:
 
 
 def rotate_right(head: ListNode, k: int) -> ListNode:
+    # working_sol (22.40%, 6.87%) -> (48ms, 16.4mb)  time: O(n) | space: O(n)
     if k == 0:
         return head
     values: list[int] = []
@@ -30,7 +31,7 @@ def rotate_right(head: ListNode, k: int) -> ListNode:
         tempo = tempo.next
     if len(values) == 0:
         return head
-    for _ in range(k):
+    for _ in range(k % len(values)):
         to_rotate = values[-1]
         values.pop()
         values.insert(0, to_rotate)
@@ -40,6 +41,12 @@ def rotate_right(head: ListNode, k: int) -> ListNode:
         tempo.next = new_node
         tempo = new_node
     return rotated
+
+
+# Time complexity: O(n) -> creating list, while looping once through input_linked O(n) ->
+#                          -> making rotated version of given input values, depends on input O(n) ->
+#                          -> creating single_linked list of rotated values O(n).
+# Space complexity: O(n) -> extra list of input_size O(n) -> extra linked_list of input_size O(n).
 
 
 # Well I considered empty linked_list and k == 0 cases, don't see any others for now.
@@ -90,10 +97,14 @@ del test
 
 # test5 - failed -> time_limit -> every time we rotate full_circle there's number of times for it.
 #                                 Guess I need to find some remainder after this full_rotations.
+#                                 ! test5_k % len(test5)
+#                                   ^^ Yep worked for this one, let's fail again :) !
 test5 = [1, 2, 3]
 test5_k = 2000000000
-print(test5_k % len(test5))
-# test5_out =
+test5_out = [2, 3, 1]
 test5_linked = create_linked(test5)
 test = rotate_right(test5_linked, test5_k)
-# print(test)
+for value in test5_out:
+    assert value == test.val
+    test = test.next
+del test
