@@ -16,7 +16,7 @@ def length_of_last_word(s: str) -> int:
 # Time complexity: O(n) -> By the task description there's always will be word and spaces (at least 1 of each)
 #                          Worst case is we're going to loop through whole input -> case like this "word   "
 #                  Θ(log n) -> best of all cases -> "word   word" (only part of input will be searched)
-#                  Ω(1) -> best case like this -> "word" (always at least one word, no info about spaces)
+#                  Ω(n) -> best case like this -> "word" (always at least one word, no info about spaces)
 # Space complexity: O(1) -> one constant for counting length.
 
 # Most simple way to solve it is STRIP(), but I guess it's not a correct way to use build_in methods.
