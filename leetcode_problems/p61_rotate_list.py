@@ -41,6 +41,7 @@ def rotate_right(head: ListNode, k: int) -> ListNode:
         tempo = new_node
     return rotated
 
+
 # Well I considered empty linked_list and k == 0 cases, don't see any others for now.
 # --------------------------
 # Ok. First of all there's no mentioning of changing it in place, and we're returning -> ListNode.
@@ -56,6 +57,7 @@ test = rotate_right(test1_linked, test1_k)
 for value in test1_out:
     assert value == test.val
     test = test.next
+del test  # deleting declared temporarily value of node, cuz there's warning for unused declaration.
 
 test2 = [0, 1, 2]
 test2_k = 4
@@ -65,6 +67,7 @@ test = rotate_right(test2_linked, test2_k)
 for value in test2_out:
     assert value == test.val
     test = test.next
+del test
 
 test3 = [1, 2, 3]
 test3_k = 0
@@ -74,6 +77,7 @@ test = rotate_right(test3_linked, test3_k)
 for value in test3_out:
     assert value == test.val
     test = test.next
+del test
 
 test4 = []
 test4_k = 3
@@ -82,3 +86,14 @@ test = rotate_right(test4, test4_k)
 for value in test4_out:
     assert value == test.val
     test = test.next
+del test
+
+# test5 - failed -> time_limit -> every time we rotate full_circle there's number of times for it.
+#                                 Guess I need to find some remainder after this full_rotations.
+test5 = [1, 2, 3]
+test5_k = 2000000000
+print(test5_k % len(test5))
+# test5_out =
+test5_linked = create_linked(test5)
+test = rotate_right(test5_linked, test5_k)
+# print(test)
