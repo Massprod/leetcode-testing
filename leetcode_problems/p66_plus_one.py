@@ -9,6 +9,7 @@
 
 
 def plus_one(digits: list[int]) -> list[int]:
+    # working_sol (7.48%, 14.55%) -> (53ms, 16.3mb)  time: O(n)  | space: O(n)
     num: str = ""
     for _ in digits:
         num += str(_)
@@ -20,8 +21,15 @@ def plus_one(digits: list[int]) -> list[int]:
         incremented.append(int(_))
     return incremented
 
+# Time complexity: O(n) -> lopping once through whole input_list to create num => O(n) ->
+#                          -> looping through created string(num) of input_list size => O(n) -> O(2n) => O(n)
+#                  Ω(n) = O(n) = Θ(n) -> always looping whole input_list, no matter what.
+# Space complexity: O(n) -> creating extra string of input_list size => O(n) ->
+#                           -> creating extra integer and string of this integer = size of input_list => O(n) ->
+#                           -> creating extra list of input_list size => O(n) -> O(3n) => O(n)
+# -----------------------------
 # Most basic way is: make str from list -> make int from string -> increment by 1 -> make str from int -> list string
-# But it's a lot of transformations and if there's time_limit, than I will rebuild but try this one.
+# But it's a lot of transformations and if there's time_limit, then I will rebuild but try this one.
 
 
 test1 = [1, 2, 3]
@@ -41,5 +49,3 @@ test3_out = [1, 0]
 print(plus_one(test3))
 for _ in range(len(test3_out)):
     assert test3_out[_] == plus_one(test3)[_]
-
-print(plus_one([-1]))
