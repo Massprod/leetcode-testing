@@ -20,7 +20,7 @@ def unique_paths(m: int, n: int) -> int:
     return matrix[-1][-1]
 
 # Time complexity: O(m * n) -> nested_loop to create matrix of m * n size O(m * n) ->
-#                              -> two loops to populate unique row, column O(n) ->
+#                              -> two loops to populate unique row O(n), column O(m) ->
 #                              -> nested_loop to populate empty cells O((m - 1) * (n - 1)).
 # Space complexity: O(m * n) -> creating matrix with height of input_m and length of input_n.
 
