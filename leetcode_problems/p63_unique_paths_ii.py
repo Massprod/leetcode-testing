@@ -12,20 +12,23 @@
 # 1 <= m, n <= 100  ,  obstacleGrid[i][j] is 0 or 1.
 
 def unique_paths_obstacles(obstacleGrid: list[list[int]]) -> int:
+    # working_sol (5.30%, 11.2%) -> (68ms, 16.4mb)  time: O(
     if obstacleGrid[0][0] == 1 or obstacleGrid[-1][-1]:
         return 0
     length: int = len(obstacleGrid[0])
     height: int = len(obstacleGrid)
+    limit_row: int = 1
     for _ in range(length):
         if obstacleGrid[0][_] == 1:
-            obstacleGrid[0][_] = 0
-            break
-        obstacleGrid[0][_] = 1
+            limit_row = 0
+            obstacleGrid[0][_] = limit_row
+        obstacleGrid[0][_] = limit_row
+    limit_column: int = 1
     for _ in range(1, height):
         if obstacleGrid[_][0] == 1:
-            obstacleGrid[_][0] = 0
-            break
-        obstacleGrid[_][0] = 1
+            limit_column = 0
+            obstacleGrid[_][0] = limit_column
+        obstacleGrid[_][0] = limit_column
     for y in range(1, height):
         for x in range(1, length):
             if obstacleGrid[y][x] == 1:
@@ -34,6 +37,11 @@ def unique_paths_obstacles(obstacleGrid: list[list[int]]) -> int:
             obstacleGrid[y][x] = obstacleGrid[y - 1][x] + obstacleGrid[y][x - 1]
     return obstacleGrid[-1][-1]
 
+
+# Time complexity: O(n * m) -> looping once through whole input of m * n size -> first_row_loop => O(m) ->
+# n - height, m - length ^^    -> first_column_loop => O(n)
+#                              -> nested loop for y = n, x = m depends on input matrix size (n * m) => O(n * m)
+# Space complexity: O(1) -> only 4 extra constants: length, height, limit_row, limit_column => O(1)
 
 # Same approach but, if we along the way encounter obstacle we're making this cell unapproachable by giving value of 0.
 # Which is 0 path to enter this cell, and we can summ num_of_paths like before.
@@ -66,10 +74,26 @@ del test
 test4 = [
     [0], [1], [0], [0], [0], [0], [0], [0], [0], [0], [0], [0], [1],
     [0], [0], [0], [0], [1], [0], [0], [0], [0], [0], [0], [0], [0],
-    [0], [0], [1], [1], [0], [1], [0], [0], [1], [0], [0], [0], [0], [1]
+    [0], [0], [1], [1], [0], [1], [0], [0], [1], [0], [0], [0], [0],
+    [1],
 ]
 test4_out = 0
 test = unique_paths_obstacles(test4)
 print(test)
 assert test == test4_out
+del test
+
+# test5 - failed -> I made loop for first row and column breaking when we encounter obstacle.
+#                   But didn't consider if there's more than 1 obstacle,
+#                   and we need to null all the row, column after first obstacle.
+test5 = [
+    [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [1, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [1, 0],
+    [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [1, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0],
+    [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [1, 0], [0, 0], [0, 0],
+    [0, 0], [0, 0],
+]
+test5_out = 0
+test = unique_paths_obstacles(test5)
+print(test)
+assert test == test5_out
 del test
