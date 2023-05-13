@@ -9,7 +9,7 @@
 
 def unique_paths(m: int, n: int) -> int:
     # working_sol (5.12%, 17.96%) -> (56ms, 16.3mb)  time: O(n * m) | space: O(n * m)
-    matrix = [[0 for _ in range(n)] for _ in range(m)]
+    matrix: list[list[int]] = [[0 for _ in range(n)] for _ in range(m)]
     for _ in range(n):
         matrix[0][_] = 1
     for _ in range(m):
@@ -37,9 +37,11 @@ def unique_paths(m: int, n: int) -> int:
 test1_m = 3
 test1_n = 7
 test1_out = 28
+print(unique_paths(test1_m, test1_n))
 assert unique_paths(test1_m, test1_n)
 
 test2_m = 3
 test2_n = 2
 test2_out = 3
+print(unique_paths(test2_m, test2_n))
 assert unique_paths(test2_m, test2_n)
