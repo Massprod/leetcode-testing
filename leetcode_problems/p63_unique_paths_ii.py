@@ -40,7 +40,8 @@ def unique_paths_obstacles(obstacleGrid: list[list[int]]) -> int:
 
 # Time complexity: O(n * m) -> looping once through whole input of m * n size -> first_row_loop => O(m) ->
 # n - height, m - length ^^    -> first_column_loop => O(n)
-#                              -> nested loop for y = n, x = m depends on input matrix size (n * m) => O(n * m)
+#                              -> nested loop for 1 <= y <= (n - 1), 1 <= x <= (m - 1)
+#                                 depends on input matrix size (n * m) => O(n * m)
 # Space complexity: O(1) -> only 4 extra constants: length, height, limit_row, limit_column => O(1)
 
 # Same approach but, if we along the way encounter obstacle we're making this cell unapproachable by giving value of 0.
