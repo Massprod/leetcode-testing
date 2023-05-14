@@ -5,7 +5,7 @@
 # For example, do not use pow(x, 0.5) in c++ or x ** 0.5 in python.
 
 def my_sqrt(x: int) -> int:
-    # working_sol (10.14%, 12.86%) -> (2548ms, 16.3mb)  time: O(n) | space: O(1)
+    # working_sol (10.14%, 12.86%) -> (2548ms, 16.3mb)  time: O(log n) | space: O(1)
     if x == 0:
         return 0
     prev_num: int = 0
@@ -17,7 +17,9 @@ def my_sqrt(x: int) -> int:
             return prev_num
         prev_num = num
 
-# Time complexity: O(n) -> one for_loop for values from 0 to input_int(x) => O(n).
+# Time complexity: O(log n) -> one for_loop for values from 0 to input_int(x) => O(n) ->
+#                              -> but we're breaking before we hit input_int(x) => O(log n) ->
+#                              -> always breaking before hitting input_int(x) value, leaving us with O(log n)
 # Space complexity: O(1) -> two constants: prev_num, result => O(1).
 
 # I need to rebuild it, but I don't want to google solution, cuz there's built_in sqrt() in every language.
