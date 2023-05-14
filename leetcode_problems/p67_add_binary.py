@@ -5,6 +5,7 @@
 # Each string does not contain leading zeros except for the zero itself.
 
 def add_binary(a: str, b: str) -> str:
+    # working_sol (13.39%, 8.73%) -> (52ms, 16.5mb)  time: O(n)  | space: O(n)
     length_a: int = len(a)
     length_b: int = len(b)
     max_length: int = -1
@@ -60,10 +61,24 @@ def add_binary(a: str, b: str) -> str:
             y -= 1
     if carry != 0:
         result.insert(0, 1)
+    answer: str = ""
     for x in range(len(result)):
-        result[x] = str(result[x])
-    return "".join(result)
+        answer += str(result[x])
+    return answer
 
+# Time complexity: O(n) -> using insert every time we call index of the highest string => O(n) ->
+#                          -> looping once through whole max_length input => O(n) ->
+#                          -> looping once through result to create answer string => O(n)
+#                          -> worst case O(n) <- where's n is max(len(a), len(b))
+# Space complexity: O(n) -> extra constants, and only one new list - result of highest_input_size => O(n) ->
+#                          -> creating string size of result => O(n) -> leaving us with auxiliary space O(n)
+
+# Welp, it worked and not even really slow, actually.
+# Especially for me, cuz I didn't even know about binary sum, before this task.
+# --------------------------------
+# 100% sure it's overcomplicated solution, but I started one thing and tried to make it work...
+# Tested with extra values and it's working. Maybe it's slow and overcomplicated but let's try this one.
+# --------------------------------
 # Binary rules for add:
 #       0 + 1 = 1
 #       1 + 0 = 1
@@ -88,3 +103,9 @@ test3_b = "1011000"
 test3_out = "10001111"
 print(add_binary(test3_a, test3_b))
 assert test3_out == add_binary(test3_a, test3_b)
+
+test4_a = "11000000111001"
+test4_b = "1101010000110001"
+test4_out = "10000010001101010"
+print(add_binary(test4_a, test4_b))
+assert test4_out == add_binary(test4_a, test4_b)
