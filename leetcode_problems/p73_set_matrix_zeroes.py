@@ -43,8 +43,8 @@ def set_zeroes(matrix: list[list[int]]) -> None:
 # skipping another 0 on the way, without it -> auxiliary space => O(m * n)
 
 
-def set_zeroes_const(matrix: list[list[int | str]]) -> None:
-    # working_sol (21.85%, 12.99%) -> (143ms, 17.3mb)  time: O(m * n) | space: O(N)
+def set_zeroes_recur(matrix: list[list[int | str]]) -> None:
+    # working_sol (21.85%, 12.99%) -> (143ms, 17.3mb)  time: O(m * n) | space: O(m * n)
     def zeroing(y: int = 0, x: int = 0, found: bool = False):
         if found:
             for _ in range(y + 1, len(matrix)):
@@ -86,12 +86,52 @@ def set_zeroes_const(matrix: list[list[int | str]]) -> None:
 # Made a recursion with auxiliary space of O(m * n).
 # ! constant space complexity means the amount of space used
 #   by your algorithm is independent of the size of the input. so you can't use recursion. !
+# Brain-lag thinking recursion taking less space.
 # How can I make it work in 1 nested loop?
 
 
+def set_zeroes_const(matrix: list[list[int | str]]):
+    # working_sol: (15.88%, 26.54%) -> (146ms, 17.2mb)  time: O(m * n) | space: O(1)
+    for y in range(len(matrix)):
+        for x in range(len(matrix[0])):
+            if matrix[y][x] == 0:
+                for _ in range(y + 1, len(matrix)):
+                    if matrix[_][x] == 0:
+                        continue
+                    matrix[_][x] = "-"
+                for _ in range(x + 1, len(matrix[0])):
+                    if matrix[y][_] == 0:
+                        continue
+                    matrix[y][_] = "-"
+                for _ in range(y - 1, -1, -1):
+                    if matrix[_][x] == 0:
+                        continue
+                    matrix[_][x] = "-"
+                for _ in range(x - 1, -1, -1):
+                    if matrix[y][_] == 0:
+                        continue
+                    matrix[y][_] = "-"
+    for _y in range(len(matrix)):
+        for _x in range(len(matrix[0])):
+            if matrix[_y][_x] == "-":
+                matrix[_y][_x] = 0
+
+# Time complexity: O(m * n) -> 2 nested loops => O(m * n)
+# Space complexity: O(1) -> nothing extra, and no recursion => O(1)
+#
+# -----------------------------------
+# I can make it like recursion, but with 2 nested loops ->
+#   -> first nested loop, we're changing all row_columns for 0 to any_symbol("-") ->
+#   -> and second nested loop we're changing symbol to 0.
+# Is it constant space? We're not using recursion or creating anything extra, just looping twice whole input.
+# Don't see how it isn't constant.
+
+
+# changing in_place, always do a copy or test once.
 test1 = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
 test1_out = [[1, 0, 1], [0, 0, 0], [1, 0, 1]]
 # set_zeroes(test1)
+# set_zeroes_recur(test1)
 set_zeroes_const(test1)
 print(test1)
 for _ in test1_out:
@@ -100,6 +140,7 @@ for _ in test1_out:
 test2 = [[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]
 test2_out = [[0, 0, 0, 0], [0, 4, 5, 0], [0, 3, 1, 0]]
 # set_zeroes(test2)
+# set_zeroes_recur(test2)
 set_zeroes_const(test2)
 print(test2)
 for _ in test2_out:
@@ -108,6 +149,7 @@ for _ in test2_out:
 test3 = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 test3_out = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 # set_zeroes(test3)
+# set_zeroes_recur(test3)
 set_zeroes_const(test3)
 print(test3)
 for _ in test3_out:
@@ -115,6 +157,7 @@ for _ in test3_out:
 
 test4 = [[1, 2, 3, 4], [5, 0, 7, 8], [0, 10, 11, 12], [13, 14, 15, 0]]
 test4_out = [[0, 0, 3, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+# set_zeroes_recur(test4)
 set_zeroes_const(test4)
 print(test4)
 for _ in test4_out:
@@ -122,6 +165,7 @@ for _ in test4_out:
 
 test5 = [[0, 0, 0, 5], [4, 3, 1, 4], [0, 1, 1, 4], [1, 2, 1, 3], [0, 0, 1, 1]]
 test5_out = [[0, 0, 0, 0], [0, 0, 0, 4], [0, 0, 0, 4], [0, 0, 0, 3], [0, 0, 0, 0]]
+# set_zeroes_recur(test5)
 set_zeroes_const(test5)
 print(test5)
 for _ in test5_out:
