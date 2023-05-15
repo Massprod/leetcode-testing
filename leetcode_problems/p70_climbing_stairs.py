@@ -3,13 +3,17 @@
 # 1 <= n <= 45
 
 def climb_stairs(n: int) -> int:
-    def climbing(step: int = 0) -> int | None:
-        if step == n:
+    copy: int = n
+
+    def climbing(step: int = copy) -> int | None:
+        if step == 0:
             return 1
-        if step > n:
+        if step < 0:
             return 0
-        return climbing(step + 1) + climbing(step + 2)
+        return climbing(step - 1) + climbing(step - 2)
     return climbing()
+
+# From right_to_left, left_to_right leaving us with O(2 ** n) recursion, and both hits time_limit.
 
 
 test1 = 2
@@ -23,3 +27,9 @@ print(climb_stairs(test2))
 test3 = 10
 test3_out = 89
 print(climb_stairs(test3))
+
+# test4 - failed -> time_limit, I did most simple wait and didn't think about task a lot, cuz it's easy.
+#                   It's working, but too slow.
+test4 = 38
+test4_out = 63245986
+print(climb_stairs(test4))
