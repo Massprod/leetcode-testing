@@ -22,6 +22,7 @@
 
 
 def is_number(s: str) -> bool:
+    # working_sol (22.14%, 21.72%) -> (48ms, 16.2mb)  time: O(n) | O(1)
     digits: set[str] = set()
     for _ in range(10):
         digits.add(str(_))
@@ -74,6 +75,12 @@ def is_number(s: str) -> bool:
         return False
     return True
 
+# Time complexity: O(n) -> looping once through whole input_string(list) => O(n)
+# Space complexity: O(1) -> we're not creating anything that depends on input_string,
+#                           but we're creating a lot of constants no matter what input is => O(1)
+#                           ! maybe it's wrong, but as I understand BigO =>
+#                             shows what will be extra space depending on input,
+#                             and we're not creating anything that depends on input, except constants !
 
 # One walk solution, but very hard on if statements, maybe there's more pretty solution.
 # But I need to test_commit this one first.
