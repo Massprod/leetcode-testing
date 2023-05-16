@@ -52,16 +52,19 @@ def is_number(s: str) -> bool:
             return False
         if symbol == dot_sign and dot_allowed:
             dot_allowed = False
+            pn_sign_allowed = False
             continue
         if symbol == dot_sign and not dot_allowed:
             return False
         if symbol in digits and e_sign_allowed:
             digits_used = True
+            pn_sign_allowed = False
             continue
         if symbol in digits and not e_sign_allowed and not digits_used:
             return False
         if symbol in digits and not e_sign_allowed and not digits_after_used:
             digits_after_used = True
+            pn_sign_allowed = False
             continue
         if (symbol not in digits) and (symbol not in pn_signs) and (symbol not in e_sign) and (symbol != dot_sign):
             return False
@@ -92,6 +95,24 @@ assert test2_out == is_number(test2)
 test3 = "."
 test3_out = False
 assert test3_out == is_number(test3)
+
+# test4 - failed -> because I made very hard_to_read solution,
+#                   and forgot about pn_sign need's to be blocked after first digit
+#                   and unblocked after e/E sign, and blocked again after first digit
+test4 = "6+1"
+test4_out = False
+assert test4_out == is_number(test4)
+
+test5 = "61e12+1"
+test5_out = False
+assert test5_out == is_number(test5)
+
+# test6 - failed -> bruh...
+#                   Literally made this mistake in test4, but forgot about dot sign blocking pn_sign as well.
+#                   ! well at least it's in last 10 cases, from 1500 cases !
+test6 = ".-4"
+test6_out = False
+assert test6_out == is_number(test6)
 
 valid_numbers = [
     "2", "0089", "-0.1", "+3.14", "4.", "-.9", "2e10",
