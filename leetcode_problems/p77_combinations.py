@@ -5,21 +5,21 @@ from copy import deepcopy
 
 
 def combine(n: int, k: int) -> list[list[int]] | set:
-    all_numbers: list[int] = [_ for _ in range(1, n + 1)]
     k_numbers: set = set()
     tempo: list[int] = []
 
-    def new_combine(origin_size: int = n, index: int = 0, slice_size: int = k):
-        if slice_size == 0:
+    def new_combine(start: int = 1, end: int = n + 1, left_to_use: int = k):
+        if left_to_use == 0:
             copy: list[int] = deepcopy(tempo)
             copy.sort()
             k_numbers.add(tuple(copy))
+            del copy
             return
-        for x in range(index, origin_size):
-            if all_numbers[x] in tempo:
+        for num in range(start, end):
+            if num in tempo:
                 continue
-            tempo.append(all_numbers[x])
-            new_combine(origin_size, index + 1, slice_size - 1)
+            tempo.append(num)
+            new_combine(start + 1, end, left_to_use - 1)
             tempo.pop()
     new_combine()
     return k_numbers
@@ -60,3 +60,4 @@ del test
 test4_n = 13
 test4_k = 10
 test = list(combine(test4_n, test4_k))
+print(test)
