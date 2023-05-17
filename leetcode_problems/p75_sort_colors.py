@@ -13,6 +13,7 @@ from random import randint
 
 
 def sort_colors(nums: list[int]) -> None:
+    # working_sol (29.38%, 19.59%) -> (44ms, 16.1mb)  time: O( ) | space: O(1)
     left: int = 0
     right: int = len(nums) - 1
     for x in range(len(nums)):
@@ -33,8 +34,20 @@ def sort_colors(nums: list[int]) -> None:
                 if nums[x] == 0:
                     left += 1
 
+# Time complexity: O(n) -> worst case, there's no 0 or 2 in array ->
+#                          -> so we're looping once through whole input_array without changing anything => O(n)
+#                  -------
+#                  Ω(n) -> best case, always looping once through every index of input_array => O(n)
+#                  -------
+#                  Θ(n) -> median case, always looping once through every index of input_array => O(n)
+#                  -------
+#     ! we're looping once through whole input_array indexes, cuz every time we use while_loop we're changing
+#       left and right, and they're index_limits, we will break from loop when we used every index once. !
+#
+# Space complexity: O(1) -> 2 extra constants => O(1)
+# -------------------
 # I made it by intuition and started with one-way solution, cuz why not?
-# But it was hard to come up with tests cases, as always commit -> fail-> rebuild
+# But it was hard to come up with tests cases, as always commit -> fail-> rebuild. Caused me 2 fails.
 # -------------------
 # It's not actually one-pass solution. Because we're looping once but there's nested loop inside to change blue color.
 # But maybe it's one-pass cuz there's no definition of that, and we're looping once through whole input.
@@ -54,7 +67,7 @@ test3 = [2, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 2, 0, 2]
 sort_colors(test3)
 print(test3)
 
-test4 = [1, 1, 1, 1, 0, 2]
+test4 = [0, 1, 1, 1, 1, 1]
 sort_colors(test4)
 print(test4)
 
