@@ -8,27 +8,35 @@
 # You must solve this problem without using the library's sort function.
 # --------------------------------
 # ! Follow up: Could you come up with a one-pass algorithm using only constant extra space? !
+import copy
+from random import randint
+
 
 def sort_colors(nums: list[int]) -> None:
     left: int = 0
     right: int = len(nums) - 1
-    while left <= right:
-        for x in range(len(nums)):
-            if nums[x] == 2 and x <= right:
+    for x in range(len(nums)):
+        if x > right:
+            break
+        if nums[x] == 2 and x <= right:
+            nums[x], nums[right] = nums[right], nums[x]
+            right -= 1
+            while nums[x] == 2 and x < right:
                 nums[x], nums[right] = nums[right], nums[x]
                 right -= 1
-            if nums[x] == 0 and x >= left:
-                nums[x], nums[left] = nums[left], nums[x]
-                left += 1
-                while nums[x] == 2:
-                    nums[x], nums[right] = nums[right], nums[x]
-                    right -= 1
-                    if nums[x] == 0:
-                        left += 1
-        break
+        if nums[x] == 0 and x >= left:
+            nums[x], nums[left] = nums[left], nums[x]
+            left += 1
+            while nums[x] == 2 and x < right:
+                nums[x], nums[right] = nums[right], nums[x]
+                right -= 1
+                if nums[x] == 0:
+                    left += 1
 
-
-# It's not actually one-pass solution. Because we're looping once but there's neste loop inside to change blue color.
+# I made it by intuition and started with one-way solution, cuz why not?
+# But it was hard to come up with tests cases, as always commit -> fail-> rebuild
+# -------------------
+# It's not actually one-pass solution. Because we're looping once but there's nested loop inside to change blue color.
 # But maybe it's one-pass cuz there's no definition of that, and we're looping once through whole input.
 
 
@@ -45,3 +53,37 @@ print(test2)
 test3 = [2, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 2, 0, 2]
 sort_colors(test3)
 print(test3)
+
+test4 = [1, 1, 1, 1, 0, 2]
+sort_colors(test4)
+print(test4)
+
+test5 = [2, 1, 1, 2, 0, 1]
+sort_colors(test5)
+print(test5)
+
+# test6 - failed -> I knew it's not a working solution, but I could make tests cases on my own and failed to see them.
+#                   Cuz im switching 2 -> 0 and failing to see all options.
+#                   -> In this one I failed with changing nums[x] == 2, if we're hitting break  x < right
+test6 = [2, 0, 2]
+sort_colors(test6)
+print(test6)
+
+# test7 - failed -> I need to make while loop for 2 to 2 switch.
+test7 = [2, 1, 2]
+sort_colors(test7)
+print(test7)
+
+test8 = [2, 0, 2, 0, 1, 2, 0]
+sort_colors(test8)
+print(test8)
+
+# Dunno about other cases, but for 1000 random cases it's working.
+for test in range(1000):
+    test_ = []
+    for _ in range(1000):
+        test_.append(randint(0, 2))
+    test_2 = copy.deepcopy(test_)
+    sort_colors(test_)
+    test_2.sort()
+    assert test_2 == test_
