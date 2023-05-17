@@ -1,28 +1,40 @@
 # Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].
 # 1 <= n <= 20  ,  1 <= k <= n
 # You may return the answer in any order.
-from copy import deepcopy
 
 
 def combine(n: int, k: int) -> list[list[int]] | set:
+    # working_sol (8.43%, 6.27%) -> (607ms, 18.5mb)  time: O(n ** k) | space: O(nCk * k)
     k_numbers: set = set()
     tempo: list[int] = []
 
     def new_combine(start: int = 1, end: int = n + 1, left_to_use: int = k):
         if left_to_use == 0:
-            copy: list[int] = deepcopy(tempo)
-            copy.sort()
-            k_numbers.add(tuple(copy))
-            del copy
+            k_numbers.add(tuple(sorted(tempo)))
             return
         for num in range(start, end):
             if num in tempo:
-                continue
+                break
             tempo.append(num)
             new_combine(start + 1, end, left_to_use - 1)
             tempo.pop()
     new_combine()
     return k_numbers
+
+# Time complexity: O(n ** k) -> recursion tree with n branches and k depths => O(n ** k)
+# Space complexity: O((n! / k! * (n-k)!) * k) or O(nCk * k) -> storing all combinations => O(nCk) ->
+#                   and size of combinations is k, for every combination we create tempo_list of k size ->
+#                   -> leaving us with a list or set with size of => O(nCk * k)
+#   !
+#   The number of combinations of n distinct objects, taken r at a time is:
+#                          nCr = n! / r! (n - r)!
+#   !
+# --------------------------
+# Counting all permutations, with 4585ms solution not a great idea, but working.
+# Ok...77ms just for breaking from loop after we try to use already used num.
+# We shouldn't have duplicates inside, it was obvious (cuz range 1...n),
+# and we should break instantly if we meet it,
+# and there's no reason to check any values after it for this recursion call.
 
 
 test1_n = 4
@@ -60,4 +72,4 @@ del test
 test4_n = 13
 test4_k = 10
 test = list(combine(test4_n, test4_k))
-print(test)
+# correct test, I just don't want to store 1000values here or made some file for it.
