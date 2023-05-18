@@ -6,6 +6,8 @@
 def largest_rectangle(heights: list[int]) -> int:
     max_area: int = 0
     for index in range(len(heights)):
+        if heights[index] == heights[index - 1] and index != 0:
+            continue
         if heights[index] == 0:
             continue
         length: int = 1
@@ -23,6 +25,12 @@ def largest_rectangle(heights: list[int]) -> int:
     return max_area
 
 
+# ------------------------
+# Yep. Failed with time_limit test of (1 * 10000000) indexes.
+# This is why I wanted to use min_plato in a first solution.
+# But here, I see only one way to skip this. If we encounter same value as before we just continue.
+# And this won't work with case of (1* 100000, 0, 1*100000) cuz we will just calculate it again...
+# ------------------------
 # Ok. I'm done with trying to make this work, and will simply rebuild it in first_dump I thought about.
 # Just count every bar one by one until I hit any value lower than bar, so we can't put this bar inside.
 # Very slow, but still not burned enough to google.
@@ -78,4 +86,3 @@ assert test7_out == largest_rectangle(test7)
 test8 = [5, 4, 1, 2]
 test8_out = 8
 print(largest_rectangle(test8))
-
