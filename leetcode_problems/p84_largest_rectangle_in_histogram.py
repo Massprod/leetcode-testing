@@ -4,44 +4,40 @@
 # 1 <= heights.length <= 105  ,  0 <= heights[i] <= 104
 
 def largest_rectangle(heights: list[int]) -> int:
+    # working_sol (43.51%, 32.19%) -> (989ms, 31mb)  time: O(n) | space: O(n)
+    heights.append(0)
+    indexes: list[int] = [-1]
     max_area: int = 0
-    for index in range(len(heights)):
-        if heights[index] == heights[index - 1] and index != 0:
-            continue
-        if heights[index] == 0:
-            continue
-        length: int = 1
-        height: int = heights[index]
-        for x in range(index - 1, -1, -1):
-            if heights[x] < height:
-                break
-            length += 1
-        for y in range(index + 1, len(heights)):
-            if heights[y] < height:
-                break
-            length += 1
-        area: int = length * height
-        max_area = max(max_area, area)
+    for x in range(len(heights)):
+        while heights[x] < heights[indexes[-1]]:
+            height: int = heights[indexes.pop()]
+            length: int = x - indexes[-1] - 1
+            max_area = max(max_area, height * length)
+        if len(indexes) == 0 or heights[x] >= heights[indexes[-1]]:
+            indexes.append(x)
+    heights.pop()
     return max_area
 
-
-# ------------------------
-# Yep. Failed with time_limit test of (1 * 10000000) indexes.
-# This is why I wanted to use min_plato in a first solution.
-# But here, I see only one way to skip this. If we encounter same value as before we just continue.
-# And this won't work with case of (1* 100000, 0, 1*100000) cuz we will just calculate it again...
-# ------------------------
-# Ok. I'm done with trying to make this work, and will simply rebuild it in first_dump I thought about.
-# Just count every bar one by one until I hit any value lower than bar, so we can't put this bar inside.
-# Very slow, but still not burned enough to google.
-# ------------------------
-# No idea how to make prev_solution work with 2 ways, cuz I made it working with ascending or equal values,
-# with no intervals with only descending like: test8.
-# ------------------------
-# min_plato => value of bottom rectangle with min_height and whole length of histogram,
-#              breaking length only when encounter 0, and starting a new one.
-# ------------------------
-# I need more test cases, an either create them or fail. Is it worth it to create them?
+# Time complexity: O(n) -> worst case, 1..2.3..n -> only ascending values ->
+#                          -> iterate once to create indexes of input_n size => O(n) ->
+#                          -> iterate indexes once to calc all index areas => O(n) -> leaving us with O(n)
+# Space complexity: O(n) -> extra list with size of input_n => O(n)
+# -----------------------------
+# Flow:
+#   left_limit = indexes[-1] after removing last element -> removing last element and getting ascending_point ->
+#   we need 2 break_points: first is point of ascending and second is point of descending.
+#   ! failed to make this before ! ascending_point == left_limit ! descending_point = right_limit !
+#   in this solution ascending_point is always last element of indexes after removing,
+#   even from the start [-1] == 0 - lowest possible
+#   right_limit = heights[x] => descending_point or first time we encounter something smaller ->
+#   distance between them is equal to length of rectangle which can be placed here ->
+#   allowing us to calc areas of all rectangles inside with heights of removed indexes.
+# -----------------------------
+# Failed with making my own solution without googling:
+#   1) Failed to count descending bard, everything worked for ascending part or equal part.
+#   2) Failed to make breakpoints, such I could count some slice with height in it.
+#   3) Failed - TimeLimit with working simple solution while counting every possible area.
+#      ! btw this solution is 1000ms, and it's after googling !
 
 
 test1 = [2, 1, 5, 6, 2, 3]
@@ -74,15 +70,15 @@ test6_out = 21
 print(largest_rectangle(test6))
 assert test6_out == largest_rectangle(test6)
 
-# test7 - failed -> I made calculations of areas when we encounter break_point or last_index,
-#                   but I failed to create test_case or see that -> we should add +1 length to all indexes,
-#                   before calculating areas...
 test7 = [1, 2, 2]
 test7_out = 4
 print(largest_rectangle(test7))
 assert test7_out == largest_rectangle(test7)
 
-# test8 - failed -> ok, failed with descending flow
 test8 = [5, 4, 1, 2]
 test8_out = 8
 print(largest_rectangle(test8))
+assert test8_out == largest_rectangle(test8)
+
+test9 = [0, 1, 2, 3]
+print(largest_rectangle(test9))
