@@ -10,7 +10,10 @@ def largest_rectangle(heights: list[int]) -> int:
     max_area: int = 0
     break_point: int = 0
     for index in range(len(heights)):
-        bars_on_route[index] = 1
+        if heights[index] != 0:
+            bars_on_route[index] = 1
+        else:
+            bars_on_route[index] = 0
         if heights[index] != 0:
             length += 1
         if heights[index] < min_height and heights[index] != 0:
@@ -21,19 +24,18 @@ def largest_rectangle(heights: list[int]) -> int:
             if index != (len(heights) - 1):
                 min_height = heights[index + 1]
             length = 0
+        if heights[index] >= heights[index - 1] and index > 0 and heights[index] != 0:
+            for key in bars_on_route.keys():
+                if break_point <= key < index:
+                    if heights[key] != 0:
+                        bars_on_route[key] += 1
         if (heights[index] < heights[index - 1] and index > 0) or (index == (len(heights) - 1)):
             for key in bars_on_route.keys():
                 if key >= break_point:
                     bar_area: int = heights[key] * bars_on_route[key]
                     max_area = max(max_area, bar_area)
             break_point = index
-            continue
-        if heights[index] >= heights[index - 1] and index > 0:
-            for key in bars_on_route.keys():
-                if break_point <= key < index:
-                    bars_on_route[key] += 1
     min_plato: int = min_height * length
-    print(bars_on_route)
     return max(max_area, min_plato)
 
 # min_plato => value of bottom rectangle with min_height and whole length of histogram,
@@ -63,5 +65,25 @@ print(largest_rectangle(test4))
 assert test4_out == largest_rectangle(test4)
 
 test5 = [0, 0, 0, 0, 0, 6, 0]
-# test5_out =
+test5_out = 6
 print(largest_rectangle(test5))
+assert test5_out == largest_rectangle(test5)
+
+test6 = [9, 8, 7, 0, 9, 8, 7, 5]
+test6_out = 21
+print(largest_rectangle(test6))
+assert test6_out == largest_rectangle(test6)
+
+# test7 - failed -> I made calculations of areas when we encounter break_point or last_index,
+#                   but I failed to create test_case or see that -> we should add +1 length to all indexes,
+#                   before calculating areas...
+test7 = [1, 2, 2]
+test7_out = 4
+print(largest_rectangle(test7))
+assert test7_out == largest_rectangle(test7)
+
+# test8 - failed -> ok, failed with descending flow
+test8 = [5, 4, 1, 2]
+test8_out = 8
+print(largest_rectangle(test8))
+
