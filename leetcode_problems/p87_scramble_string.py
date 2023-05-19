@@ -11,11 +11,10 @@
 # -----------------
 # s1.length == s2.length  ,  1 <= s1.length <= 30
 # s1 and s2 consist of lowercase English letters.
-import random
-from string import ascii_lowercase
 
 
 def is_scramble(s1: str, s2: str) -> bool:
+    # working_sol (66.18%, 16.6%) -> (57ms, 16.5mb)  time: O(n * n) | space: O(n * n)
     if len(s1) == 1 and s1 == s2:
         return True
     if len(s1) == 1 and s1 != s2:
@@ -27,7 +26,7 @@ def is_scramble(s1: str, s2: str) -> bool:
             return True
         if not len(string):
             return True
-        if sorted(string) != sorted(check):
+        if sorted(string) != sorted(check):  # not sure if we allowed, task is to recreate description
             return False
         if len(string) != len(check):
             return False
@@ -52,10 +51,27 @@ def is_scramble(s1: str, s2: str) -> bool:
                 return True
         storage[added] = flag
         return False
+
     if slice_search(s1, s2):
         return True
     return False
 
+# Time complexity: O(n * n) -> O(2 ** n + 2 ** (n - k)) for recursion without storage and O(n * n) with storage ->
+# n - len of input_string ^^   -> looping and calling recursion for every index, repeating this for each call ->
+# (n - k) - len of slices ^^   -> maximum number of recursion calls will be (n * n) => O(n * n) or O(n ** 2).
+#
+# Space complexity: O(n * n) -> worst case, we're storing every recursion call as a string of in storage(dict).
+# -----------------------
+# Failed with my own_solution:
+#   1) Failed to understand what we need to compare ->
+#      -> I was trying to slice and recreate string from these slices and didn't come up with working way ->
+#      -> in the end we're just slicing indexes 1 by one in both string and compare them ->
+#      -> slicing first_string(s1) in 2 ways, left -> right, right -> left (normal, reverse)
+#   2) Failed to see that we can slice from 2 ways 123 left = 1 and reverse_left = 3
+#      in one call we're slicing both ways and comparing slices from both strings.
+#
+#  ! guess I'm not experienced enough to solve HARD without extra research !
+# -----------------------
 # This is some combination stuff, but with changing slices?
 # For every index in s1 slice it call recursion with resulted 2 slices: swapped, un_swapped.
 # repeat and give input of slice index?
