@@ -4,28 +4,32 @@
 # 1 <= row, cols <= 200  ,  matrix[i][j] is '0' or '1'.
 
 def maximal_rectangle(matrix: list[list[str | int]]) -> int:
-    # working_sol (23.12%, 13.14%) -> (347ms, 17.7mb)  time: O(n * m) | space: O(m)
+    # working_sol (30.65%, 26.7%) -> (320ms, 17.6mb)  time: O(n * m) | space: O(m)
     max_area: int = 0
+    for g in range(len(matrix)):
+        for h in range(len(matrix[0])):
+            matrix[g][h] = int(matrix[g][h])
 
-    def stack_calc(hist: list[str]):
-        hist_max_area: int = 0
-        hist.append("0")
+    def stack_calc(row_num: int):
+        calc_max_area: int = 0
+        matrix[row_num].append(0)
         stack: list[int] = [-1]
-        for index in range(len(hist)):
-            while int(hist[index]) < int(hist[stack[-1]]):
-                height: int = int(hist[stack.pop()])
+        for index in range(len(matrix[row_num])):
+            while matrix[row_num][index] < matrix[row_num][stack[-1]]:
+                height: int = matrix[row_num][stack.pop()]
                 lenght: int = index - int(stack[-1]) - 1
                 current_area: int = height * lenght
-                hist_max_area = max(hist_max_area, current_area)
+                calc_max_area = max(calc_max_area, current_area)
             stack.append(index)
-        hist.pop()
-        return hist_max_area
+        matrix[row_num].pop()
+        return calc_max_area
+
     for y in range(len(matrix)):
         if y >= 1:
             for x in range(len(matrix[y])):
-                if int(matrix[y][x]) == 1:
-                    matrix[y][x] = int(matrix[y][x]) + int(matrix[y-1][x])
-        max_area = max(max_area, stack_calc(matrix[y]))
+                if matrix[y][x] == 1:
+                    matrix[y][x] = matrix[y][x] + matrix[y-1][x]
+        max_area = max(max_area, stack_calc(y))
     return max_area
 
 # Time complexity: O(n * m) -> worst_case, traversing once through all indexes in a row => O(m)
@@ -34,9 +38,13 @@ def maximal_rectangle(matrix: list[list[str | int]]) -> int:
 #
 # Space complexity: O(m) -> creating stack of matrix_row(hist) size => O(m) -> and max_area constant => O(1)
 
-# Using this monstrosity with converting str -> int, cuz I don't want to make extra loop to change all cells to int.
-# It's going to be slower than this ^^. But it's very bad looking and error_prone.
-# Will change and see diff in speed after first correct commit.
+# Apparently changing whole matrix values to the integers, was faster than doing this on a move.
+# Extra I can place stack_calc inside nested loop, but it's going to be uglier and less readable. At least for me.
+# -------------------
+# Changed______
+#  Using this monstrosity with converting str -> int, cuz I don't want to make extra loop to change all cells to int.
+#  It's going to be slower than this ^^. But it's very bad looking and error_prone.
+#  Will change and see diff in speed after first correct commit.
 # -------------------
 # After failing with p84 and googling for a method, get a glimpse of STACK problems, and this is one of them.
 # We can just assume that this matrix rows as histograms,
