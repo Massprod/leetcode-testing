@@ -27,8 +27,11 @@ def create_linked(to_link: list[int]) -> ListNode:
 
 
 def partition(head: ListNode, x: int) -> ListNode:
+    # working_sol(38.83%, 13.38%) -> (44ms, 16.5mb)  time: O(n) | space: O(n)
     lower: list[int] = []
     higher: list[int] = []
+    if not head:
+        return head
     tempo: ListNode = head
     while tempo:
         if tempo.val >= x:
@@ -37,7 +40,6 @@ def partition(head: ListNode, x: int) -> ListNode:
             lower.append(tempo.val)
         tempo = tempo.next
     whole: list[int] = lower + higher
-    print(whole)
     tempo = new_link = ListNode()
     for index in range(len(whole)):
         tempo.val = whole[index]
@@ -47,6 +49,23 @@ def partition(head: ListNode, x: int) -> ListNode:
     return new_link
 
 
+# Time complexity: O(n) -> traversing once through whole input linked_list of n size O(n) ->
+#                          -> creating new_linked_list of same size => O(n) --> O(n)
+# Space complexity: O(n) -> creating lists with summary size of input linked_list ->
+#                           -> merging them together and getting list of input_n size => O(n)
+# n - number of values inside linked_list ^^
+
+# ---------------------------
+# Ok. I should have been considered incorrect input of None and make it return None.
+# I was correct with thinking this is through but, I didn't think about incorrect input of None.
+# ---------------------------
+# ! The number of nodes in the list is in the range [0, 200] !
+# How we return ListNode if there's NO input? Cuz any ListNode by default having val == 0, always should be [1, 200]?
+# WTF? We given input -> HEAD type of ListNode -> ListNode() object by default having val=0 ->
+# we just can't even start function without correct input how it can be 0?
+# Even if ListNode_input will be 1 length, still going to have at least 1 value of 0 by default,
+# and if ListNode_input length is 0 => means it doesn't exist, and we can't call a function?
+# Ok.w.e. Let's try to fail.
 # ---------------------------
 # Most basic way and slowest (guess), is just recreate linked list from scratch.
 # Loop once to take all values inside nodes ->
@@ -60,10 +79,43 @@ test1 = [1, 4, 3, 2, 5, 2]
 test1_x = 3
 test1_out = [1, 2, 2, 4, 3, 5]
 linked = create_linked(test1)
-print(partition(linked, test1_x))
+test_tempo = test = partition(linked, test1_x)
+print(test)
+for _ in range(len(test1_out)):
+    assert test_tempo.val == test1_out[_]
+    test_tempo = test_tempo.next
+    if _ == len(test1_out) == 0:
+        assert test.next is None
+del test
 
 test2 = [2, 1]
 test2_x = 2
 test2_out = [1, 2]
 linked = create_linked(test2)
-print(partition(linked, test2_x))
+test_tempo = test = partition(linked, test2_x)
+print(test)
+for _ in range(len(test2_out)):
+    assert test_tempo.val == test2_out[_]
+    test_tempo = test_tempo.next
+    if _ == len(test2_out) == 0:
+        assert test.next is None
+del test
+
+test3 = [0]
+test3_x = 1
+test3_out = [0]
+linked = create_linked(test3)
+test_tempo = test = partition(linked, test3_x)
+print(test)
+for _ in range(len(test3_out)):
+    assert test_tempo.val == test3_out[_]
+    test_tempo = test_tempo.next
+    if _ == len(test3_out) == 0:
+        assert test.next is None
+del test
+
+test4 = []
+test4_x = 0
+test4_out = []
+test = partition(test4, test4_x)
+assert test == []
