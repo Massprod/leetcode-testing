@@ -21,7 +21,6 @@ def exist(board: list[list[str]], word: str) -> bool:
         for m in range(len(board[0])):
             used_starts[(n, m)] = False
             correct_matrix[board[n][m]] = True
-
     for _ in word:
         if _ not in correct_matrix:
             return False
