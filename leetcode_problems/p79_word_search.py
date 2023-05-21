@@ -13,7 +13,7 @@
 
 
 def exist(board: list[list[str]], word: str) -> bool:
-    # working_sol (80.82%, 8.37%) -> (2712ms, 16.9mb)  time: O( ) | space: O( )
+    # working_sol (80.82%, 8.37%) -> (2712ms, 16.9mb)  time: O((m * n) * (4 ** k)) | space: O(2(m * n) + k)
     path: list[tuple[int, int]] = []
     used_starts: dict = {}
     correct_matrix: dict = {}
@@ -108,18 +108,27 @@ def exist(board: list[list[str]], word: str) -> bool:
     return False
 
 
-
-
-# Totally need to be polished, really hard to read_solution. Maybe I will revisit and rebuild later.
+# Time complexity: O((m * n) * (4 ** k)) -> worst case, for every index we encounter => O(m * g) ->
+# 4 - options to turn ^^                    -> calling recursion with 4 branches and k depths => O(4 ** k).
+# k - length of word  ^^
+# Space complexity: O((m * n) + (m * n) + k) -> creating 2 dictionaries of (m * n) sizes => O(2(m * n)) ->
+# m - length of matrix     ^^                   -> holding in memory path for recursions, max size of path == k =>
+# n - length of matrix_row ^^                   => O(k) <- ! not sure about space for recursion, need to learn more.
+# k - length of word  ^^                        maybe O((4**k) * (k-index)) ->
+#                                               -> k - index == size of word for every recursion call,
+#                                                  and 4**k calls, but everything hold's in 1 place and reused,
+#                                                  guess O(k) is more correct !
+# ------------------------
+# Totally need to be polished, really hard_to_read solution. Maybe I will revisit and rebuild later.
 # ------------------------
 # Yep. Totally not my fault with failing time_limit, I even make it better, and now we're checking
 # every starting and ending symbols in word along the standard search, maybe it's actually slower with these checks.
 # But it's still not passable without checking correct matrix. I will leave it with extra checks, just why not.
-# With checking correct matrix both hits time_limit. 2712ms with checks -> 2127 without.
+# With checking correct matrix both hits time_limit. 2712ms with extra checks -> 2127 without.
 # But it's good to have extra experience and actually made it work, might be useful in a future.
 # ------------------------
 # Bruh. Literally took a complete solution with this trick and deleted trick_part.
-# And it 5161ms, when mine is 4000...
+# And it 5161ms, when mine is 3979...
 # Guess it's just a test_case to check my understanding of input. If input isn't correct from the start,
 # and we can save time without running algorithm for incorrect inputs.
 # ------------------------
