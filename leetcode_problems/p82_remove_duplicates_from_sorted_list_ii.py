@@ -62,7 +62,7 @@ def delete_duplicates(head: ListNode) -> ListNode | None:
 #                              and creating list without duplicates => O(n) ->
 #                              -> looping once through created no_duplicates list and creating new linked_list => O(m).
 #
-# Space complexity: O(m + (log n)) -> list to store path_values, with size of == part of the input => O(log n) ->
+# Space complexity: O(2(log n)) -> list to store path_values, with size of == part of the input => O(log n) ->
 #                                     -> creating linked list of the same size => O(log n) -> O(2(log n)).
 # n - size of input l_list ^^
 # m - size of no_duplicates list ^^
