@@ -50,6 +50,7 @@ def restore_ip(s: str) -> list[str]:
     recurs_slice(s, [])
     return validated
 
+
 # Time complexity: O(n * (3 ** 4)) -> recursion tree with 3 branches and depths of 4 ->
 # n - size of input_string^^          -> calling recursion for every slice until we reach
 #                                        end of the string and correct_tempo
@@ -76,13 +77,13 @@ def restore_ip(s: str) -> list[str]:
 #   !
 # ----------------
 # Heh. P91 was working, but this leetcode_time_limit stuff is dirty.
-# Because this is similar task but, with different sizes and limit on the length(s).
+# Because this is similar task, but with different sizes and limit on the length(s).
 # Why they do this limitations like this, because there's no way I could find this pattern
-# without extra research on p91. But there almost the same solution with recursion and limited length is OK.
+# without extra research on p91. But this is almost the same solution with recursion and limited length is OK.
 # ----------------
 # First of all this basic: 1 <= s.length <= 20.
 # Ip address can be at low limit of length 4 and max limit of length 12, and in p91 I have been hitting time_limit.
-# When tried to use every possible slice, but in this case it's limited to 12 and should be enough ok with speed.
+# When tried to use every possible slice, but in this case it's limited to 12 and should be ok with such speed.
 # Otherwise, I need to find a way to cull some recursion calls.
 
 
