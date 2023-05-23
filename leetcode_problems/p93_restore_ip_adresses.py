@@ -11,6 +11,7 @@
 
 
 def restore_ip(s: str) -> list[str]:
+    # working_sol: (80.42%, 6.35%) -> (36ms, 16.6mb)  time: O(n * (3 ** 4)) | space: O(g * m)
     validated: list[str] = []
     if not 4 <= len(s) <= 12:
         return validated
@@ -49,6 +50,36 @@ def restore_ip(s: str) -> list[str]:
     recurs_slice(s, [])
     return validated
 
+# Time complexity: O(n * (3 ** 4)) -> recursion tree with 3 branches and depths of 4 ->
+# n - size of input_string^^          -> calling recursion for every slice until we reach
+#                                        end of the string and correct_tempo
+#                                        or correct tempo but not the end of a string => O(3 ** 4) ->
+#                                     -> slicing input_string every time we call recursion => O(n * (3 ** 4))
+#                  Ω(n * 4) -> best case, "0000" (or any 4 signs) -> we will use only 4 calls
+#                              and slice input_string 4 times => Ω(n * 4)
+# ! Doubt this is correct. Still didn't learn how to properly calculate recursion O(),
+#   but for 8 size string (median size of s() give as most variants to use) returning 19 IPs.
+#   Means there was 19 * 4 calls, because we're breaking after reaching 4 calls. Giving us somewhat 76 calls.
+#   This is like most variants we can get, and it's close to 3 ** 4 == 81 for the worst_case
+#   !
+# ----------------
+# Space complexity: O(g * m) -> creating list(validated), size of m * g => O(m * g)
+# m - number of correct ips^^
+# g - size of tempo_ip^^
+# ! Don't know how to calculate -> all_number of correct ips we will get. Leaving it as m <- unknown actually
+#   I could calculate it like before nCk, but it's only for a one size. How we do this for 1, 2, 3 sizes in one?
+#   Because we're calling with 1 size, then changing it to 2 or 3 etc. No idea how to calculate it.
+#   like for 1 size it's going to be 8C1 -> all combinations for a string of size 8 and slicing by 1.
+#   But we're slicing for 1 in first_call, and changing size to 2 and 3, and it's going to be somewhat random.
+#   There's some *big_math* and I have no idea for now.
+#   Maybe revisit it after I learn this part.
+#   !
+# ----------------
+# Heh. P91 was working, but this leetcode_time_limit stuff is dirty.
+# Because this is similar task but, with different sizes and limit on the length(s).
+# Why they do this limitations like this, because there's no way I could find this pattern
+# without extra research on p91. But there almost the same solution with recursion and limited length is OK.
+# ----------------
 # First of all this basic: 1 <= s.length <= 20.
 # Ip address can be at low limit of length 4 and max limit of length 12, and in p91 I have been hitting time_limit.
 # When tried to use every possible slice, but in this case it's limited to 12 and should be enough ok with speed.
