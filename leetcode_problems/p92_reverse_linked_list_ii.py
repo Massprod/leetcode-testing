@@ -96,7 +96,7 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def reverse_between(head: ListNode, left: int, right: int) -> ListNode:
-    # working_sol (47.46%, 9.51%) -> (40ms, 16.5mb)  time: O(2n) | space: O(n)
+    # working_sol (64.51%, 9.51%) -> (36ms, 16.5mb)  time: O(2n) | space: O(n)
     if not head:
         return head
     tempo: ListNode = head
@@ -150,6 +150,14 @@ def reverse_between(head: ListNode, left: int, right: int) -> ListNode:
 #                              -> leaving us with 2 full loops on l_input_list => O(2n)
 # Space complexity: O(2n) -> worst case, recreating full size of l_input_list into a sliced => O(n) ->
 #                            -> and creating a new_linked list size of a sliced => O(n) -> O(2n)
+# --------------------
+# Ways to optimise:
+#   - first we can store link's to a nodes inside l_input_list, not values. Same as p25.
+#   - second we can ignore creating of a new linked_list with ListNode(),
+#     and just made it link to already existing nodes in l_input_list,
+#     just assign stored nodes like this -> new_tempo = sliced[-1] etc.
+#   ! Guess I was just tired after solving p25, or didn't want to repeat it. Created something like this.
+#     Not really bad, but this 2 ways already culling memory to O(n). Something new is always good. !
 # --------------------
 # Failed 1 commit, only because I didn't think it was such easy task, and made it work for encounter of INTs.
 # Meanwhile, task description asks only about indexes...Still a fail...
