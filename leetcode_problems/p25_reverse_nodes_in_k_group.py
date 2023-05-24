@@ -39,7 +39,7 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def reverse_k_group(head: ListNode, k: int) -> ListNode:
-    # working_sol (13.52%, 32.27%) -> (71ms, 17.6mb)  time: O(((k * 3) - 1) * (n // k) + (n % k)) | space: O(n)
+    # working_sol (33.30%, 32.27%) -> (64ms, 17.6mb)  time: O(((k * 3) - 1) * (n // k) + (n % k)) | space: O(n)
     if not head:
         return head
     if k == 1:
