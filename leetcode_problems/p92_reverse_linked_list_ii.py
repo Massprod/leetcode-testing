@@ -37,7 +37,61 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def reverse_between(head: ListNode, left: int, right: int) -> ListNode:
-    pass
+    if not head:
+        return head
+    tempo: ListNode = head
+    slice_start: bool = False
+    sliced: list[int] = []
+    new_linked: ListNode = ListNode()
+    new_tempo: ListNode = new_linked
+    while tempo:
+        if tempo.next is None:
+            sliced.append(tempo.val)
+            for x in range(len(sliced) - 1, -1, -1):
+                new_tempo.val = sliced[x]
+                new_tempo.next = ListNode()
+                if x == 0:
+                    new_tempo.next = None
+                new_tempo = new_tempo.next
+            break
+        if tempo.val == right and tempo.next is None:
+            sliced.append(tempo.val)
+            for x in range(len(sliced) - 1, -1, -1):
+                new_tempo.val = sliced[x]
+                new_tempo.next = ListNode()
+                if x == 0:
+                    new_tempo.next = None
+                new_tempo = new_tempo.next
+            break
+        if tempo.val == right and tempo.next.val != right:
+            slice_start = False
+            sliced.append(tempo.val)
+            for x in range(len(sliced) - 1, -1, -1):
+                new_tempo.val = sliced[x]
+                new_tempo.next = ListNode()
+                new_tempo = new_tempo.next
+            tempo = tempo.next
+            sliced.clear()
+            continue
+        if tempo.val == right and tempo.next.val == right:
+            sliced.append(tempo.val)
+            tempo = tempo.next
+            continue
+        if slice_start:
+            sliced.append(tempo.val)
+            tempo = tempo.next
+            continue
+        if tempo.val == left and not slice_start:
+            slice_start = True
+            sliced.append(tempo.val)
+            tempo = tempo.next
+            continue
+        new_tempo.val = tempo.val
+        if tempo.next is not None:
+            new_tempo.next = ListNode()
+            new_tempo = new_tempo.next
+        tempo = tempo.next
+    return new_linked
 
 
 # Actually why bother? We're not assigned to do this in_place, so why not just store slice from left to right values,
@@ -57,8 +111,25 @@ test1 = create_linked([1, 2, 3, 4, 5])
 test1_left = 2
 test1_right = 4
 test1_out = [1, 4, 3, 2, 5]
+print(reverse_between(test1, test1_left, test1_right))
 
 test2 = create_linked([5])
 test2_left = 1
 test2_right = 1
 test2_out = [5]
+print(reverse_between(test2, test2_left, test2_right))
+
+test3 = create_linked([1, 4, 5, 2, 1, 1, 1, 2, 2])
+test3_left = 1
+test3_right = 2
+test3_out = [2, 5, 4, 1, 2, 2, 1, 1, 1]
+print(reverse_between(test3, test3_left, test3_right))
+
+# test4 - failed -> Ok. I didn't understand task correctly, I was thinking we should reverse slice from value to value,
+#                   like we encounter int == left, we're starting reversing until we hit last on a way int == right,
+#                   -> my solution actually is harder, because I'm switching every possible combination on the way,
+#                   like in test3. But in this task we're given POSITION, index or step from and to.
+#                   So I just need to reverse slice from pos1 to pos2, not every possible option in linked_list...
+test4 = create_linked([3, 5])
+test4_left = 1
+test4_right = 2
