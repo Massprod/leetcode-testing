@@ -39,6 +39,7 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def reverse_k_group(head: ListNode, k: int) -> ListNode:
+    # working_sol (13.52%, 32.27%) -> (71ms, 17.6mb)  time: O(((k * 3) - 1) * (n // k) + (n % k)) | space: O(n)
     if not head:
         return head
     if k == 1:
@@ -84,8 +85,29 @@ def reverse_k_group(head: ListNode, k: int) -> ListNode:
     if not complete:
         return head
 
-# Space complexity: O(n) -> worst cas
-#
+
+# Time complexity: O(((k * 3) - 1) * (n // k) + (n % k)) -> traversing once for k time to create path ->
+# n - length of input_list ^^    -> path is always size of k, traversing this path to create reverse ->
+# k - number of steps ^^         -> after this traversing same k nodes in complete if complete is already existing ->
+#                                -> if it isn't existing we're just linking complete = reverse, no traversing =>
+#                                => O((k*3) - 1) -> all of this going to be repeated for (n // k) times,
+#                                -> because we're creating reverse only for nodes if we can make k - steps =>
+#                                => O((k*3) - 1) * (n // k)) -> and we're going to make extra steps in
+#                                original linked_list which is going to be equal to (n % k), after we exhaust
+#                                every possible k - step walks, we're left with this ^^ =>
+#                                => O(((k * 3) - 1) * (n // k) + (n % k))
+# Space complexity: O(n) -> worst case we're going to create path with every node from input_list in it ->
+#                           -> and reverse this path one by one until we create fully reversed complete.
+# -------------------------------
+# ! Space complexity for each operation in a linked list is O(1), as no extra space is required for any operation
+#   This ^^. We're creating links to original input list isn't? Not copying because we can't even copy()
+#   there's no method for it in a linked_list class. So we're creating list of links to a nodes, it's still
+#   going to use extra space. But in case of a *complete* are we using extra space? Because we're not creating
+#   extra linked_list, we're just made combinations of links from original input_list.
+#   So I guess it's going to be just O(n) -> because we're creating extra list with links, but nothing else.
+#   For the future, if I revisit it to remade with O(1) all I need is to make some step counter walk and change,
+#   original list on last_step position to a reverse. Actually it's going to be something similar to what
+#   I'm doing with loop for creating complete, but I'm not doing it now. Maybe after revisit, someday. !
 # -------------------------------
 # Pff. actually made it in 1 commit. Well experience with all this tasks didn't go to waste,
 # already can see limit_cases and made count of problems like *not_complete* before failing commits.
