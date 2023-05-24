@@ -40,6 +40,19 @@ def reverse_between(head: ListNode, left: int, right: int) -> ListNode:
     pass
 
 
+# Actually why bother? We're not assigned to do this in_place, so why not just store slice from left to right values,
+# and store everything else in 2 lists: before_left, after_right. Merge all 3 of them, but with reversed slice.
+# Horrible on space, but simpler.
+# --------------------
+# For one way solution, as I understand it. We cannot traverse original linked_list more than once.
+# But we can store needed slice and use it to reassign (left - 1) node and (right + 1) nodes,
+# in reverse order of stored nodes, and restore path after this.
+# Otherwise, I have no idea how to do this in *one_pass*. At least make this one work.
+# --------------------
+# Thought about using it to actually practice p25, for space O(1). But this is not going to be one_pass solution.
+# So better to just do it as one_pass solution, and revisit for practice in p25 sometime else.
+
+
 test1 = create_linked([1, 2, 3, 4, 5])
 test1_left = 2
 test1_right = 4
