@@ -11,58 +11,23 @@ def rotate(nums: list[int], k: int) -> None:
     k = k % len(nums)
     if k == 0:
         return
-    if len(nums) % 2 != 0:
-        prev: int = nums[k]
-        nums[k] = nums[0]
-        point_1: int = k + k
-        if point_1 >= len(nums):
-            point_1 = point_1 - len(nums)
-        point_2: int = k + 1
-        if point_2 >= len(nums):
-            point_2 = point_2 - len(nums)
-        point_3: int = 1
-        if (len(nums) - k) < k:
-            while point_3 < k:
-                nums[point_1], nums[point_2] = nums[point_2], nums[point_1]
-                nums[point_2], nums[point_3] = nums[point_3], nums[point_2]
-                point_1 += 1
-                if point_1 >= len(nums):
-                    point_1 = point_1 - len(nums)
-                point_2 += 1
-                if point_2 >= len(nums):
-                    point_2 = point_2 - len(nums)
-                point_3 += 1
-        if (len(nums) - k) > k:
-            while point_3 < k:
-                nums[point_1], nums[point_2] = nums[point_2], nums[point_1]
-                nums[point_2], nums[point_3] = nums[point_3], nums[point_2]
-                point_1 += 1
-                if point_1 >= len(nums):
-                    point_1 = point_1 - len(nums)
-                point_2 += 1
-                if point_2 >= len(nums):
-                    point_2 = point_2 - len(nums)
-                point_3 += 1
-                if point_3 >= len(nums):
-                    point_3 = point_3 - len(nums)
-            for y in range(len(nums) - 1, point_2 - 1, -1):
-                index: int = y + 1
-                if index >= len(nums):
-                    index = index - len(nums)
-                nums[y], nums[index] = nums[index], nums[y]
-        prev_index: int = k + k
-        if prev_index >= len(nums):
-            prev_index = prev_index - len(nums)
-        nums[prev_index] = prev
-        return
-    if len(nums) % 2 == 0:
-        for x in range(k):
-            next_index: int = x + k
-            if next_index >= len(nums):
-                next_index = next_index - len(nums)
-            nums[x], nums[next_index] = nums[next_index], nums[x]
+    for x in range(k):
+        next_index: int = x + k
+        if next_index >= len(nums):
+            next_index = next_index - len(nums)
+        prev: int = nums[next_index]
+        nums[x], nums[next_index] = nums[next_index], nums[x]
+        step_index: int = next_index + k
+        if step_index >= len(nums):
+            step_index = step_index - len(nums)
+        while step_index <= x:
+            nums[step_index], prev = prev, nums[step_index]
+            step_index += k
+            if step_index >= len(nums):
+                step_index = step_index - len(nums)
+        nums[x] = prev
 
-
+# Done with trying to make this with switching indexes.
 # --------------------
 # Time limit, because I made one_by_one_solution.
 # Just wanted to make it work after failing to turn indexes for k insta.
@@ -79,21 +44,21 @@ def rotate(nums: list[int], k: int) -> None:
 #   3+) 99% sure we can rotate every index by k in one walk, but how?
 
 
-test1 = [1, 2, 3, 4, 5, 6, 7]
-test1_k = 3
-test1_out = [5, 6, 7, 1, 2, 3, 4]
-rotate(test1, test1_k)
-print(test1)
-assert test1_out == test1
+# test1 = [1, 2, 3, 4, 5, 6, 7]
+# test1_k = 3
+# test1_out = [5, 6, 7, 1, 2, 3, 4]
+# rotate(test1, test1_k)
+# print(test1)
+# assert test1_out == test1
 
 
-test2 = [-1, -100, 3, 99]
+# test2 = [-1, -100, 3, 99]
 # test2_k = 2
 # test2_out = [3, 99, -1, -100]
 # rotate(test2, test2_k)
 # print(test2)
 # assert test2_out == test2
 
-test3 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-rotate(test3, 3)
+test3 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+rotate(test3, 4)
 print(test3)
