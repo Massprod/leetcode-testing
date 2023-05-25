@@ -11,6 +11,19 @@ def rotate(nums: list[int], k: int) -> None:
     pass
 
 
+#
+# --------------------
+# Already done similar but with linked_list in p61.
+# Three different ways:
+#   1) We're just slicing at [:x + 1] and [x + 1:] and returning => [x + 1:] + [:x + 1] => O(2n)
+#      ^^not in place solution, but there's no mentioning three in_place solutions.
+#   2) Same solution as 1 but, we're recreating new list from indexes not slices, not actually a different one.
+#   3) Changing every index 1 by 1 for k times, in_place. But it will be O(k * n),
+#      because we're only rotating by one at a time.
+#      ^^did this in p61, if I recall correctly.
+#   3+) 99% sure we can rotate every index by k in one walk, but how?
+
+
 test1 = [1, 2, 3, 4, 5, 6, 7]
 test1_k = 3
 test1_out = [5, 6, 7, 1, 2, 3, 4]
