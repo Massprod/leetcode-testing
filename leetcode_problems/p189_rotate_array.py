@@ -8,10 +8,26 @@
 
 
 def rotate(nums: list[int], k: int) -> None:
-    pass
+    k = k % len(nums)
+    turn: int = 0
+    while turn < k:
+        prev: int = nums[turn]
+        for x in range(turn + 1, len(nums)):
+            nums[x], prev = prev, nums[x]
+            if (x + 1) >= len(nums):
+                nums[turn + (len(nums) - (x + 1))] = prev
+        turn += 1
+    point_1: int = 0
+    point_2: int = k - 1
+    while point_1 < point_2:
+        nums[point_1], nums[point_2] = nums[point_2], nums[point_1]
+        point_1 += 1
+        point_2 -= 1
 
 
-#
+# Time limit, because I made one_by_one_solution.
+# Just wanted to make it work after failing to turn indexes for k insta.
+# But here's time limit for that.
 # --------------------
 # Already done similar but with linked_list in p61.
 # Three different ways:
@@ -27,7 +43,18 @@ def rotate(nums: list[int], k: int) -> None:
 test1 = [1, 2, 3, 4, 5, 6, 7]
 test1_k = 3
 test1_out = [5, 6, 7, 1, 2, 3, 4]
+rotate(test1, test1_k)
+print(test1)
+assert test1_out == test1
+
 
 test2 = [-1, -100, 3, 99]
 test2_k = 2
 test2_out = [3, 99, -1, -100]
+rotate(test2, test2_k)
+print(test2)
+assert test2_out == test2
+
+test3 = [1, 2, 3, 4, 5, 6, 7]
+rotate(test3, 0)
+print(test3)
