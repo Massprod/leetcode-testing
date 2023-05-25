@@ -8,7 +8,7 @@
 
 
 def rotate1(nums: list[int], k: int) -> None:
-    # working_time_limit O(k * n)
+    # working_time_limit O(k * n) | space: O(1)
     k = k % len(nums)
     turn: int = 0
     while turn < k:
@@ -27,7 +27,7 @@ def rotate1(nums: list[int], k: int) -> None:
 
 
 def rotate2(nums: list[int], k: int) -> None:
-    # working_sol (62.74%, 5.19%) -> (223ms, 27.9mb)  time: O(n) | space: O(1)
+    # working_sol (94.5%, 33.5%) -> (207ms, 27.9mb)  time: O(n) | space: O(1)
     k = k % len(nums)
     if k == 0:
         return
@@ -38,9 +38,22 @@ def rotate2(nums: list[int], k: int) -> None:
 # n - length of input_list^^ -> from [0] to [k] => O(n - k) -> O(n - k) + O(k) => O(n)
 # k - pivot point^^
 # Space complexity: O(1) -> no extra space.
+# --------------------
 # ! This might be incorrect ^^. Because, reason why I even tried other solution's with switching indexes.
 #   Wanted to make constant space, and because python_slice is taking
-#   extra space to store a slice, we're not saving it but still. !
+#   extra space to store a slice, we're not saving it but still.
+#   @@Each slice operation basically amounts to a primitive O(n) copy operation.
+#   Since only references are copied, the size or type of elements does not matter.
+#   Space complexity is only O(n), since the temporary slices are reclaimable immediately.@@
+#   ^^ this one reference to a creating list and then slicing it, but we're having list already.
+#      so we're just referencing it.
+#   @@In a nutshell, every list slicing operation involves making a copy
+#   of the relevant object references (but not the objects themselves).@@
+#   Ok. W.e I just doesn't want to start with binary trees and started this, as I already experienced with similar.
+#   But failed with making solution for just *switching_indexes* without slicing or rebuilding.
+#   Actually made one, but it's O(n*k) <- most simple way.
+#   Maybe will just google to learn the way to do this without slicing, but this one might be correct for O(1).
+#   !
 # --------------------
 # Was correct about slicing, but forget about reversing parts.
 # This one is working. But I wanted to make working solution with switching indexes around k-point, and failed...
