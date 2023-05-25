@@ -27,14 +27,21 @@ def rotate1(nums: list[int], k: int) -> None:
 
 
 def rotate2(nums: list[int], k: int) -> None:
+    # working_sol (62.74%, 5.19%) -> (223ms, 27.9mb)  time: O(n) | space: O(1)
     k = k % len(nums)
     if k == 0:
         return
     nums[:] = nums[-k:] + nums[:-k]
 
 
-
-#
+# Time complexity: O(n) -> slicing one part, from k to [end] => O(k) ->
+# n - length of input_list^^ -> from [0] to [k] => O(n - k) -> O(n - k) + O(k) => O(n)
+# k - pivot point^^
+# Space complexity: O(1) -> no extra space.
+# ! This might be incorrect ^^. Because, reason why I even tried other solution's with switching indexes.
+#   Wanted to make constant space, and because python_slice is taking
+#   extra space to store a slice, we're not saving it but still. !
+# --------------------
 # Was correct about slicing, but forget about reversing parts.
 # This one is working. But I wanted to make working solution with switching indexes around k-point, and failed...
 # In the end. 2 solutions, one working but time_limited -> one_by_one switch.
@@ -50,23 +57,23 @@ def rotate2(nums: list[int], k: int) -> None:
 test1 = [1, 2, 3, 4, 5, 6, 7]
 test1_k = 3
 test1_out = [5, 6, 7, 1, 2, 3, 4]
-rotate1(test1, test1_k)
-# rotate2(test1, test1_k)
+# rotate1(test1, test1_k)
+rotate2(test1, test1_k)
 print(test1)
 assert test1_out == test1
 
 test2 = [-1, -100, 3, 99]
 test2_k = 2
 test2_out = [3, 99, -1, -100]
-rotate1(test2, test2_k)
-# rotate2(test2, test2_k)
+# rotate1(test2, test2_k)
+rotate2(test2, test2_k)
 print(test2)
 assert test2_out == test2
 
 test3 = [1, 2, 3]
 test3_k = 2
 test3_out = [2, 3, 1]
-rotate1(test3, test3_k)
-# rotate2(test3, 2)
+# rotate1(test3, test3_k)
+rotate2(test3, 2)
 print(test3)
 assert test3_out == test3
