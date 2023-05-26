@@ -4,6 +4,7 @@
 
 
 def reverse_bits(n: int) -> int:
+    # working_sol (44.4%, 43.34%) -> (43ms, 16.2mb)  time: O(1) | space: O(1)
     reverse: int = 0
     for x in range(32):
         reverse = reverse << 1
@@ -13,6 +14,10 @@ def reverse_bits(n: int) -> int:
     return reverse
 
 
+# Time complexity: O(1) -> all input_n going to be 32 bits_unsigned,
+#                          so we're always traverse all 32 bits no matter what input is => O(1)
+# Space complexity: O(1) -> only constant for reverse => O(1)
+# ------------------
 # We need to reverse read input bits, and return INT for this reversed bits.
 # * y << x * -> shifting bits, by deleting most significant(left) and inserting 0 at other end.
 #             x => number of bits to shift.
@@ -36,7 +41,7 @@ def reverse_bits(n: int) -> int:
 #   and new bit is going to be 0, 1 depending on * n & 1 * ->
 #   -> which is bit AND operand checking bits from n with our mask(1) ->
 #   -> our mask(1) only have 1 bit, so it's deciding what less significant bit in n is.
-#    if it's 1 return 1 and if 0 return 0, (AND -> only both bits 11 return TRUE)
+#      if it's 1 return 1 and if 0 return 0, (AND -> only both bits 11 return TRUE)
 #   -> appending this last bit into our reverse by just adding it ->
 #   -> this is going to place our less_signi n bit at correct place in reverse,
-#    because we're populating backwards.
+#      because we're populating backwards.
