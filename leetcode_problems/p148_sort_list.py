@@ -5,6 +5,7 @@
 # --------------------
 # Follow up: Can you sort the linked list in O(n log n) time and O(1) memory (i.e. constant space)?
 from random import randint
+import time
 
 
 class ListNode:
@@ -36,7 +37,7 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
     assert count == len(testout)
 
 
-def sort_list(head: ListNode) -> ListNode:
+def sort_list_slow(head: ListNode) -> ListNode:
     if not head:
         return head
     if head.next is None:
@@ -46,29 +47,23 @@ def sort_list(head: ListNode) -> ListNode:
     max_node: ListNode = tempo
     tempo = tempo.next
     while tempo:
-        # print(head)
-        current: int = tempo.val
         current_node: ListNode = tempo
-        if current >= max_node.val:
+        if current_node.val >= max_node.val:
             max_node.next = current_node
             max_node = tempo
             tempo = tempo.next
             continue
-        if min_node.val < current < max_node.val:
-            # print(min_node, "min")
-            # print(max_node, "max")
+        if min_node.val < current_node.val < max_node.val:
             tempo = tempo.next
             max_node.next = current_node.next
             between: ListNode = min_node
-            # print(max_node, "max2")
-            while between.next.val < current:
+            while between.next.val < current_node.val:
                 between = between.next
             to_place: ListNode = between.next
             between.next = current_node
             current_node.next = to_place
-            # print(min_node, "min2")
             continue
-        if current < min_node.val:
+        if current_node.val <= min_node.val:
             tempo = tempo.next
             current_node.next = min_node
             min_node = current_node
@@ -77,6 +72,44 @@ def sort_list(head: ListNode) -> ListNode:
     return min_node
 
 
+# Time complexity: O(n * n)
+# Space complexity: O(1) -> only links used.
+# -----------------
+# I don't see how this is not constant space O(1) solution.
+# But what about time?
+# We're traversing once through whole linked_input => O(n) ->
+# -> placing min or max values on sides which should be O(1), we're always knowing where to place and
+#    changing only next links => O(1) -> placing values in between, this part is really slow,
+#    because in the worst case, we're going to traverse almost whole linked_input of n - 1.
+#    last value will be placed inside, and it's only lower than max_node ->
+# -> leaving us with path of (n - 1) to check before we inserting it => O(n) ->
+# -> should be O(n * n)
+# Taking median of 92s to solve with max_constraints:
+#       num_of_nodes == (5 * (10 ** 4))
+#       values == (-10 ** 5 <= value <= 10 ** 5)
+# -----------------
+# ! dummy = cur = ListNode()
+#         intMax = float('inf')
+#
+#         while(node1 or node2):
+#             value1, value2 = node1.val if(node1) else intMax, node2.val if(node2) else intMax
+#             if(value1 < value2):
+#                 cur.next = node1
+#                 node1 = node1.next
+#             else:
+#                 cur.next = node2
+#                 node2 = node2.next
+#             cur = cur.next
+#
+#         return dummy.next
+#   ^^Somewhat looking like space O(1) and they claim it is. But first they're using 2 recursions,
+# which is already extra, but ok. Inside this recursion above, they're creating dummy =>
+# => dummy is a new ListNode() with new value = 0, ok. -> than he populates this dummy with nodes from
+# original linked list, ok. We can call it links, not just copies of linked list, but it's still using space
+# to store this dummy and links inside of it. I'm not sure if it's O(1) (not alone here, comments) ->
+# -> Guess I will just leave my solution, which is I think is correct O(1) because I'm operating only with links,
+# without creating any new lists or changing values inside input. !
+# -----------------
 # Dunno about solutions with O(1) space, because every one of them having either recursion, or
 # rebuild it, not from scratch but still changing values saved in traversing before.
 # If I see it correctly my_solution didn't take any extra space, and we're operating only with links from original.
@@ -101,6 +134,47 @@ def sort_list(head: ListNode) -> ListNode:
 # 1 solution is easy and already done similar tasks, guess it's time to think about 2 solution :)
 
 
+def sort_list(head: ListNode) -> ListNode:
+    # working_sol (27.27%, 37.62) -> (705ms, 38.7mb)  time: O(n * log n) | space: O(1)????
+    if not head:
+        return head
+    if head.next is None:
+        return head
+
+    def halve(whole: ListNode) -> ListNode:
+        fast = prev = slow = whole
+        while fast and fast.next:
+            fast = fast.next.next
+            prev = slow
+            slow = slow.next
+        if prev:
+            prev.next = None
+        return slow
+
+    def merge(left: ListNode, right: ListNode) -> ListNode:
+        new_whole = tempo = ListNode()
+        while left and right:
+            if left.val > right.val:
+                left, right = right, left
+            tempo.next = left
+            tempo = tempo.next
+            left = left.next
+        if left:
+            tempo.next = left
+        if right:
+            tempo.next = right
+        return new_whole.next
+
+    half: ListNode = halve(head)
+    if not half or head == half:
+        return head
+    return merge(sort_list(head), sort_list(half))
+
+
+# Rebuilding with most looking like O(1) google solution.
+# Only can call this O(1) if we're not counting recursion and counting one_new node as O(1).
+
+
 test1 = create_linked([4, 2, 1, 3])
 test1_out = [1, 2, 3, 4]
 test = sort_list(test1)
@@ -122,17 +196,19 @@ t_one_linked(test, test3_out)
 print(test)
 del test
 
-test4 = create_linked([3, 4, 1])
-test = sort_list(test4)
-print(test)
 
-
-# extra slow for this
-# for _ in range(50):
-#     test_list = [randint(-500, 500) for _ in range(0, 10000)]
-#     test_linked = create_linked(test_list)
-#     test = sort_list(test_linked)
-#     test_list.sort()
-#     t_one_linked(test, test_list)
-#     print(test)
-#     print(test_list)
+# extra slow for leet
+timed: set = set()
+for _ in range(10):
+    t: float = time.time()
+    test_list = [randint(-10 ** 5, 10 ** 5) for _ in range(0, 5 * (10 ** 4))]
+    test_linked = create_linked(test_list)
+    test = sort_list(test_linked)
+    test_list.sort()
+    t_one_linked(test, test_list)
+    t: float = time.time() - t
+    timed.add(t)
+median: int = 0
+for _ in timed:
+    median += _
+print(median/len(timed))
