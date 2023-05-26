@@ -36,7 +36,43 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def sort_list(head: ListNode) -> ListNode:
-    pass
+    if not head:
+        return head
+    if head.next is None:
+        return head
+    tempo: ListNode = head
+    min_node: ListNode = tempo
+    max_node: ListNode = tempo
+    tempo = tempo.next
+    while tempo:
+        # print(head)
+        current: int = tempo.val
+        current_node: ListNode = tempo
+        if current >= max_node.val:
+            max_node.next = current_node
+            max_node = tempo
+            tempo = tempo.next
+            continue
+        if min_node.val < current < max_node.val:
+            # print(min_node, "min")
+            # print(max_node, "max")
+            tempo = tempo.next
+            max_node.next = current_node.next
+            between: ListNode = min_node
+            # print(max_node, "max2")
+            while between.next.val < current:
+                between = between.next
+            to_place: ListNode = between.next
+            between.next = current_node
+            current_node.next = to_place
+            # print(min_node, "min2")
+            continue
+        if current < min_node.val:
+            tempo = tempo.next
+            current_node.next = min_node
+            min_node = current_node
+            continue
+    return min_node
 
 
 # 1 obvious solution with time => O(n + n * log n + n) ->
@@ -49,6 +85,21 @@ def sort_list(head: ListNode) -> ListNode:
 
 test1 = create_linked([4, 2, 1, 3])
 test1_out = [1, 2, 3, 4]
+test = sort_list(test1)
+t_one_linked(test, test1_out)
+print(test)
+del test
 
 test2 = create_linked([-1, 5, 3, 4, 0])
 test2_out = [-1, 0, 3, 4, 5]
+test = sort_list(test2)
+t_one_linked(test, test2_out)
+print(test)
+del test
+
+test3 = create_linked([2, 3, 5, 4])
+test3_out = [2, 3, 4, 5]
+test = sort_list(test3)
+t_one_linked(test, test3_out)
+print(test)
+del test
