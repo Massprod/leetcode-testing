@@ -129,8 +129,7 @@ def sort_list_slow(head: ListNode) -> ListNode:
 # 1 obvious solution with time => O(n + n * log n + n) ->
 #   -> creating list of all values, sorting with python built_in, making new one.
 # Slow and space will be O(2n) => storing list of values + extra linked list created.
-# 2 solution I can think of is either recursion or while loop with 2 pointers,
-# to min_max values.
+# 2 solution I can think of is either recursion or while loop with 2 pointers, to min_max values.
 # 1 solution is easy and already done similar tasks, guess it's time to think about 2 solution :)
 
 
@@ -171,7 +170,8 @@ def sort_list(head: ListNode) -> ListNode:
     return merge(sort_list(head), sort_list(half))
 
 
-# Rebuilding with most looking like O(1) google solution.
+# This one takes 0.2 of s to solve max_constraints. But it's totally not O(1) for space.
+# Rebuilding with most looking like O(1) googled solution.
 # Only can call this O(1) if we're not counting recursion and counting one_new node as O(1).
 
 
