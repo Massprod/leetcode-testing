@@ -18,6 +18,8 @@ def max_points(points: list[list[int]]) -> int:
     ascending_diag: int = 1
     descending_diag: int = 1
     lines: set[int] = set()
+    if length >= 2:
+        lines.add(2)
     for point in points:
         point_x: int = point[0]
         point_y: int = point[1]
@@ -77,3 +79,10 @@ print(max_points(test1))
 test2 = [[1, 1], [3, 2], [5, 3], [4, 1], [2, 3], [1, 4]]
 test2_out = 4
 print(max_points(test2))
+
+# test3 - failed -> failed to consider, that every 2 points can be a 1 line at any coordinates,
+#                   so if we only have >= (2 points) -> it's by default 2 points_straight_line.
+#                   And only after that we should count everything else.
+test3 = [[2, 3], [1, 1]]
+test3_out = 2
+print(max_points(test3))
