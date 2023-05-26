@@ -39,8 +39,16 @@ def sort_list(head: ListNode) -> ListNode:
     pass
 
 
-test1 = [4, 2, 1, 3]
+# 1 obvious solution with time => O(n + n * log n + n) ->
+#   -> creating list of all values, sorting with python built_in, making new one.
+# Slow and space will be O(2n) => storing list of values + extra linked list created.
+# 2 solution I can think of is either recursion or while loop with 2 pointers,
+# to min_max values.
+# 1 solution is easy and already done similar tasks, guess it's time to think about 2 solution :)
+
+
+test1 = create_linked([4, 2, 1, 3])
 test1_out = [1, 2, 3, 4]
 
-test2 = [-1, 5, 3, 4, 0]
+test2 = create_linked([-1, 5, 3, 4, 0])
 test2_out = [-1, 0, 3, 4, 5]
