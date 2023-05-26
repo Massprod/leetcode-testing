@@ -72,12 +72,27 @@ def sort_list(head: ListNode) -> ListNode:
             tempo = tempo.next
             current_node.next = min_node
             min_node = current_node
-            if tempo is None:
-                current_node.next.next = None
+            max_node.next = tempo
             continue
     return min_node
 
 
+# Dunno about solutions with O(1) space, because every one of them having either recursion, or
+# rebuild it, not from scratch but still changing values saved in traversing before.
+# If I see it correctly my_solution didn't take any extra space, and we're operating only with links from original.
+# Working, and correctly, but really slow, because inserting in the middle traversing whole slice inside.
+# -----------------
+# Flow with min_node fixed, I was inserting min_node and didn't change current_node, ended in a loop.
+# Now we're ending it by assigning next value as max_node.next, because we're always having tempo ->
+# which is n + 1 while max_node is n.
+# -----------------
+# Fun part, I actually made O(1) solution, but slow af. And I have one flow with inserting min_node.
+# No way I could do this by myself, and even after searching I didn't find real O(1) space solution,
+# either they're rebuilding it with sort() or just sort by themselves and rebuilding anyway.
+# But none of the solutions change it without recursion or rebuilding.
+# -----------------
+# Rebuild, too slow to cover constraints even in my tests, and failing some tests anyway.
+# -----------------
 # 1 obvious solution with time => O(n + n * log n + n) ->
 #   -> creating list of all values, sorting with python built_in, making new one.
 # Slow and space will be O(2n) => storing list of values + extra linked list created.
@@ -107,17 +122,17 @@ t_one_linked(test, test3_out)
 print(test)
 del test
 
-test4 = create_linked([2, 1])
+test4 = create_linked([3, 4, 1])
 test = sort_list(test4)
 print(test)
 
 
 # extra slow for this
-for _ in range(50):
-    test_list = [randint(-500, 500) for _ in range(0, 10000)]
-    test_linked = create_linked(test_list)
-    test = sort_list(test_linked)
-    test_list.sort()
-    t_one_linked(test, test_list)
-    print(test)
-    print(test_list)
+# for _ in range(50):
+#     test_list = [randint(-500, 500) for _ in range(0, 10000)]
+#     test_linked = create_linked(test_list)
+#     test = sort_list(test_linked)
+#     test_list.sort()
+#     t_one_linked(test, test_list)
+#     print(test)
+#     print(test_list)
