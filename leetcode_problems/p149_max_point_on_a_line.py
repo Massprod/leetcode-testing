@@ -3,73 +3,63 @@
 # -----------------------
 # 1 <= points.length <= 300  ,  points[i].length == 2  ,  -104 <= xi, yi <= 104
 # All the points are unique.
+import math
 
 
 def max_points(points: list[list[int]]) -> int:
+    # working_sol (66.22%, 29.41%) -> (92ms, 16.5mb)  time: O((n * n) * (log n)) | space: O(n)
     length: int = len(points)
     if length == 1:
         return 1
-    used_horizont: set[int] = set()
-    used_vertical: set[int] = set()
-    used_ascending: set[int] = set()
-    used_descending: set[int] = set()
-    vertical_line: int = 1
-    horizontal_line: int = 1
-    ascending_diag: int = 1
-    descending_diag: int = 1
-    lines: set[int] = set()
-    if length >= 2:
-        lines.add(2)
-    for point in points:
-        point_x: int = point[0]
-        point_y: int = point[1]
-        if point_x in used_vertical:
-            continue
-        if point_y in used_horizont:
-            continue
-        if abs(point_x + point_y) in used_descending:
-            continue
-        if abs(point_x - point_y) in used_ascending:
-            continue
-        for g in range(length):
-            if points[g] == point:
+    if length == 2:
+        return 2
+
+    def normalize_float(x: tuple[int, int], y: tuple[int, int]) -> tuple[int, int]:
+        run: int = y[0] - x[0]
+        if run == 0:
+            return 1, 0
+        if run < 0:
+            x, y = y, x
+            run = y[0] - x[0]
+        rise: int = y[1] - x[1]
+        greatest_common_div: int = math.gcd(abs(rise), abs(run))
+        return rise // greatest_common_div, run // greatest_common_div
+
+    max_on_line: int = 0
+    for g in range(length):
+        point: tuple = tuple(points[g])
+        slopes: dict = {}
+        for h in range(g + 1, length):
+            pair: tuple = tuple(points[h])
+            if point == pair:
                 continue
-            check_x: int = points[g][0]
-            check_y: int = points[g][1]
-            if check_y == point_y:
-                horizontal_line += 1
-            if check_x == point_x:
-                vertical_line += 1
-            if (check_x + check_y) == (point_x + point_y):
-                descending_diag += 1
-            if abs(check_x - check_y) == abs(point_x - point_y):
-                ascending_diag += 1
-        used_horizont.add(point_y)
-        used_vertical.add(point_x)
-        used_ascending.add(abs(point_x - point_y))
-        used_descending.add(abs(point_x + point_y))
-        lines.add(vertical_line), lines.add(horizontal_line)
-        lines.add(ascending_diag), lines.add(descending_diag)
-        vertical_line = 1
-        horizontal_line = 1
-        ascending_diag = 1
-        descending_diag = 1
-    return max(lines)
+            slope: tuple = normalize_float(point, pair)
+            if slope in slopes:
+                slopes[slope] += 1
+                continue
+            slopes[slope] = 2
+        if slopes.values():
+            max_on_line = max(max_on_line, max(slopes.values()))
+    return max_on_line
 
 
-# Ascending diag: x1 - y1 == xk - yk
-# Descending diag: x1 + y1 == xk + yk
-# Horizont: y1 = y2 = yk
-# Vertical: x1 = x2 = xk
-# -----------------------
-# If we don't care about speed we can check every index one by one and count their lines,
-# but it's going to be O(n ** n) and I fear with 300 points it will hit time_limit.
-# How we can avoid it?
-# 1) Delete every index with 0? If we check point and find there's no other points on her lines.
-# Ok. But still need's to be checked and if there's none like this?
-# 2) Remember lines? We check x = 2, for every index, and if we met another point with x == 2
-# just ignore it or at least ignore horizontal calc.
-# Ok. 2 might be enough, don't see other options for now.
+# Time complexity: O((n * n) * (log n)) -> traversing whole input_list with nested loop => O(n * n) ->
+# n - length of input_list^^   -> for every point we check, normalizing their slope(float),
+#                                 constant actions with same input sizes => O(1) ->
+#                              -> for every index g we're trying to check, creating dictionary and populating it
+#                                 only with part of the input_list values => O(log n) ->
+#                              -> choosing max_on_line between int and populated dictionary => O(1) <- hash table.
+# Space complexity: O(n) -> creating extra dictionary, with size of input_list in the worst_case ->
+# n - length of input_list^^ -> every point will have unique slope with our check_point(points[g]) => O(n)
+# !
+#   For each point p, calculate its slope with other points and use a map to record
+#  how many points have same slope, by which we can find out how many points are on same line
+#  with p as their one point. For each point keep doing the same thing and update
+#  the maximum number of point count found so far.
+#   To get rid of the precision problems, we treat slope as pair ((y2 – y1), (x2 – x1))
+#  instead of ratio, and reduce pair by their gcd before inserting into map. !
+#  No way to solve it without knowing this math ^^.
+# I was trying to solve it, like queen problem...
 
 
 test1 = [[1, 1], [2, 2], [3, 3]]
@@ -86,3 +76,8 @@ print(max_points(test2))
 test3 = [[2, 3], [1, 1]]
 test3_out = 2
 print(max_points(test3))
+
+# test4 - failed -> not on diagonals and hor,vert. How can we make a line?
+test4 = [[-6, -1], [3, 1], [12, 3]]
+test4_out = 3
+print(max_points(test4))
