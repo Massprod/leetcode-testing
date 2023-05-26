@@ -55,7 +55,7 @@ def sort_list_slow(head: ListNode) -> ListNode:
             continue
         if min_node.val < current_node.val < max_node.val:
             tempo = tempo.next
-            max_node.next = current_node.next
+            max_node.next = tempo
             between: ListNode = min_node
             while between.next.val < current_node.val:
                 between = between.next
@@ -199,7 +199,7 @@ del test
 
 # extra slow for leet
 timed: set = set()
-for _ in range(10):
+for _ in range(1):
     t: float = time.time()
     test_list = [randint(-10 ** 5, 10 ** 5) for _ in range(0, 5 * (10 ** 4))]
     test_linked = create_linked(test_list)
