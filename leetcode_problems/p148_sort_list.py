@@ -4,6 +4,7 @@
 # -105 <= Node.val <= 105
 # --------------------
 # Follow up: Can you sort the linked list in O(n log n) time and O(1) memory (i.e. constant space)?
+from random import randint
 
 
 class ListNode:
@@ -71,6 +72,8 @@ def sort_list(head: ListNode) -> ListNode:
             tempo = tempo.next
             current_node.next = min_node
             min_node = current_node
+            if tempo is None:
+                current_node.next.next = None
             continue
     return min_node
 
@@ -103,3 +106,18 @@ test = sort_list(test3)
 t_one_linked(test, test3_out)
 print(test)
 del test
+
+test4 = create_linked([2, 1])
+test = sort_list(test4)
+print(test)
+
+
+# extra slow for this
+for _ in range(50):
+    test_list = [randint(-500, 500) for _ in range(0, 10000)]
+    test_linked = create_linked(test_list)
+    test = sort_list(test_linked)
+    test_list.sort()
+    t_one_linked(test, test_list)
+    print(test)
+    print(test_list)
