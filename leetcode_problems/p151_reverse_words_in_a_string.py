@@ -13,6 +13,7 @@
 
 
 def reverse_words_rebuild(s: str) -> str:
+    # working_sol (5.49%, 36.41%) -> (73ms, 16.5mb)  time: O( ) | space: O( )
     new_words: str = ""
     new_word: str = ""
     for x in range(len(s) - 1, -1, -1):
@@ -32,19 +33,28 @@ def reverse_words_rebuild(s: str) -> str:
     return new_words
 
 
+# Time complexity: O(2n) -> traversing once through whole input_string => O(n) ->
+# n - len of input_string^^ -> creating words along the way, on break point traversing this new_word
+#                              to reverse and append new_words(answer) => O(log n) <- on median, in the worst case ->
+#                           -> our whole input_string will be filled with only correct symbols => O(n) -> O(n) + O(n)
+# Space complexity: O(2n) -> same worst, case we're storing whole input_string into new_word
+#                            and reversing new_word into new_words(answer) => O(n) + O(n)
 # -------------------
-# Basic rebuilding with O(n) space is easy, so it's better to try O(1).
-# But, even better is to do both.
+# Basic rebuilding with O(2n) space is easy, so it's better to try O(1).
+# But, even better is to do both.                     Sometime later^^ :)
 
 
 test1 = "the sky is blue"
 test1_out = "blue is sky the"
 print(reverse_words_rebuild(test1))
+assert test1_out == reverse_words_rebuild(test1)
 
 test2 = "  hello world  "
 test2_out = "world hello"
 print(reverse_words_rebuild(test2))
+assert test2_out == reverse_words_rebuild(test2)
 
 test3 = "a good   example"
 test3_out = "example good a"
 print(reverse_words_rebuild(test3))
+assert test3_out == reverse_words_rebuild(test3)
