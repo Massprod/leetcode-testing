@@ -41,10 +41,11 @@ def reverse_words_rebuild(s: str) -> str:
 #                            and reversing new_word into new_words(answer) => O(n) + O(n)
 # -------------------
 # Basic rebuilding with O(2n) space is easy, so it's better to try O(1).
-# But, even better is to do both.                     Sometime later^^ :)
+# ! Strings are not mutable in Python. ! <- Sadly, we can't.
 
 
 test1 = "the sky is blue"
+print(test1)
 test1_out = "blue is sky the"
 print(reverse_words_rebuild(test1))
 assert test1_out == reverse_words_rebuild(test1)
