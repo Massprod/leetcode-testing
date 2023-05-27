@@ -14,14 +14,61 @@
 
 
 def eval_rpn(tokens: list[str]) -> int:
-    pass
+    path: list[int] = []
+    for x in range(len(tokens)):
+        if tokens[x] == "+":
+            new: int = path[-2] + path[-1]
+            path.pop()
+            path[-1] = new
+            continue
+        if tokens[x] == "-":
+            new: int = path[-2] - path[-1]
+            path.pop()
+            path[-1] = new
+            continue
+        if tokens[x] == "*":
+            new: int = int(path[-2] * path[-1])
+            path.pop()
+            path[-1] = new
+            continue
+        if tokens[x] == "/":
+            new: int = int(path[-2] / path[-1])
+            path.pop()
+            path[-1] = new
+            continue
+        path.append(int(tokens[x]))
+    return path[-1]
+
+
+# Should I check for errors?
+# Because in the description => | The input represents a valid arithmetic expression in a reverse polish notation. | ->
+# -> so inputs like this: ["1", "+", "-"] should be incorrect, and shouldn't be presented in test_cases.
+# Guess I need to fail to check this, because if we trust in description it's ok.
+# Otherwise, I need to check len of path, and ignore operands if there's less than 2 values inside
+# -----------------------------
+# !
+#  In reverse Polish notation, the operators follow their operands. For example, to add 3 and 4 together,
+# the expression is 3 4 + rather than 3 + 4. The expression 3 − 4 + 5 in conventional notation is 3 4 − 5 +
+# in reverse Polish notation: 4 is first subtracted from 3, then 5 is added to it.
+#  The concept of a stack, a last-in/first-out construct, is integral to the left-to-right evaluation of RPN.
+# In the example 3 4 -, first the 3 is put onto the stack, then the 4; the 4 is now on top and the 3 below it.
+# The subtraction operator removes the top two items from the stack, performs 3 - 4,
+# and puts the result of -1 onto the stack. !
+# Wiki page was given as a reference and I had no idea about this RPN, so it's correct to use this.
 
 
 test1 = ["2", "1", "+", "3", "*"]
 test1_out = 9
+print(eval_rpn(test1))
 
 test2 = ["4", "13", "5", "/", "+"]
 test2_out = 6
+print(eval_rpn(test2))
 
 test3 = ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"]
 test3_out = 22
+print(eval_rpn(test3))
+
+test4 = ["1", "+"]
+test4_out = 1
+print(eval_rpn(test4))
