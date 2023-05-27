@@ -14,6 +14,7 @@
 
 
 def eval_rpn(tokens: list[str]) -> int:
+    # working_sol (43.14%, 52.21%) -> (84ms, 16.6mb)  time: O(n) | space: O(log n)
     path: list[int] = []
     for x in range(len(tokens)):
         if tokens[x] == "+":
@@ -40,6 +41,12 @@ def eval_rpn(tokens: list[str]) -> int:
     return path[-1]
 
 
+# Time complexity: O(n) -> traversing whole input once => O(n).
+# n - length of input_list^^
+# Space complexity: O(log n) -> only part with integers of input_list will be stored in path => O(log n)
+# -----------------------------
+# Wow, they didn't trick us in the description. Rare occasion.
+# -----------------------------
 # Should I check for errors?
 # Because in the description => | The input represents a valid arithmetic expression in a reverse polish notation. | ->
 # -> so inputs like this: ["1", "+", "-"] should be incorrect, and shouldn't be presented in test_cases.
@@ -60,15 +67,24 @@ def eval_rpn(tokens: list[str]) -> int:
 test1 = ["2", "1", "+", "3", "*"]
 test1_out = 9
 print(eval_rpn(test1))
+assert test1_out == eval_rpn(test1)
 
 test2 = ["4", "13", "5", "/", "+"]
 test2_out = 6
 print(eval_rpn(test2))
+assert test2_out == eval_rpn(test2)
 
 test3 = ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"]
 test3_out = 22
 print(eval_rpn(test3))
+assert test3_out == eval_rpn(test3)
 
-test4 = ["1", "+"]
+test4 = ["1"]
 test4_out = 1
 print(eval_rpn(test4))
+assert test4_out == eval_rpn(test4)
+
+test5 = ["3", "4", "*", "5", "6", "*", "+"]
+test5_out = 42
+print(eval_rpn(test5))
+assert test5_out == eval_rpn(test5)
