@@ -13,7 +13,7 @@
 
 
 def reverse_words_rebuild(s: str) -> str:
-    # working_sol (5.49%, 36.41%) -> (73ms, 16.5mb)  time: O( ) | space: O( )
+    # working_sol (5.49%, 36.41%) -> (73ms, 16.5mb)  time: O(2n) | space: O(2n)
     new_words: str = ""
     new_word: str = ""
     for x in range(len(s) - 1, -1, -1):
