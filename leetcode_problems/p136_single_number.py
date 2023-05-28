@@ -10,6 +10,13 @@ def single_number(nums: list[int]) -> int:
     pass
 
 
+# O(1) - space, O(n) - time, huh.
+# So we can't rebuild or sort, only some constants.
+# Sum? Like, left_right loop with summarizing everything and extracting after we encounter double?
+# Nah, we would need extra space to store used values, and if only 1 value remembered we will lose values.
+#
+
+
 test1 = [2, 2, 1]
 test1_out = 1
 
