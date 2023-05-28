@@ -6,6 +6,7 @@
 
 
 def max_product(nums: list[int]) -> int:
+    # working_sol (5.15%, 13.72%) -> (113ms, 16.9mb)  time: O(n * ((n - i) + (0 + i)) | space: O(1)
     if len(nums) == 1:
         return nums[0]
     max_val: int = nums[0]
@@ -55,6 +56,20 @@ def max_product(nums: list[int]) -> int:
     return max_val
 
 
+# Time complexity: O(n * ((n - i) + (0 + i)) -> traversing whole input list once => O(n) ->
+# n - len of input_list^^ -> for every index on this traversing_way
+# i - current index^^        we're checking left(0 + i) and right(n - i) sides of the index
+#                            in the worst case, we're having values not equal to 0, 1, -1
+#                            than we're checking every index on both sides without breaking => O((n - i) + (0 + i)).
+#                  Ω(1) -> best case, we're having 1 value in input_list, and it's equal to (2 ** 31 - 1).
+#                  Θ(log n * (log(n - 1) + log(0 + i))) ->
+#                  -> part of the input_list will be 0, or 1, or -1 after negative_used
+#                     and only part of the input_list and left, right slices going to be checked.
+# Space complexity: O(1) -> only 3 extra constants used, and number of constants doesn't depend on input_list => O(1)
+# -------------------
+# Not bad actual results with my solution, without any extra info via Google or something.
+# Median time is like 97ms, and mine is 113.
+# -------------------
 # Ok. Another possible cull, skip 1 and -1, but take in consideration that -1 can make
 # from -high_product -> + high_product -> and skip 1, because we're already walk through whole right_left sides.
 # How?
