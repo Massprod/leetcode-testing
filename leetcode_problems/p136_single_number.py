@@ -42,17 +42,24 @@ def single_number(nums: list[int]) -> int:
 test1 = [2, 2, 1]
 test1_out = 1
 print(single_number(test1))
+assert test1_out == single_number(test1)
 
 test2 = [4, 1, 2, 1, 2]
 test2_out = 4
 print(single_number(test2))
+assert test2_out == single_number(test2)
 
 test3 = [1]
 test3_out = 1
 print(single_number(test3))
+assert test3_out == single_number(test3)
 
 test4 = [1, 2, 3, 4, 5, 6, 7, 10, 9, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+test4_out = 10
 print(single_number(test4))
+assert test4_out == single_number(test4)
 
 test5 = [1, 2, 3, 4, 2, 1, 3]
+test5_out = 4
 print(single_number(test5))
+assert test5_out == single_number(test5)
