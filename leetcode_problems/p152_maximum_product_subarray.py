@@ -15,13 +15,29 @@ def max_product(nums: list[int]) -> int:
         for y in range(x + 1, len(nums)):
             prod = prod * nums[y]
             max_val = max(max_val, prod)
+            if max_val >= (2 ** 31 - 1) or max_val <= -(2 ** 31):
+                return max_val
         prod = nums[x]
         for z in range(x - 1, -1, -1):
             prod = prod * nums[z]
             max_val = max(max_val, prod)
+            if max_val >= (2 ** 31 - 1) or max_val <= -(2 ** 31):
+                return max_val
     return max_val
 
 
+# Ok. Another possible cull, skip 1 and -1, but take in consideration that -1 can make
+# from -high_product -> + high_product -> and skip 1, because we're already walk through whole right_left sides.
+# How?
+# -------------------
+# 186/190 - passed, last one is time_gates as always,
+# And I don't think we can sort like I was thinking, because we're obliged to find SUBARRAY,
+# but after sorting we're not having any order to see what is SUBARRAY or just random values,
+# how can we cull duplicates?
+# !
+# The test cases are generated so that the answer will fit in a 32-bit integer. !
+# Ok, if we find any values equal or lower, insta return.
+# -------------------
 # Maybe sorting? Well it could cull everything, because we're just going to calculate
 # values from negative, starting from some index which will give us EVEN number of negative,
 # like: [-100, -50, -25, -10, 1, 50, 60, 70, 80, 90]
