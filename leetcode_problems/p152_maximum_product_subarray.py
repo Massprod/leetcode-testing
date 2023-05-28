@@ -9,19 +9,30 @@ def max_product(nums: list[int]) -> int:
     if len(nums) == 1:
         return nums[0]
     max_val: int = nums[0]
+    prod: int = max_val
+    negative_used: bool = False
     for x in range(len(nums)):
-        prod: int = nums[x]
+        if nums[x] == -1 and prod < 0 and x != 0 and not negative_used:
+            max_val = max(max_val, (prod * -1))
+            negative_used = True
+            continue
+        prod = nums[x]
+        if nums[x] == 1:
+            continue
+        if nums[x] == 0:
+            continue
         max_val = max(max_val, nums[x])
+        negative_used = False
         for y in range(x + 1, len(nums)):
             prod = prod * nums[y]
             max_val = max(max_val, prod)
-            if max_val >= (2 ** 31 - 1) or max_val <= -(2 ** 31):
+            if max_val >= (2 ** 31 - 1):
                 return max_val
         prod = nums[x]
         for z in range(x - 1, -1, -1):
             prod = prod * nums[z]
             max_val = max(max_val, prod)
-            if max_val >= (2 ** 31 - 1) or max_val <= -(2 ** 31):
+            if max_val >= (2 ** 31 - 1):
                 return max_val
     return max_val
 
@@ -69,3 +80,8 @@ test3 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 test3_out = 3628800
 print(max_product(test3))
 assert test3_out == max_product(test3)
+
+test4 = [-5, 2, 4, 1, -2, 2, -6, 3, -1, -1, -1, -2, -3, 5, 1, -3, -4, 2, -4, 6, -1, 5, -6, 1, -1, -1, 1, 1, -1, 1, 1,
+         -1, -1, 1, -1, -1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1, 1, -1, 1, -1, 1, 1, -1, -1, -1, -1, 1, -1, -1, 1, -1, -1,
+         1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, -1, -1, -1, -1, 1, 1, 1]
+print(max_product(test4))
