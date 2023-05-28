@@ -12,26 +12,44 @@ def max_product(nums: list[int]) -> int:
     prod: int = max_val
     negative_used: bool = False
     for x in range(len(nums)):
+        if nums[x] == 1:
+            if prod <= 0:
+                prod = 1
+                max_val = max(max_val, prod)
+            continue
         if nums[x] == -1 and prod < 0 and x != 0 and not negative_used:
-            max_val = max(max_val, (prod * -1))
+            prod = prod * -1
+            max_val = max(max_val, prod)
             negative_used = True
             continue
-        prod = nums[x]
-        if nums[x] == 1:
+        if nums[x] == -1 and negative_used:
+            continue
+        if nums[x] == -1 and prod > 0:
             continue
         if nums[x] == 0:
+            prod = 0
+            max_val = max(max_val, prod)
             continue
+        prod = nums[x]
         max_val = max(max_val, nums[x])
         negative_used = False
         for y in range(x + 1, len(nums)):
+            if nums[y] == 1:
+                continue
             prod = prod * nums[y]
             max_val = max(max_val, prod)
+            if nums[y] == 0:
+                break
             if max_val >= (2 ** 31 - 1):
                 return max_val
         prod = nums[x]
         for z in range(x - 1, -1, -1):
+            if nums[z] == 1:
+                continue
             prod = prod * nums[z]
             max_val = max(max_val, prod)
+            if nums[z] == 0:
+                break
             if max_val >= (2 ** 31 - 1):
                 return max_val
     return max_val
@@ -47,22 +65,24 @@ def max_product(nums: list[int]) -> int:
 # how can we cull duplicates?
 # !
 # The test cases are generated so that the answer will fit in a 32-bit integer. !
-# Ok, if we find any values equal or lower, insta return.
+# Ok, if we find any values equal or higher than (2 ** 31 -1), insta return. <- 32 bit positive limit_value
 # -------------------
 # Maybe sorting? Well it could cull everything, because we're just going to calculate
 # values from negative, starting from some index which will give us EVEN number of negative,
 # like: [-100, -50, -25, -10, 1, 50, 60, 70, 80, 90]
 # all we need after sorting is take [0] -> [3] => giving us positive product with the highest values,
 # and multiply one by one [1, 50, 60, 70, 80, 90] => most highest value.
-# If we're allowing to do this it might be working solution, because I doubt it can pass with just O(n * (n + n).
+# If we're allowing to do this it might be working solution,
+# because I doubt it can pass with just O(n * (log n + log n).
 # But let's fail first.
 # -------------------
 # !
 # A subarray is a contiguous non-empty sequence of elements within an array. !
-# Don't know how to make it faster than O(n * (n + n)) at least for now, and I didn't know what time_limit is.
+# Don't know how to make it faster than O(n * (log n + log n)) at least for now,
+# and I didn't know what time_limit is.
 # Let's first try to make it like this and after hitting limit change,
 # because I don't see any ways to skip calculations.
-# We should always go from index and check every side of it, from 0 - index, and index - end.
+# We should always go from index and check every side of it, from 0 <- index, and index -> end.
 # Always compare it to current max, and just return this max. Like I see it for now.
 
 
@@ -81,7 +101,20 @@ test3_out = 3628800
 print(max_product(test3))
 assert test3_out == max_product(test3)
 
+# part of time_limit, whole is x10
 test4 = [-5, 2, 4, 1, -2, 2, -6, 3, -1, -1, -1, -2, -3, 5, 1, -3, -4, 2, -4, 6, -1, 5, -6, 1, -1, -1, 1, 1, -1, 1, 1,
          -1, -1, 1, -1, -1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1, 1, -1, 1, -1, 1, 1, -1, -1, -1, -1, 1, -1, -1, 1, -1, -1,
          1, 1, -1, -1, 1, 1, -1, 1, -1, -1, 1, -1, -1, -1, -1, 1, 1, 1]
 print(max_product(test4))
+
+# test5 - failed -> I made IF for the case with prod == 0, but if it was lower than 0 -> 1 is still higher and I should
+#                   made prod == 1 in this case, changed for IF prod <= 0.
+test5 = [-2, 1, 0]
+test5_out = 1
+print(max_product(test5))
+assert test5_out == max_product(test5)
+
+test6 = [3, -1, 4]
+test6_out = 4
+print(max_product(test6))
+assert test6_out == max_product(test6)
