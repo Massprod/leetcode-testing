@@ -29,7 +29,7 @@ def can_complete_circuit(gas: list[int], cost: list[int]) -> int:
                 break
             current += 1
             if current >= len(gas):
-                current = current - len(gas)
+                return start
             tank += gas[current]
         if current == start:
             return start
@@ -37,6 +37,16 @@ def can_complete_circuit(gas: list[int], cost: list[int]) -> int:
             start += 1
     return -1
 
+
+# Ok. Totally can't break time_limit just by changing it. What else can we do with path?
+# -----------------------
+# Hmm. If we need to have fuel at least equal to a cost.
+# Can we just summarize everything until we hit rock_bottom with empty tank?
+# That's already done and if we're not checking from a start to a full circle, how can we get info about other half?
+# Like summ of first_half is equal to first_half_costs, but what about other half?
+# Ok we can cull other half, because we're already checked that it can be done by sum(gas) < sum(cost)
+# Not enough.
+# -----------------------
 # Ok. Still not enough.
 # -----------------------
 # What to cull? Ok. After I culled 0 gas stations, time limit passed ->
