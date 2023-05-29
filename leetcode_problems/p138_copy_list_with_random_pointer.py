@@ -28,6 +28,7 @@ class Node:
       self.next -> next node this node links to.
       self.random -> link to any random node inside linked list.
     """
+
     def __init__(self, x: int = 0, next: 'Node' = None, random: 'Node' = None):
         self.val = int(x)
         self.next = next
@@ -98,17 +99,19 @@ def t_two_lists_with_random(list1: Node, list2: Node, check_random: bool = False
 
 
 def copy_random_list(head: Node) -> Node:
+    # working_sol (54.4%, 39.41%) -> (46ms, 17.2mb)  time: O(n) | space: O(3n)
     if not head:
         return head
     all_data: list[list[int | None]] = []
     temp: Node = head
     node_index: int = 0
     while temp:
-        if temp.val:
+        if temp.val is not None:
             node_val: list[int] = [temp.val]
             all_data.append(node_val)
-        if not temp.val:
-            all_data.append([None])
+        if temp.val is None:
+            node_val: list[None] = [None]
+            all_data.append(node_val)
         temp.val = node_index
         temp = temp.next
         if temp:
@@ -116,10 +119,10 @@ def copy_random_list(head: Node) -> Node:
     temp = head
     node_index = 0
     while temp:
-        if temp.random:
+        if temp.random is not None:
             random_index: int = temp.random.val
             all_data[node_index].append(random_index)
-        if not temp.random:
+        if temp.random is None:
             all_data[node_index].append(None)
         temp = temp.next
         if temp:
@@ -152,6 +155,23 @@ def copy_random_list(head: Node) -> Node:
     return deepcopy
 
 
+# Time complexity O(n) -> traversing once through input linked list to get all values, and replace them
+# n - number of nodes in original list^^|  with node indexes => O(n) -> traversing once again to get indexes
+#                                          of the nodes which random_link points => O(n) ->
+#                                       -> returning changed values in input_list to their original state => O(n) ->
+#                                       -> creating deepcopy with same number of linked nodes as original => O(n) ->
+#                                       -> adding correct random links to created nodes in deepcopy => O(n) ->
+#                                       -> returning deepcopy -> O(n) + O(n) + O(n) + O(n) => O(4n) or O(n)
+#         ! linear time with any correct input, because we're doing this 4 options for any correct input^^ !
+#
+# Space complexity: O(3n) -> creating extra list to store values and random indexes of original input_list => O(n) ->
+#                            -> creating a deepcopy of with same number of nodes as original => O(n) ->
+#                            -> creating another extra list to store links to a deepcopy nodes => O(n) -> O(3n)
+# ------------------
+# !
+# Node.random is null or is pointing to some node in the linked list. !
+# ^^Don't need to check for negative values, or check if it's correct link.
+# ------------------
 # Ok. All working. Time to make test function and fail commit, because there's either time_limit or
 # some tricky part I have missed.
 # ------------------
@@ -178,7 +198,6 @@ def copy_random_list(head: Node) -> Node:
 
 
 test1 = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
-test1_out = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
 test_linked = create_linked(test1)
 # show_all_nodes(test_linked, False)
 test_out = copy_random_list(test_linked)
@@ -187,14 +206,26 @@ t_two_lists_with_random(test_linked, test_out)
 del test_linked
 
 test2 = [[1, 1], [2, 1]]
-test2_out = [[1, 1], [2, 1]]
 test_linked = create_linked(test2)
 test_out = copy_random_list(test_linked)
 t_two_lists_with_random(test_linked, test_out)
 del test_linked
 
 test3 = [[3, None], [3, 0], [3, None]]
-test3_out = [[3, None], [3, 0], [3, None]]
 test_linked = create_linked(test3)
+test_out = copy_random_list(test_linked)
+t_two_lists_with_random(test_linked, test_out)
+del test_linked
+
+# test4 - failed -> Most silly mistake I could make after nailing all of this, is to check if VALUE in a node is None
+#                   I did this like if VAL => proceed, but 0 is False...
+#                   So we need to check implicitly for None, now it if VAL is not None => proceed.
+test4 = [
+    [3, None], [5, 17], [4, None], [-9, 6], [-10, 3], [5, 15], [0, 11],
+    [6, None], [-6, 16], [3, 16], [-6, 11], [9, 12], [-2, 1], [-3, 11],
+    [-1, 10], [2, 11], [-3, None], [-9, 7], [-2, 4], [-8, None], [5, None]
+]
+test_linked = create_linked(test4)
+test_out = copy_random_list(test_linked)
 t_two_lists_with_random(test_linked, test_out)
 del test_linked
