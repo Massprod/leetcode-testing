@@ -9,36 +9,45 @@
 
 
 def can_complete_circuit(gas: list[int], cost: list[int]) -> int:
+    # working_sol (9.46%, 17.88%) -> (1175ms, 22.3mb)  time: O(n) | space: O(1)
     if sum(gas) < sum(cost):
         return -1
     start: int = 0
-    while start != len(gas):
-        if gas[start] == 0:
-            start += 1
-            continue
-        if not (gas[start] >= cost[start]):
-            start += 1
-            continue
-        current: int = start + 1
-        if current >= len(gas):
-            current = current - len(gas)
-        tank: int = gas[start] + gas[current] - cost[start]
-        while current != start:
-            tank -= cost[current]
-            if tank < 0:
-                break
-            current += 1
-            if current >= len(gas):
-                return start
-            tank += gas[current]
-        if current == start:
-            return start
-        else:
-            start += 1
-    return -1
+    tank: int = 0
+    for station in range(len(gas)):
+        tank += gas[station] - cost[station]
+        if tank < 0:
+            start = station + 1
+            tank = 0
+    if start == len(gas):
+        start = start - len(gas)
+        return start
+    return start
 
 
+# Time complexity: O(n) -> traversing once whole input_lists to calculate sums => O(n) + O(n) => O(2n) ->
+# n - len of input_list^^  -> and traversing indexes of both input_lists once to calc tank => O(n) -> O(3n)
+#                          -> for a correct input_lists it's always linear O(n).
+# Space complexity: O(1) -> only 2 extra constants used (2 INTs: start, tank) ->
+#                          -> for a correct input_lists it's always constant O(1).
+# -----------------------
+# Failed a lot of commits, but actually made working solution on 1 try.
+# Just as always no indication about time they want, better to always try to cull everything from the start.
+# But how can I start culling parts of the solution if I don't even know if it's working?
+# Either make own tests, or just fail like this...
+# -----------------------
+# OK. At least this time_limits passed.
+# Ok. Forgot to update tank, we're starting new start at (break + 1) station
+# -----------------------
 # Ok. Totally can't break time_limit just by changing it. What else can we do with path?
+# Summarize all path and break on negative gas, by assuming that we have sum(gas) > sum(cost) ->
+# -> and assume that somewhere on the way we will just get this gas? ->
+# -> like if we don't have a fuel to get from 0 1, but we have correct equals on gas + cost,
+#    means there's some gas on the way we can take and still make full circle. How to do this?
+# Instead of *current* which I wanted to start from (start + 1 station), start from 0gas - 0cost?
+# Either full_circle or nothing, instantly checked by sum(gas) < sum(cost) ->
+# -> so yeah, either station cycle will give us enough fuel to make circle ->
+# -> or it's going to be gathered somewhere later but 100% enough after check -> no reasons to check both ways.
 # -----------------------
 # Hmm. If we need to have fuel at least equal to a cost.
 # Can we just summarize everything until we hit rock_bottom with empty tank?
@@ -74,12 +83,16 @@ test1_gas = [1, 2, 3, 4, 5]
 test1_cost = [3, 4, 5, 1, 2]
 test1_out = 3
 print(can_complete_circuit(test1_gas, test1_cost))
+assert test1_out == can_complete_circuit(test1_gas, test1_cost)
 
 test2_gas = [2, 3, 4]
 test2_cost = [3, 4, 3]
 test2_out = -1
 print(can_complete_circuit(test2_gas, test2_cost))
+assert test2_out == can_complete_circuit(test2_gas, test2_cost)
 
 test3_gas = [6, 5, 4, 3, 2, 0, 8, 9, 10, 5]
 test3_cost = [4, 6, 5, 3, 2, 0, 0, 7, 8, 6]
+test3_out = 0
 print(can_complete_circuit(test3_gas, test3_cost))
+assert test3_out == can_complete_circuit(test3_gas, test3_cost)
