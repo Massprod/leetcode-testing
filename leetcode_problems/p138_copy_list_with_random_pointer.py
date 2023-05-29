@@ -22,7 +22,13 @@
 
 
 class Node:
-    def __init__(self, x=0, next: 'Node' = None, random: 'Node' = None):
+    """
+    Creating single Node for a linked list with random links inside.
+      self.val -> value this node holds.
+      self.next -> next node this node links to.
+      self.random -> link to any random node inside linked list.
+    """
+    def __init__(self, x: int = 0, next: 'Node' = None, random: 'Node' = None):
         self.val = int(x)
         self.next = next
         self.random = random
@@ -32,6 +38,10 @@ class Node:
 
 
 def create_linked(to_link: list[list[int, int]]) -> Node:
+    """
+    Creating linked list with random links inside.
+      to_link -> should have value to put inside and index of a random_node to link with.
+    """
     tempo = link = Node()
     all_nodes: list[Node] = []
     for index in range(len(to_link)):
@@ -51,8 +61,15 @@ def create_linked(to_link: list[list[int, int]]) -> Node:
     return link
 
 
-def show_all_nodes(linked: Node) -> None:
+def show_all_nodes(linked: Node, show_all: bool = True) -> None:
+    """
+    Showing all linked list with random links.
+      linked -> correctly linked list with random links inside the nodes.
+      show_all -> shows every node one by one with random nodes when True, without random nodes when False.
+    """
     print("\nAll nodes:", linked)
+    if not show_all:
+        return
     node_num: int = 0
     one_node: Node = linked
     while one_node:
@@ -65,9 +82,79 @@ def show_all_nodes(linked: Node) -> None:
             node_num += 1
 
 
-def copy_random_list(head: Node) -> Node:
-    pass
+def t_two_lists_with_random(list1: Node, list2: Node, check_random: bool = False) -> None:
+    """
+    Testing all values (.val) for all nodes in original lists passed, and all nodes in random links inside.
+      list1 -> linked list with random links inside.
+      list2 -> linked list with random links inside.
+    """
+    while list1 and list2:
+        assert id(list1) != id(list2)
+        if (list1.random is not None) and not check_random:
+            t_two_lists_with_random(list1.random, list2.random, True)
+        assert list1.val == list2.val
+        list1 = list1.next
+        list2 = list2.next
 
+
+def copy_random_list(head: Node) -> Node:
+    if not head:
+        return head
+    all_data: list[list[int | None]] = []
+    temp: Node = head
+    node_index: int = 0
+    while temp:
+        if temp.val:
+            node_val: list[int] = [temp.val]
+            all_data.append(node_val)
+        if not temp.val:
+            all_data.append([None])
+        temp.val = node_index
+        temp = temp.next
+        if temp:
+            node_index += 1
+    temp = head
+    node_index = 0
+    while temp:
+        if temp.random:
+            random_index: int = temp.random.val
+            all_data[node_index].append(random_index)
+        if not temp.random:
+            all_data[node_index].append(None)
+        temp = temp.next
+        if temp:
+            node_index += 1
+    temp = head
+    node_index = 0
+    while temp:
+        temp.val = all_data[node_index][0]
+        temp = temp.next
+        if temp:
+            node_index += 1
+    deepcopy: Node = Node(0)  # don't know why they changed it, but before there was 0 by default for a .val
+    temp = deepcopy
+    all_copy_nodes: list[Node] = []
+    for x in range(len(all_data)):
+        val_copy: int = all_data[x][0]
+        temp.val = val_copy
+        all_copy_nodes.append(temp)
+        if x == (len(all_data) - 1):
+            temp.next = None
+            break
+        temp.next = Node(0)
+        temp = temp.next
+    for y in range(len(all_copy_nodes)):
+        random_index = all_data[y][1]
+        if random_index is None:
+            all_copy_nodes[y].random = None
+            continue
+        all_copy_nodes[y].random = all_copy_nodes[random_index]
+    return deepcopy
+
+
+# Ok. All working. Time to make test function and fail commit, because there's either time_limit or
+# some tricky part I have missed.
+# ------------------
 # Well while making all this basics to see what's going on in this task. I'm already made part of what we needed.
 # Hardest part is to get indexes of random_nodes, because we're just given these nodes.
 # Their not unique and have no indexes, so only way I see to get where we need to place them,
@@ -86,24 +173,28 @@ def copy_random_list(head: Node) -> Node:
 # ------------------
 # Ok. Rebuild creating of linked list from before, and dunder for __str__.
 # But can't make it show random, because it's trying to loop for itself and ending in a max_recursion.
-# Tho it's working correct, and checking with just print, is bad. But first time I encounter something more,
-# than single_linked list, so it's fine for now.
+# Tho it's working correct, and checking with just print, is bad.
+# But it's first time I encounter something more than single_linked list, so it's fine for now.
 
 
 test1 = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
-test1_out = [{7, None}, [13, 0], [11, 4], [10, 2], [1, 0]]
-test = create_linked(test1)
-show_all_nodes(test)
-del test
+test1_out = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
+test_linked = create_linked(test1)
+# show_all_nodes(test_linked, False)
+test_out = copy_random_list(test_linked)
+# show_all_nodes(test_out)
+t_two_lists_with_random(test_linked, test_out)
+del test_linked
 
 test2 = [[1, 1], [2, 1]]
 test2_out = [[1, 1], [2, 1]]
-test = create_linked(test2)
-show_all_nodes(test)
-del test
+test_linked = create_linked(test2)
+test_out = copy_random_list(test_linked)
+t_two_lists_with_random(test_linked, test_out)
+del test_linked
 
 test3 = [[3, None], [3, 0], [3, None]]
 test3_out = [[3, None], [3, 0], [3, None]]
-test = create_linked(test3)
-show_all_nodes(test)
-del test
+test_linked = create_linked(test3)
+t_two_lists_with_random(test_linked, test_out)
+del test_linked
