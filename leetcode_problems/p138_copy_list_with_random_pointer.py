@@ -52,7 +52,7 @@ def create_linked(to_link: list[list[int, int]]) -> Node:
 
 
 def show_all_nodes(linked: Node) -> None:
-    print(linked)
+    print("\nAll nodes:", linked)
     node_num: int = 0
     one_node: Node = linked
     while one_node:
@@ -68,7 +68,22 @@ def show_all_nodes(linked: Node) -> None:
 def copy_random_list(head: Node) -> Node:
     pass
 
-
+# Well while making all this basics to see what's going on in this task. I'm already made part of what we needed.
+# Hardest part is to get indexes of random_nodes, because we're just given these nodes.
+# Their not unique and have no indexes, so only way I see to get where we need to place them,
+# is to change every value in given list to 0...n, than read this list again, and get first .val of random_link.
+# But it's changing original input_list, so we're going to traverse TWICE just to get random indexes,
+# is there a better way?
+# First task with this type of linked_lists, and I won't google until I hit time_limit, so let's try to
+# make something like O(4) -> 1 to get indexes,
+#                          -> 2 to return original values,
+#                          -> 3 build new with values,
+#                          -> 4 put random_links
+# I could leave original changed, but it's not correct, and maybe it's allowed because there's no condition for that.
+# But we're dealing DEEPCOPY, so we're obliged to return COPY and leave original as it is.
+# I don't even know if we're allowed to change original in first place, but how else can we get random_indexes to put?
+# Extra time to traverse, but it's 99% more correct to return the original state.
+# ------------------
 # Ok. Rebuild creating of linked list from before, and dunder for __str__.
 # But can't make it show random, because it's trying to loop for itself and ending in a max_recursion.
 # Tho it's working correct, and checking with just print, is bad. But first time I encounter something more,
@@ -79,9 +94,16 @@ test1 = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
 test1_out = [{7, None}, [13, 0], [11, 4], [10, 2], [1, 0]]
 test = create_linked(test1)
 show_all_nodes(test)
+del test
 
 test2 = [[1, 1], [2, 1]]
 test2_out = [[1, 1], [2, 1]]
+test = create_linked(test2)
+show_all_nodes(test)
+del test
 
 test3 = [[3, None], [3, 0], [3, None]]
 test3_out = [[3, None], [3, 0], [3, None]]
+test = create_linked(test3)
+show_all_nodes(test)
+del test
