@@ -28,7 +28,7 @@ class Node:
         self.random = random
 
     def __str__(self):
-        return f"{self.val} + {self.random} -> {self.next}"
+        return f"{self.val} -> {self.next}"
 
 
 def create_linked(to_link: list[list[int, int]]) -> Node:
@@ -43,17 +43,42 @@ def create_linked(to_link: list[list[int, int]]) -> Node:
     tempo = link
     for x in range(len(to_link)):
         random_index: int = to_link[x][1]
+        if random_index is None:
+            tempo = tempo.next
+            continue
         tempo.random = all_nodes[random_index]
         tempo = tempo.next
     return link
+
+
+def show_all_nodes(linked: Node) -> None:
+    print(linked)
+    node_num: int = 0
+    one_node: Node = linked
+    while one_node:
+        print("Node index:", node_num)
+        print("Node.val:", one_node.val)
+        print("Node.random:", one_node.random)
+        print("----")
+        one_node = one_node.next
+        if one_node:
+            node_num += 1
 
 
 def copy_random_list(head: Node) -> Node:
     pass
 
 
+# Ok. Rebuild creating of linked list from before, and dunder for __str__.
+# But can't make it show random, because it's trying to loop for itself and ending in a max_recursion.
+# Tho it's working correct, and checking with just print, is bad. But first time I encounter something more,
+# than single_linked list, so it's fine for now.
+
+
 test1 = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
 test1_out = [{7, None}, [13, 0], [11, 4], [10, 2], [1, 0]]
+test = create_linked(test1)
+show_all_nodes(test)
 
 test2 = [[1, 1], [2, 1]]
 test2_out = [[1, 1], [2, 1]]
