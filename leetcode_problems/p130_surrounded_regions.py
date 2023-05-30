@@ -86,11 +86,11 @@ def solve(board: list[list[str]]) -> None:
 #                            adding elements in already_flipped(set()) and path itself => O(1) -> -> leading us to =>
 #                            => O((m - 2)  * (n - 2)) + O((m -2) * (n -2)) => O(2 * (m - 2) * (n - 2)).
 # Space complexity: O(2 * ((m - 2) * (n - 2)) + (g * 4)) -> worst case == every border index is "X" insides "O" ->
-# g - num of unique paths^^| -> extra dict() to store path, which in the worst case can be size of (m - 2) * (n - 2) ->
+# g - num of unique "O" ^^| -> extra dict() to store path, which in the worst case can be size of (m - 2) * (n - 2) ->
 #                            -> same goes to the already_flipped(set()), values on the  path we walk added into it =>
 #                            => O(2 * ((m - 2) * (n - 2))) -> every recursion creates two extra sets to store
 #                            all values around coordinate it called(start), both of them store only 4 values
-#                            distributed between them => O(g * 4), recursion called only once for every unique path.
+#                            distributed between them => O(g * 4), recursion called only once for every unique "O".
 # ------------------
 # Solution is a mess and not so good on performance but working.
 # Can be changed to remove recursion and check less extra pointers, but maybe later.
