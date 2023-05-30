@@ -47,12 +47,13 @@ def solve(board: list[list[str]]) -> None:
             if is_surrounded(point):
                 path.add(point)
                 return True
+            path.clear()
             return False
         if len(blocked) == 3:
             return True
 
-    for y_ in range(max_y + 1):
-        for x_ in range(max_x + 1):
+    for y_ in range(1, max_y):
+        for x_ in range(1, max_x):
             if ((y_, x_) in already_flipped) or board[y_][x_] == "X":
                 continue
             if is_surrounded((y_, x_)):
@@ -70,14 +71,35 @@ def solve(board: list[list[str]]) -> None:
 test1 = [["X", "X", "X", "X"], ["X", "O", "O", "X"], ["X", "X", "O", "X"], ["X", "O", "X", "X"]]
 test1_out = [["X", "X", "X", "X"], ["X", "X", "X", "X"], ["X", "X", "X", "X"], ["X", "O", "X", "X"]]
 solve(test1)
-print(test1)
+assert test1_out == test1
 
 test2 = [["X"]]
 test2_out = [["X"]]
 solve(test2)
-print(test2)
+assert test2_out == test2
 
 test3 = [["O"]]
 test3_out = [["O"]]
 solve(test3)
-print(test3)
+assert test3_out == test3
+
+test4 = [
+    ["O", "O", "X", "O", "O", "O"],
+    ["X", "O", "O", "O", "O", "X"],
+    ["X", "X", "X", "X", "X", "X"],
+    ["X", "O", "O", "O", "X", "X"],
+    ["X", "X", "X", "O", "O", "X"],
+    ["X", "O", "O", "O", "X", "O"],
+    ["O", "X", "X", "X", "O", "O"],
+]
+test4_out = [
+    ['O', 'O', 'X', 'O', 'O', 'O'],
+    ['X', 'O', 'O', 'O', 'O', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'X'],
+    ['X', 'X', 'X', 'X', 'X', 'O'],
+    ['O', 'X', 'X', 'X', 'O', 'O'],
+]
+solve(test4)
+assert test4_out == test4
