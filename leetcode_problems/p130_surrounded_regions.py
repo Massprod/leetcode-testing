@@ -1,6 +1,7 @@
 # Given an m x n matrix board containing 'X' and 'O', capture all regions
 #   that are 4-directionally surrounded by 'X'.
 # A region is captured by flipping all 'O's into 'X's in that surrounded region.
+# ------------------
 # m == board.length  ,  n == board[i].length
 # 1 <= m, n <= 200  ,  board[i][j] is 'X' or 'O'.
 
@@ -63,6 +64,8 @@ def solve(board: list[list[str]]) -> None:
                 path.clear()
 
 
+# Seems working, but I don't want to create nore test cases, so let's fail.
+# ------------------
 # Ok. P79 but simpler on the first look, because there's no check for correct matrix, and we can insta add
 # flipped "O" indexes and ignore them after.
 # There's no limit to what use, so I will stick to recursion, because iterations is way harder for this case.
@@ -103,3 +106,14 @@ test4_out = [
 ]
 solve(test4)
 assert test4_out == test4
+
+test5 = [
+    ["O", "X", "X", "O", "X"],
+    ["X", "O", "O", "X", "O"],
+    ["X", "O", "X", "O", "X"],
+    ["O", "X", "O", "O", "O"],
+    ["X", "X", "O", "X", "O"],
+]
+solve(test5)
+for _ in test5:
+    print(_)
