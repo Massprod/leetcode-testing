@@ -57,9 +57,11 @@ def bulb_switch(n: int) -> int:
 #       So, there are 5 perfect squares in the range 1 to 25 (1, 4, 9, 16, and 25).
 # -----------------------
 # Hard to come up with workings solution for a time_limit, but now I understand how it's needs to be done.
-# For a future use -> perfect_square is any number which -> int(sqrt(num)) * int(sqrt(num)) == num,
-#                     and perfect_square number always have ODD factors, which means
-#                     it will be triggered ODD times. Non-perfect always have EVEN factors(triggers).
+# For a future use -> perfect_square is any number which -> int(sqrt(num)) * int(sqrt(num)) == num.
+#                     Perfect_square number always have ODD factors, which means
+#                     it will be triggered EVEN times.
+#                     Non-perfect always have EVEN factors, which means
+#                     it will be triggered ODD times.
 
 
 test1 = 3
