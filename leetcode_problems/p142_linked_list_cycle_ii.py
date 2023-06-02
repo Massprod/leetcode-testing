@@ -39,24 +39,41 @@ def create_linked_with_cycle(to_link: list[int], pos: int) -> tuple[ListNode, Li
     return link, pos_node
 
 
-def detect_cycle(head: ListNode) -> ListNode:
-    pass
+def detect_cycle(head: ListNode) -> ListNode | bool:
+    if not head:
+        return head
+    all_nodes: dict[ListNode] = {}
+    temp: ListNode = head
+    while temp:
+        all_nodes[temp] = True
+        temp = temp.next
+        if temp in all_nodes:
+            return temp
+    return False
+
+
+# Seems working, but there's no info about what we return if there's NO cycle.
+# ! Output: no cycle ! What this? By default, we're returning ListNode, so it's None or False like in p141.
+# I will stick to a False like p141, but this descriptions...
+# ---------------------
+# !
+# Do not modify the linked list. !
+# Ok. Now it's time to use dictionary. Last one I know how to solve it without extra info.
+# So if I hit time_limit or commit correctly I will check what O(1) space here,
+# because there's some big_math again, and without extra_theory practically impossible to solve.
 
 
 test1_pos = 1
 test1 = create_linked_with_cycle([3, 2, 0, -4], test1_pos)
 test1_out = test1[1]
-print(detect_cycle(test1[0]))
 assert test1_out == detect_cycle(test1[1])
 
 test2_pos = 0
 test2 = create_linked_with_cycle([1, 2], test2_pos)
 test2_out = test2[1]
-print(detect_cycle(test2[1]))
 assert test2_out == detect_cycle(test2[0])
 
 test3_pos = -1
 test3 = create_linked_with_cycle([1], test3_pos)
 test3_out = False
-print(detect_cycle(test3[0]))
 assert test3_out == detect_cycle(test3[0])
