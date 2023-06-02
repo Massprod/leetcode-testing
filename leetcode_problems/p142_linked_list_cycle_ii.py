@@ -39,7 +39,8 @@ def create_linked_with_cycle(to_link: list[int], pos: int) -> tuple[ListNode, Li
     return link, pos_node
 
 
-def detect_cycle(head: ListNode) -> ListNode | bool:
+def detect_cycle(head: ListNode) -> ListNode | None:
+    # working_sol (39.7%, 10.86%) -> (65ms, 20.7mb)  time: O(n) | space: O(n)
     if not head:
         return head
     all_nodes: dict[ListNode] = {}
@@ -49,9 +50,17 @@ def detect_cycle(head: ListNode) -> ListNode | bool:
         temp = temp.next
         if temp in all_nodes:
             return temp
-    return False
+    return None
 
 
+# Time complexity: O(n) -> traversing whole linked list once to create dictionary
+# n - len of input_list^^| and extra 1 Node to check if there's cycle, and to get node where's it starting => O(n)
+# Space complexity: O(n) -> storing links for all nodes of the linked_list => O(n)
+#
+# ---------------------
+# ! Your returned value is not a ListNode type. !
+# Ok. ! If there is no cycle, return null. ! Found.
+# ---------------------
 # Seems working, but there's no info about what we return if there's NO cycle.
 # ! Output: no cycle ! What this? By default, we're returning ListNode, so it's None or False like in p141.
 # I will stick to a False like p141, but this descriptions...
