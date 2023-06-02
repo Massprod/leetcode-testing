@@ -27,7 +27,7 @@ def create_linked_with_cycle(to_link: list[int], pos: int) -> ListNode:
     pos_node: ListNode | None = None
     for index in range(len(to_link)):
         tempo.val = to_link[index]
-        if 0 < pos == step:
+        if 0 <= pos == step:
             pos_node = tempo
         if index != (len(to_link) - 1):
             tempo.next = ListNode()
@@ -39,17 +39,34 @@ def create_linked_with_cycle(to_link: list[int], pos: int) -> ListNode:
 
 
 def has_cycle(head: ListNode) -> bool:
-    pass
+    placeholder: str = "p"
+    temp: ListNode = head
+    while temp:
+        if temp.val == placeholder:
+            return True
+        temp.val = placeholder
+        temp = temp.next
+    return False
+
+
+# Getting recursion Error so creating of cycled_linked is correct.
+# Task is easy we're not obligated to save original state of linked_list, and there's no rule for that.
+# I see 2 ways at least for now, is change every value from 0 - n and just check if we encounter changed value =>
+# => O(1) for space, we're just changing linked list.
+# Or just save whole linked_list nodes links into a dict() and check if we meet them twice, this one is O(n) space.
 
 
 test1_pos = 1
 test1 = create_linked_with_cycle([3, 2, 0, -4], test1_pos)
 test1_out = True
+print(has_cycle(test1))
 
 test2_pos = 0
 test2 = create_linked_with_cycle([1, 2], test2_pos)
 test2_out = True
+print(has_cycle(test2))
 
 test3_pos = -1
 test3 = create_linked_with_cycle([1], test3_pos)
 test3_out = False
+print(has_cycle(test3))
