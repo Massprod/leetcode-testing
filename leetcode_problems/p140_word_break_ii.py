@@ -9,17 +9,61 @@
 
 
 def word_break(s: str, wordDict: list[str]) -> list[str]:
-    pass
+    all_symbols: set[str] = set()
+    path: list[str] = []
+    paths: list[[list[str]]] = []
+    for _ in wordDict:
+        for symbol in _:
+            if symbol not in all_symbols:
+                all_symbols.add(symbol)
+    for _ in s:
+        if _ not in all_symbols:
+            return path
+    all_words: set[str] = set(wordDict)
+    max_len: int = 0
+    for _ in all_words:
+        max_len = max(max_len, len(_))
+    failed: dict[int] = {}
+
+    def check_start(start: int):
+        if start in failed.keys() and failed[start] is False:
+            return False
+        if len("".join(path)) == len(s):
+            to_append: str = " ".join(path.copy())
+            paths.append(to_append)
+            return True
+        fail: bool = True
+        to_check: str = ""
+        for y in range(start, len(s)):
+            if len(to_check) > max_len:
+                failed[start] = False
+                return False
+            to_check += s[y]
+            if to_check in all_words:
+                fail = False
+                path.append(to_check)
+                check_start(y + 1)
+                path.pop()
+        if fail:
+            failed[start] = False
+    check_start(0)
+    return paths
+
+
+# Well. 25/26 cases passed, at least it's working with prev_build.
 
 
 test1 = "catsanddog"
 test1_dict = ["cat", "cats", "and", "sand", "dog"]
 test1_out = ["cats and dog", "cat sand dog"]
+print(word_break(test1, test1_dict))
 
 test2 = "pineapplepenapple"
 test2_dict = ["apple", "pen", "applepen", "pine", "pineapple"]
 test2_out = ["pine apple pen apple", "pineapple pen apple", "pine applepen apple"]
+print(word_break(test2, test2_dict))
 
 test3 = "catsandog"
 test3_dict = ["cats", "dog", "sand", "and", "cat"]
 test3_out = []
+print(word_break(test3, test3_dict))
