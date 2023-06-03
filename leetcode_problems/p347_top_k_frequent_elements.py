@@ -9,36 +9,33 @@
 
 
 def top_k_frequent(nums: list[int], k: int) -> list[int]:
-    # working_sol (5.2%, 64.58%) -> (264ms, 21.1mb)  time: O(n + n * K) | space: O(n + K)
+    # working_sol (94.23%, 46.12%) -> (101ms, 21.2mb)  time: O(n + (log n)) | space: O(2n)
     doubles: dict[int] = {}
     for num in nums:
         if num not in doubles:
             doubles[num] = 1
             continue
         doubles[num] += 1
-    top_values: list[int] = []
-    max_key: int | None = None
-    step: int = 0
-    while step != k:
-        for key in doubles:
-            if max_key is None:
-                max_key = key
-                continue
-            if doubles[max_key] < doubles[key]:
-                max_key = key
-        top_values.append(max_key)
-        del doubles[max_key]
-        max_key = None
-        step += 1
-    return top_values
+    reverse_doubles: list[tuple[int, int]] = list(sorted([(value, key) for (key, value) in doubles.items()]))
+    reverse_doubles: list[int] = [tup[1] for tup in reverse_doubles]
+    return reverse_doubles[-k:]
 
 
-# Time complexity: O(n + n * K) -> traversing input_list once to recreate dict_counter for every value => O(n) ->
-# K - number of frequents^^| -> checking every value in dictionary for K times to get K_max_values => O(n * K) ->
-# n - len of input_list^^|   -> appending this values into top_values => O(1) -> O(n + n * K)
+# Time complexity: O(n + (log n)) -> traversing through whole input_list to create dictionary with all unique_values =>
+# n - len of input_list^^| => O(n) -> creating reversed + sorted version of (key, value) pairs from created dictionary
+# m - num of unique values^^|  in form of a list with these pairs as tuples => O(m) ->
+#                             -> taking sorted keys out of these pairs, and returning K number of keys => O(log m) ->
+#                             -> O(n + m + (log m)) -> in the worst case there's no duplicates, so we can call it ->
+#                             -> O(n + n + (log n)) => O(2n + (log n)) => O(n + (log n))
 # --------------------------
-# Auxiliary space: O(n + K) -> creating dict with all unique values from nums, worst case - no duplicates => O(n) ->
-#                               -> creating top_values list with K number of values in it => O(K) -> O(n + K)
+# Auxiliary space: O(2n) -> creating dict with all unique values from nums, worst case - no duplicates => O(n) ->
+#                           -> creating copy of that dictionary as a list but sorted and reversed pairs => O(n) ->
+#                           -> changing tuples in this list to INTs holding keys, and returning K number of keys ->
+#                           -> O(n + n) => O(2n)
+# --------------------------
+# Ok. Now it's faster, changed K * n scrolling through dictionary.
+# Now we're rebuilding this dictionary with sorted values for keys, and after this taking key_values we need.
+# [-k:] -> all keys we need.
 # --------------------------
 # Hmm. What about same number of duplicates?
 # !
@@ -55,25 +52,37 @@ def top_k_frequent(nums: list[int], k: int) -> list[int]:
 test1 = [1, 1, 1, 2, 2, 3]
 test1_k = 2
 test1_out = [1, 2]
-print(top_k_frequent(test1, test1_k))
-assert test1_out == top_k_frequent(test1, test1_k)
+test = top_k_frequent(test1, test1_k)
+assert len(test1_out) == len(test)
+for _ in test:
+    assert _ in test1_out
+del test
 
 test2 = [1]
 test2_k = 1
 test2_out = [1]
-print(top_k_frequent(test2, test2_k))
-assert test2_out == top_k_frequent(test2, test2_k)
+test = top_k_frequent(test2, test2_k)
+assert len(test2_out) == len(test)
+for _ in test:
+    assert _ in test2_out
+del test
 
 test3 = [1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 5, 5, 5, 5, 5, 5]
 test3_k = 3
 test3_out = [5, 2, 1]
-print(top_k_frequent(test3, test3_k))
-assert test3_out == top_k_frequent(test3, test3_k)
+test = top_k_frequent(test3, test3_k)
+assert len(test3_out) == len(test)
+for _ in test:
+    assert _ in test3_out
+del test
 
 # test4 - failed -> gosh, again im getting 0 at IF check and failing it because 0 is FALSE...
 #                   Always explicitly check for None!
 test4 = [3, 0, 1, 0]
 test4_k = 1
 test4_out = [0]
-print(top_k_frequent(test4, test4_k))
-assert test4_out == top_k_frequent(test4, test4_k)
+test = top_k_frequent(test4, test4_k)
+assert len(test4_out) == len(test)
+for _ in test:
+    assert _ in test4_out
+del test
