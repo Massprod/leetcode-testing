@@ -41,9 +41,13 @@ def word_break(s: str, wordDict: list[str]) -> bool:
     return check_start(0)
 
 
+# Ok. Made fully working solution by myself, but failed to see what we need to Remember.
+# I was trying to think about how we can remember already used PATH, but after googling a little, found
+# that we can just remember PART of a string we didn't complete, and this part is unique.
+# If we remember it, we can ignore any cases when we encounter such left PART.
+# -----------------------------
 # Obviously not enough. How can I scroll it differently? From the highest size word in dict will lead to same problem,
 # with repeating same words. Can we destroy original string and recreate it?
-#
 # -----------------------------
 # Ok. It's working correct but how can I cull some calls?
 # Hmm. Don't see how we can cull double calls, because we're allowed to reuse words.
@@ -86,32 +90,10 @@ test5_dict = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa"
 test5_out = False
 print(word_break(test5, test5_dict))
 
-
-def wordBreak(s: str, wordDict: list[str]) -> bool:
-    def construct(current, wordDict, memo={}):
-        if current in memo:
-            return memo[current]
-
-        if not current:
-            return True
-
-        for word in wordDict:
-            if current.startswith(word):
-                new_current = current[len(word):]
-                if construct(new_current, wordDict, memo):
-                    memo[current] = True
-                    return True
-
-        memo[current] = False
-        return False
-
-    return construct(s, wordDict)
-
 test6 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaabaabaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaa"
 test6_dict = ["aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa", "ba"]
 test6_out = False
-# print(wordBreak(test6, test6_dict))
 print(word_break(test6, test6_dict))
