@@ -9,7 +9,7 @@
 
 
 def top_k_frequent(nums: list[int], k: int) -> list[int]:
-    # working_sol (5.2%, 64.58%) -> (264ms, 21.1mb)  time: O(n) | space: O(n + k)
+    # working_sol (5.2%, 64.58%) -> (264ms, 21.1mb)  time: O(n + n * K) | space: O(n + K)
     doubles: dict[int] = {}
     for num in nums:
         if num not in doubles:
@@ -37,8 +37,8 @@ def top_k_frequent(nums: list[int], k: int) -> list[int]:
 # K - number of frequents^^| -> checking every value in dictionary for K times to get K_max_values => O(n * K) ->
 # n - len of input_list^^|   -> appending this values into top_values => O(1) -> O(n + n * K)
 # --------------------------
-# Auxiliary space: O(n + k) -> creating dict with all unique values from nums, worst case - no duplicates => O(n) ->
-#                               -> creating top_values list with K number of values in it => O(k) -> O(n + k)
+# Auxiliary space: O(n + K) -> creating dict with all unique values from nums, worst case - no duplicates => O(n) ->
+#                               -> creating top_values list with K number of values in it => O(K) -> O(n + K)
 # --------------------------
 # Hmm. What about same number of duplicates?
 # !
