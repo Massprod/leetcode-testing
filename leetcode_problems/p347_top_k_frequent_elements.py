@@ -33,11 +33,9 @@ def top_k_frequent(nums: list[int], k: int) -> list[int]:
     return top_values
 
 
-# Time complexity: O(n) -> traversing input_list once to recreate dict_counter for every value => O(n) ->
-# n - len of input_list^^| -> checking every value in dictionary for K times to get K_max_values => O(1 * k) ->
-#                          -> appending this values into top_values => O(1) -> O(n)
-# ^^It's correct if we assume that all HASH operations with dictionaries is O(1).
-# But I think it's O(n * k + n), because I'm still not convicted that dict operations even if there's N of them is O(1).
+# Time complexity: O(n + n * K) -> traversing input_list once to recreate dict_counter for every value => O(n) ->
+# K - number of frequents^^| -> checking every value in dictionary for K times to get K_max_values => O(n * K) ->
+# n - len of input_list^^|   -> appending this values into top_values => O(1) -> O(n + n * K)
 # --------------------------
 # Auxiliary space: O(n + k) -> creating dict with all unique values from nums, worst case - no duplicates => O(n) ->
 #                               -> creating top_values list with K number of values in it => O(k) -> O(n + k)
