@@ -36,7 +36,8 @@ def word_break(s: str, wordDict: list[str]) -> list[str]:
         to_check: str = ""
         for y in range(start, len(s)):
             if len(to_check) > max_len:
-                failed[start] = False
+                if fail:
+                    failed[start] = False
                 return False
             to_check += s[y]
             if to_check in all_words:
@@ -46,6 +47,7 @@ def word_break(s: str, wordDict: list[str]) -> list[str]:
                 path.pop()
         if fail:
             failed[start] = False
+
     check_start(0)
     return paths
 
@@ -67,3 +69,24 @@ test3 = "catsandog"
 test3_dict = ["cats", "dog", "sand", "and", "cat"]
 test3_out = []
 print(word_break(test3, test3_dict))
+
+# test4 - failed -> I was adding start_indexes into fail even after exceeding max_length which isn't correct,
+#                   because now we're not just returning True or False, but checking every possible way to construct,
+#                   and after exceeding length we're just going out from recursion and start is still reusable.
+test4 = "aaaaaaaa"
+test4_dict = ["aaaa", "aa", "a"]
+test4_out = [
+    "a a a a a a a a", "aa a a a a a a", "a aa a a a a a", "a a aa a a a a", "aa aa a a a a", "aaaa a a a a",
+    "a a a aa a a a", "aa a aa a a a", "a aa aa a a a", "a aaaa a a a", "a a a a aa a a", "aa a a aa a a",
+    "a aa a aa a a", "a a aa aa a a", "aa aa aa a a", "aaaa aa a a", "a a aaaa a a", "aa aaaa a a",
+    "a a a a a aa a", "aa a a a aa a", "a aa a a aa a", "a a aa a aa a", "aa aa a aa a", "aaaa a aa a",
+    "a a a aa aa a", "aa a aa aa a", "a aa aa aa a", "a aaaa aa a", "a a a aaaa a", "aa a aaaa a",
+    "a aa aaaa a", "a a a a a a aa", "aa a a a a aa", "a aa a a a aa", "a a aa a a aa", "aa aa a a aa",
+    "aaaa a a aa", "a a a aa a aa", "aa a aa a aa", "a aa aa a aa", "a aaaa a aa", "a a a a aa aa",
+    "aa a a aa aa", "a aa a aa aa", "a a aa aa aa", "aa aa aa aa", "aaaa aa aa", "a a aaaa aa", "aa aaaa aa",
+    "a a a a aaaa", "aa a a aaaa", "a aa a aaaa", "a a aa aaaa", "aa aa aaaa", "aaaa aaaa",
+]
+test = word_break(test4, test4_dict)
+for _ in test4_out:
+    if _ not in test:
+        print(_)
