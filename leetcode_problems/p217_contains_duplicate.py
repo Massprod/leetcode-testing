@@ -18,12 +18,17 @@ def contains_duplicate(nums: list[int]) -> bool:
 # n - len of input_list^^|
 # Auxiliary space: O(n) -> in the worst case adding all copies of input_list values into doubles => O(n)
 # -----------------------
+# Took a peak into faster solutions:  return len(nums) != len(set(nums)) <- perfect.
+# For a future use -> is always faster to make set than (traversing list + checking dictionary).
+#                     HASH operations is O(1), but still slower than getting simple len after converting list.
+# -----------------------
 # Well 2 methods I know to solve this.
 #   1) Using dict to store everything we meet and return False after double_cross -> time: O(n) , space: O(n).
 #   2) Sorting original list, and just checking every value from left to right, until we hit double or not ->
 #      -> time: O((n * (log n) + n) , space: O(1).
 # There's no extra objective, so I will stick to 1. Speed > Memory.
 # Maybe I could come up with something more, but there are no reasons to.
+# -----------------------
 
 
 test1 = [1, 2, 3, 1]
