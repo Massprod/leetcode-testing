@@ -9,6 +9,7 @@
 
 
 def word_break(s: str, wordDict: list[str]) -> list[str]:
+    # working_sol (41.42%, 28.56%) -> (44ms, 16.4mb)  time: O(2 ** (log n)) | space: O(m + n + (K * n))
     all_symbols: set[str] = set()
     path: list[str] = []
     paths: list[[list[str]]] = []
@@ -52,27 +53,61 @@ def word_break(s: str, wordDict: list[str]) -> list[str]:
     return paths
 
 
+# Time complexity: O(2 ** (log n)) -> creating set() with all available symbols in input_dict => O(j * g) ->
+# n - len of input_string^^| -> checking every symbol in input_string to be available in input_dict => O(n) ->
+# m - len of input_dict^^  | -> creating set of input_dict => O(m) -> getting max_len from all_word => O(m) ->
+# g - lens of words in input_dict^^| -> recursion to check every substring in input_string => O(2 ** (log n)) ->
+# j - number of words in input_dict^^| -> O((j * g) + n + m + 2 ** n) -> O(2 ** (log n))
+#                                 ! 99% sure it's incorrect for the recursion^^,
+#                                   but still didn't find how to calc them correctly.
+#                                   Leaving it as default for all substrings O(2 ** n)
+#                                   We're only using combinations for nCg for every g in input_dict !
+# Auxiliary space: O(O(m + n + (K * n))) -> creating set() with all available symbols in input_dict => O(j * g) ->
+#                         -> set() with all_words from input_dict => O(m) -> creating path with all words used =>
+#                         => contains words of input_string, with correct path summarized length of these
+#                            always equal to n => O(n) -> dictionary with failed start_indexes => worst case
+#                            we're going to start from every index from 0 to n - 2, and n - 1 index isn't solvable =>
+#                         => O(n - 2) -> O((j * g) + m + n + (n - 2)) -> O(2m + 2n) -> O(m + n)
+#                                             ^^all words lengths summarized will leave us with m
+# K - num of correct paths^^| Now we're creating extra PATHS, containing all correct paths we found ->
+#                         -> every path is at max of len(n) but number of these paths unknown, let it be some int-K ->
+#                         -> O(K * n) => O(m + n + (K * n))
+# -----------------------------
+# Ok. Rebuild p139 solution to save path, and don't skip indexes we're already visited but not failed.
+# -----------------------------
 # Well. 25/26 cases passed, at least it's working with prev_build.
 
 
 test1 = "catsanddog"
 test1_dict = ["cat", "cats", "and", "sand", "dog"]
 test1_out = ["cats and dog", "cat sand dog"]
-print(word_break(test1, test1_dict))
+test = word_break(test1, test1_dict)
+assert len(test1_out) == len(test)
+for _ in test1_out:
+    assert _ in test
+del test
 
 test2 = "pineapplepenapple"
 test2_dict = ["apple", "pen", "applepen", "pine", "pineapple"]
 test2_out = ["pine apple pen apple", "pineapple pen apple", "pine applepen apple"]
-print(word_break(test2, test2_dict))
+test = word_break(test2, test2_dict)
+assert len(test2_out) == len(test)
+for _ in test2_out:
+    assert _ in test
+del test
 
 test3 = "catsandog"
 test3_dict = ["cats", "dog", "sand", "and", "cat"]
 test3_out = []
-print(word_break(test3, test3_dict))
+test = word_break(test3, test3_dict)
+assert len(test3_out) == len(test)
+for _ in test3_out:
+    assert _ in test
+del test
 
-# test4 - failed -> I was adding start_indexes into fail even after exceeding max_length which isn't correct,
+# test4 - failed -> I was adding start_indexes into failed even after exceeding max_length which isn't correct,
 #                   because now we're not just returning True or False, but checking every possible way to construct,
-#                   and after exceeding length we're just going out from recursion and start is still reusable.
+#                   and after exceeding length we're just going out from recursion, and start_index is still reusable.
 test4 = "aaaaaaaa"
 test4_dict = ["aaaa", "aa", "a"]
 test4_out = [
@@ -87,6 +122,7 @@ test4_out = [
     "a a a a aaaa", "aa a a aaaa", "a aa a aaaa", "a a aa aaaa", "aa aa aaaa", "aaaa aaaa",
 ]
 test = word_break(test4, test4_dict)
+assert len(test4_out) == len(test)
 for _ in test4_out:
-    if _ not in test:
-        print(_)
+    assert _ in test
+del test
