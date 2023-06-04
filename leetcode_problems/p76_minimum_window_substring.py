@@ -25,15 +25,17 @@ def min_window(s: str, t: str) -> str:
     extras: list[str] = []
     while right != len(s) + 1 and left < len(s):
         for key in cur_chars:
-            if chars[key] == cur_chars[key]:
+            if cur_chars[key] >= chars[key]:
                 whole = True
-            if chars[key] != cur_chars[key]:
+                continue
+            if chars[key] > cur_chars[key]:
                 whole = False
                 break
         if not whole:
             for key in cur_chars:
                 if cur_chars[key] > chars[key]:
-                    extras.append(key)
+                    if (cur_chars[key] - chars[key]) != extras.count(key):
+                        extras.append(key)
         if whole:
             if len(min_sub) > len(s[left: right]) or len(min_sub) == 0:
                 min_sub = s[left: right]
@@ -41,17 +43,20 @@ def min_window(s: str, t: str) -> str:
                 cur_chars[s[left]] -= 1
             left += 1
             continue
-        while (s[left] not in cur_chars) or (s[left] in extras):
+        while left < len(s) and ((s[left] not in cur_chars) or (s[left] in extras)):
             if s[left] in extras:
                 cur_chars[s[left]] -= 1
                 extras.remove(s[left])
             left += 1
-        if (right != len(s)) and (s[right] in cur_chars):
+        if (right < len(s)) and (s[right] in cur_chars):
             cur_chars[s[right]] += 1
         right += 1
     return min_sub
 
 
+# Sadly 265/267 cases passed, now it's TimeGate, but at least I made working solution,
+# without extra info(google/gpt). There's a lot of extra checks, and maybe I will find how to cull them.
+# --------------------------
 # Ok. I need to fail, because I'm kinda stuck with thinking that's correct need more test_cases.
 # --------------------------
 # Creating two dictionaries because copying is taking the same time, and I want to use counter and limiter.
@@ -83,3 +88,11 @@ test3 = "a"
 test3_t = "aa"
 test3_out = ""
 print(min_window(test3, test3_t))
+
+test4 = "A"
+test4_t = "a"
+print(min_window(test4, test4_t))
+
+test5 = "acbbaca"
+test5_t = "aba"
+print(min_window(test5, test5_t))
