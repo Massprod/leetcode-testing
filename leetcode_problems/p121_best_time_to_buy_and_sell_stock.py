@@ -8,11 +8,28 @@
 
 
 def max_profit(prices: list[int]) -> int:
-    pass
+    max_prof: int = 0
+    lowest_value: int = prices[0]
+    for price in prices:
+        if price < lowest_value:
+            lowest_value = price
+            continue
+        max_prof = max(price - lowest_value, max_prof)
+    return max_prof
+
+
+# We only allowed to move from left to right, so there's no reason to use stack or anything except the lowest value.
+# Holding lowest and extracting it from any other (x + 1) we meet, changing this lowest if we find something lower,
+# always taking max() out of this extraction and stored max_value.
+# !
+# choosing a single day to buy one stock and choosing a different day in the future to sell that stock. !
+# ^^Guess we're not allowed to sell on the same day as well.
 
 
 test1 = [7, 1, 5, 3, 6, 4]
 test1_out = 5
+print(max_profit(test1))
 
 test2 = [7, 6, 4, 3, 1]
 test2_out = 0
+print(max_profit(test2))
