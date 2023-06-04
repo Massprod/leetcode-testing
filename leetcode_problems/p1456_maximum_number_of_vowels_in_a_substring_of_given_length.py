@@ -7,8 +7,6 @@
 
 
 def max_vowels(s: str, k: int) -> int:
-    k_sub_indexes: set = set()
-    tempo: list[int] = []
     vowels: dict[str] = {
         "a": True,
         "e": True,
@@ -17,33 +15,49 @@ def max_vowels(s: str, k: int) -> int:
         "u": True,
         "max": 0,
     }
-
-    def new_combine(left_to_use: int, start: int = 0, end: int = len(s), ) -> None:
-        if left_to_use == 0:
-            k_sub_indexes.add(tuple(sorted(tempo)))
-            return
-        for num in range(start, end):
-            if num in tempo:
-                break
-            tempo.append(num)
-            new_combine(left_to_use - 1, start + 1, end)
-            tempo.clear()
-            return
-
-    for _ in range(len(s)):
-        new_combine(k, start=_)
-    for tup in k_sub_indexes:
-        current_vowels: int = 0
-        for index in tup:
-            if s[index] in vowels:
-                current_vowels += 1
-        if current_vowels > vowels["max"]:
-            vowels["max"] = current_vowels
+    left: int = 0
+    right: int = k - 1
+    start_vowels: int = 0
+    for symbol in s[left:right + 1]:
+        if symbol in vowels:
+            start_vowels += 1
+    vowels["max"] = start_vowels
+    while right != (len(s) - 1):
+        if s[left] in vowels:
+            prev_left: bool = True
+        else:
+            prev_left: bool = False
+        left += 1
+        right += 1
+        if s[right] in vowels:
+            right_correct: bool = True
+        else:
+            right_correct = False
+        if right_correct and prev_left:
+            vowels["max"] = max(vowels["max"], start_vowels)
+            continue
+        if right_correct and not prev_left:
+            start_vowels += 1
+            vowels["max"] = max(vowels["max"], start_vowels)
+            continue
+        if not right_correct and prev_left:
+            start_vowels -= 1
+            vowels["max"] = max(vowels["max"], start_vowels)
+            continue
     return vowels["max"]
 
 
-# Bad part I was thinking we should use every SUBSET, and rebuild previously made recursion for that.
-# But after than I see that only substrings...W.e still made this working, but I will need to cull some parts.
+# left change -> if from correct to incorrect vowels -1,
+#                if from correct to correct vowels -1,
+#                if from incorrect to correct vowels +0,
+# right change -> if from correct to incorrect and left from correct to incorrect -1
+#                 if from correct to correct and left from correct to correct +1
+#                 if from correct to correct and left from correct to incorrect +0
+# actually we need only check left for -> if from correct -> it's -1
+#                             right for -> if to incorrect and left from correct -> it's -1
+# --------------------------
+# Ok. I missed hard p76, and didn't check a hint. There's no way to break time_limit without using a window.
+# Time to learn window_methods.
 
 
 test1 = "abciiidef"
