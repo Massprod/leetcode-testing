@@ -10,6 +10,7 @@
 
 
 def min_window(s: str, t: str) -> str:
+    # working_sol (8.74%, 63.72%) -> (801ms, 63.72%)  time: O(n + n * m) | space: O(m)
     if len(t) > len(s):
         return ""
     chars: dict[str] = {}
@@ -59,6 +60,19 @@ def min_window(s: str, t: str) -> str:
     return min_sub
 
 
+# Time complexity: O(n + n * m) -> traversing whole symbols_string, and creating 3 dictionaries with equal size => O(m) ->
+# m - len of symbols_string^^| -> traversing whole input_string from 0 to end with right_pointer, in the worst case,
+# n - len of input_string^^|   and (n - m) with left_pointer => O(n + (n - m)) -> for every index on this path
+#                              checking every KEY in cur_chars + chars + cur_chars, every check is O(1) but
+#                              for every KEY is still should be O(m) => O(n * 3m) -> O(m + n + (n - m) + n * 3m) ->
+#                              ->  O(2n + n * 3m) -> O(n + n * m)
+# !
+# Maybe if we can call all dictionary operations O(1) even if there's multiple instances of them than it could be,
+# close to O(n + m), but number of these instances depends on length of dictionaries, so I guess we can't. !
+# --------------------------
+# Auxiliary space: O(m) -> 3 dictionaries of the same size == m => O(3m) -> extra constants,
+#                          and string with the size == m in the worst case => O(m) -> O(4m) -> O(m)
+# --------------------------
 # Sheesh. Hard without extra info and only using HINT as guidance, evolving.
 # Dunno about O(n + m), but at least I made a correctly working solution.
 # Actually we're making it in ONE_WAY walk O(n), but with every step we're checking too much data
@@ -101,21 +115,28 @@ test1 = "ADOBECODEBANC"
 test1_t = "ABC"
 test1_out = "BANC"
 print(min_window(test1, test1_t))
+assert test1_out == min_window(test1, test1_t)
 
 test2 = "a"
 test2_t = "a"
 test2_out = "a"
 print(min_window(test2, test2_t))
+assert test2_out == min_window(test2, test2_t)
 
 test3 = "a"
 test3_t = "aa"
 test3_out = ""
 print(min_window(test3, test3_t))
+assert test3_out == min_window(test3, test3_t)
 
 test4 = "A"
 test4_t = "a"
+test4_out = ""
 print(min_window(test4, test4_t))
+assert test4_out == min_window(test4, test4_t)
 
 test5 = "acbbaca"
 test5_t = "aba"
+test5_out = "baca"
 print(min_window(test5, test5_t))
+assert test5_out == min_window(test5, test5_t)
