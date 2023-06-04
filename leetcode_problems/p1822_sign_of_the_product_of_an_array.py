@@ -9,14 +9,25 @@
 
 
 def array_sign(nums: list[int]) -> int:
-    pass
+    negative: bool = False
+    for num in nums:
+        if num == 0:
+            return 0
+        if num < 0:
+            negative = not negative
+    if negative:
+        return -1
+    return 1
 
 
 test1 = [-1, -2, -3, -4, 3, 2, 1]
 test1_out = 1
+print(array_sign(test1))
 
 test2 = [1, 5, 0, 2, -3]
 test2_out = 0
+print(array_sign(test2))
 
 test3 = [-1, 1, -1, 1, -1]
 test3_out = -1
+print(array_sign(test3))
