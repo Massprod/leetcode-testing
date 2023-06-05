@@ -7,9 +7,10 @@
 
 
 def average(salary: list[int]) -> float:
+    # working_sol (91.96%, 91.73%) -> (37ms, 16.2mb)  time: O(n) | space: O(1)
     min_sal: int = salary[0]
     max_sal: int = salary[0]
-    summ_sal: int | float = 0
+    summ_sal: int = 0
     for sal in salary:
         summ_sal += sal
         if sal > max_sal:
@@ -19,6 +20,11 @@ def average(salary: list[int]) -> float:
             min_sal = sal
             continue
     return (summ_sal - min_sal - max_sal) / (len(salary) - 2)
+
+
+# Time complexity: O(n) -> traversing whole input_list once => O(n)
+# n - len of input_list^^|
+# Auxiliary space: O(1) -> 3 extra constants, all INTs -> O(1)
 
 
 test1 = [4000, 3000, 1000, 2000]
