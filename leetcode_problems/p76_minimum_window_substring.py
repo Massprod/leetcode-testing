@@ -15,12 +15,10 @@ def min_window(s: str, t: str) -> str:
         return ""
     chars: dict[str] = {}
     cur_chars: dict[str] = {}
-    extras: dict[str] = {}
     for char in t:
         if char not in chars:
             chars[char] = 1
             cur_chars[char] = 0
-            extras[char] = 0
             continue
         chars[char] += 1
     left: int = 0
