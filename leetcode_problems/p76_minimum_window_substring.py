@@ -10,7 +10,7 @@
 
 
 def min_window(s: str, t: str) -> str:
-    # working_sol (8.74%, 63.72%) -> (801ms, 63.72%)  time: O(n + n * m) | space: O(m)
+    # working_sol (21.69%, 65.61%) -> (301ms, 17mb)  time: O(n + (n - j) * m) | space: O(m)
     if len(t) > len(s):
         return ""
     chars: dict[str] = {}
@@ -27,19 +27,16 @@ def min_window(s: str, t: str) -> str:
     right: int = 0
     min_sub: str = ""
     whole: bool = False
+    used: int = 0
     while right != len(s) + 1 and left < len(s):
-        for key in cur_chars:
-            if cur_chars[key] >= chars[key]:
-                whole = True
-                continue
-            if chars[key] > cur_chars[key]:
-                whole = False
-                break
-        if not whole:
+        if used >= len(t):
             for key in cur_chars:
-                if cur_chars[key] > chars[key]:
-                    if (cur_chars[key] - chars[key]) != extras[key]:
-                        extras[key] += 1
+                if cur_chars[key] >= chars[key]:
+                    whole = True
+                    continue
+                if chars[key] > cur_chars[key]:
+                    whole = False
+                    break
         if whole:
             if len(min_sub) > len(s[left: right]) or len(min_sub) == 0:
                 min_sub = s[left: right]
@@ -47,28 +44,42 @@ def min_window(s: str, t: str) -> str:
                     return min_sub
             if s[left] in cur_chars:
                 cur_chars[s[left]] -= 1
+                used -= 1
+                whole = False
             left += 1
             continue
-        while left < len(s) and ((s[left] not in cur_chars) or (extras[s[left]] != 0)):
-            if s[left] in extras:
+        while left < len(s) and ((s[left] not in cur_chars) or ((cur_chars[s[left]] - chars[s[left]]) > 0)):
+            if (s[left] in cur_chars) and ((cur_chars[s[left]] - chars[s[left]]) > 0):
                 cur_chars[s[left]] -= 1
-                extras[s[left]] -= 1
+                used -= 1
+                whole = False
             left += 1
         if (right < len(s)) and (s[right] in cur_chars):
             cur_chars[s[right]] += 1
+            used += 1
         right += 1
     return min_sub
 
 
-# Time complexity: O(n + n * m) -> traversing whole symbols_string, and creating 3 dictionaries with equal size => O(m) ->
-# m - len of symbols_string^^| -> traversing whole input_string from 0 to end with right_pointer, in the worst case,
-# n - len of input_string^^|   and (n - m) with left_pointer => O(n + (n - m)) -> for every index on this path
-#                              checking every KEY in cur_chars + chars + cur_chars, every check is O(1) but
-#                              for every KEY is still should be O(m) => O(n * 3m) -> O(m + n + (n - m) + n * 3m) ->
-#                              ->  O(2n + n * 3m) -> O(n + n * m)
-# !
-# Maybe if we can call all dictionary operations O(1) even if there's multiple instances of them than it could be,
-# close to O(n + m), but number of these instances depends on length of dictionaries, so I guess we can't. !
+# Time complexity: O(n + (n - j) * m) ->
+#   -> traversing whole symbols_string, and creating 3 dictionaries with equal size => O(m) ->
+#   -> traversing whole input_string from 0 to end with right_pointer, in the worst case,
+#      and (n - m) with left_pointer => O(n + (n - m)) ->
+#   -> for every index on this path checking every KEY in cur_chars + chars + cur_chars, every check is O(1) but
+#      for every KEY is still should be O(m) => O((n - j) * 3m) ->
+#   -> O(m + n + (n - m) + (n - j) * 3m) => O(2n + (n - j) * 3m) =>  O(n + (n - j) * m)
+# ^^ m - len of symbols_string | n - len of input_string | j - number of unique subs with WHOLE in it ^^
+# --------------------------
+# ^^After sleeping on this task, it's not so bad in the end if I just add extra check to cull some calls
+# on check if WHOLE or not, now it's 308ms instead of 800, still not 120ms like top_tiers, but I'm fine with that.
+# And now it's not (n * m) -> ((n - j) * m) <- where's j is number of unique substrings
+#                                              with correct number of search_values.
+# Don't know how to calculate this j. Worst case should be like -> s = "aacbcaacbcaacbca", t = "aba" ->
+# -> "aacb" gives us WHOLE but not same length as t, so we're going to check more ->
+# -> so after that we're checking every index from 3 to 15 is calling check on WHOLE, so it's still O((n - j) * m).
+# But in the best case, like -> s = "aacbcddddddddd", t = "aba" -> we're getting "aacb" ->
+# -> and after shifting left side by 1 index, it's never going to get (used >= len(t)), so it's just 1 check.
+# Better than it was, but still can be changed to check less, maybe I will come up with something later.
 # --------------------------
 # Auxiliary space: O(m) -> 3 dictionaries of the same size == m => O(3m) -> extra constants,
 #                          and string with the size == m in the worst case => O(m) -> O(4m) -> O(m)
