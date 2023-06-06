@@ -26,6 +26,7 @@
 
 
 def predict_party_victory(senate: str) -> str:
+    # working_sol (5%, 6.98%) -> (3927ms, 17.3mb)  time: O(j * (n * (log n))) | space: O(n)
     if not senate:
         return senate
     active_senators: dict[int] = {}
@@ -47,14 +48,14 @@ def predict_party_victory(senate: str) -> str:
             right_used: bool = False
             if senate[y] == "R" and active_senators[y]:
                 for z in range(y + 1, len(senate)):
-                    if senate[z] == "D":
+                    if senate[z] == "D" and active_senators[z]:
                         active_senators[z] = False
                         dire_rights -= 1
                         right_used = True
                         break
                 if not right_used:
                     for z in range(y):
-                        if senate[z] == "D":
+                        if senate[z] == "D" and active_senators[z]:
                             active_senators[z] = False
                             dire_rights -= 1
                             break
@@ -62,14 +63,14 @@ def predict_party_victory(senate: str) -> str:
                     return "Radiant"
             if senate[y] == "D" and active_senators[y]:
                 for z in range(y + 1, len(senate)):
-                    if senate[z] == "R":
+                    if senate[z] == "R" and active_senators[z]:
                         active_senators[z] = False
                         radiant_rights -= 1
                         right_used = True
                         break
                 if not right_used:
                     for z in range(y):
-                        if senate[z] == "D":
+                        if senate[z] == "R" and active_senators[z]:
                             active_senators[z] = False
                             radiant_rights -= 1
                             break
@@ -81,6 +82,12 @@ def predict_party_victory(senate: str) -> str:
         return "Radiant"
 
 
+# Time complexity: O(j * (n * (log n))) -> traversing once to create dictionary with all senators => O(n) ->
+# n - len of input_string^^| -> for every round traversing once whole input_string and in the worst case,
+# j - number of rounds^^|    for every index we check calling nested loop to extra check part of input_string again =>
+#                            => O(j * (n * (log n))) -> O(n + j * (n * (log n)))
+# Space complexity: O(n) -> extra constants and dictionary of size n => O(n)
+# -------------------
 # !
 # Suppose every senator is smart enough and will play the best strategy for his own party. !
 # ^^Guess it's only voting against opposite faction? Then we can just make dictionary to hold all indexes,
@@ -90,20 +97,28 @@ def predict_party_victory(senate: str) -> str:
 test1 = "RD"
 test1_out = "Radiant"
 print(predict_party_victory(test1))
+assert test1_out == predict_party_victory(test1)
 
 test2 = "RDD"
 test2_out = "Dire"
 print(predict_party_victory(test2))
+assert test2_out == predict_party_victory(test2)
 
 test3 = "RRRDDDDDDR"
 test3_out = "Dire"
 print(predict_party_victory(test3))
+assert test3_out == predict_party_victory(test3)
 
 # test4 - failed -> Ok. I was deleting senators in most basic way, just first one from start.
 #                   But we need to delete them before they can vote, so it's extra check from point to end.
 test4 = "DRRDRDRDRDDRDRDR"
+test4_out = "Radiant"
 print(predict_party_victory(test4))
+assert test4_out == predict_party_victory(test4)
 
 # test5 - failed -> forgot to check if senator we want to block is already blocked or not...
+#                   And extra typo with checking Radiant, guess I need to be doublecheck, on +38c days.
 test5 = "DDRRR"
+test5_out = "Dire"
 print(predict_party_victory(test5))
+assert test5_out == predict_party_victory(test5)
