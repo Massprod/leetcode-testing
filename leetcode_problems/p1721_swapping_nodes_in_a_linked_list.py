@@ -36,6 +36,9 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def swap_nodes(head: ListNode, k: int) -> ListNode:
+    # working_sol (75.95%, 34.80%) -> (952ms, 50.9mb)  time: O(n) | space: O(n)
+    if not head:
+        return head
     all_nodes: list[ListNode] = [0]  # for 1 indexed
     tempo: ListNode = head
     while tempo:
@@ -45,6 +48,16 @@ def swap_nodes(head: ListNode, k: int) -> ListNode:
     return head
 
 
+# Time complexity: O(n) -> traversing input_list once, and creating list with links to every node => O(n)
+# n - number of nodes in input_list^^|
+# Auxiliary space: O(n) -> extra list with all links to a nodes of input_list => O(n)
+# ----------------------
+# No info about correct input, guess this is why it's medium.
+# Because what if k == 3, and list is having 1 node?
+# !
+# The number of nodes in the list is n.  1 <= k <= n <= 10 ** 5 !
+# Ok. It's fine.
+# ----------------------
 # No limitations, jus save whole list and swap k nodes in a list, append is O(1) get index is O(1),
 # should be enough.
 
