@@ -36,11 +36,31 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def swap_nodes(head: ListNode, k: int) -> ListNode:
-    pass
+    all_nodes: list[ListNode] = [0]  # for 1 indexed
+    tempo: ListNode = head
+    while tempo:
+        all_nodes.append(tempo)
+        tempo = tempo.next
+    all_nodes[k].val, all_nodes[-k].val = all_nodes[-k].val, all_nodes[k].val
+    return head
+
+
+# No limitations, jus save whole list and swap k nodes in a list, append is O(1) get index is O(1),
+# should be enough.
 
 
 test1 = [1, 2, 3, 4, 5]
 test1_k = 2
+test1_out = [1, 4, 3, 2, 5]
+test1_linked = create_linked(test1)
+test = swap_nodes(test1_linked, test1_k)
+t_one_linked(test, test1_out)
+del test
 
 test2 = [7, 9, 6, 6, 7, 8, 3, 0, 9, 5]
 test2_k = 5
+test2_out = [7, 9, 6, 6, 8, 7, 3, 0, 9, 5]
+test2_linked = create_linked(test2)
+test = swap_nodes(test2_linked, test2_k)
+t_one_linked(test, test2_out)
+del test
