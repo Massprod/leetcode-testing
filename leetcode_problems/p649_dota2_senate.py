@@ -23,70 +23,85 @@
 # -------------------
 # n == senate.length  ,  1 <= n <= 10 ** 4
 # senate[i] is either 'R' or 'D'.
+from collections import deque
 
 
 def predict_party_victory(senate: str) -> str:
-    # working_sol (5%, 6.98%) -> (3927ms, 17.3mb)  time: O(j * (n * (log n))) | space: O(n)
+    # working_sol (80.16%, 51.4%) -> (67ms, 16.6mb)  time: O(n) | space: O(n + (log n))
     if not senate:
         return senate
-    active_senators: dict[int] = {}
-    dire_rights: int = 0
-    radiant_rights: int = 0
-    for x in range(len(senate)):
-        if senate[x] == "D":
-            dire_rights += 1
-            active_senators[x] = True
-        elif senate[x] == "R":
-            radiant_rights += 1
-            active_senators[x] = True
-    if radiant_rights == 0:
-        return "Dire"
-    if dire_rights == 0:
+    radiant_que: deque = deque()
+    dire_que: deque = deque()
+    for index, value in enumerate(senate):
+        if value == "R":
+            radiant_que.append(index)
+        if value == "D":
+            dire_que.append(index)
+    while radiant_que and dire_que:
+        radiant_active: deque = deque()
+        dire_active: deque = deque()
+        while radiant_que and dire_que:
+            if dire_que[0] > radiant_que[0]:
+                radiant_active.append(radiant_que[0])
+            elif dire_que[0] < radiant_que[0]:
+                dire_active.append(dire_que[0])
+            radiant_que.popleft()
+            dire_que.popleft()
+        while radiant_que:
+            radiant_active.append(radiant_que[0])
+            radiant_que.popleft()
+            if len(dire_active) != 0:
+                dire_active.popleft()
+        while dire_que:
+            dire_active.append(dire_que[0])
+            dire_que.popleft()
+            if len(radiant_active) != 0:
+                radiant_active.popleft()
+        radiant_que = radiant_active
+        dire_que = dire_active
+    if radiant_que:
         return "Radiant"
-    while radiant_rights != 0 and dire_rights != 0:
-        for y in range(len(senate)):
-            right_used: bool = False
-            if senate[y] == "R" and active_senators[y]:
-                for z in range(y + 1, len(senate)):
-                    if senate[z] == "D" and active_senators[z]:
-                        active_senators[z] = False
-                        dire_rights -= 1
-                        right_used = True
-                        break
-                if not right_used:
-                    for z in range(y):
-                        if senate[z] == "D" and active_senators[z]:
-                            active_senators[z] = False
-                            dire_rights -= 1
-                            break
-                if dire_rights == 0 and radiant_rights > 0:
-                    return "Radiant"
-            if senate[y] == "D" and active_senators[y]:
-                for z in range(y + 1, len(senate)):
-                    if senate[z] == "R" and active_senators[z]:
-                        active_senators[z] = False
-                        radiant_rights -= 1
-                        right_used = True
-                        break
-                if not right_used:
-                    for z in range(y):
-                        if senate[z] == "R" and active_senators[z]:
-                            active_senators[z] = False
-                            radiant_rights -= 1
-                            break
-                if radiant_rights == 0 and dire_rights > 0:
-                    return "Dire"
-    if radiant_rights == 0:
+    elif dire_que:
         return "Dire"
-    if dire_rights == 0:
-        return "Radiant"
 
 
-# Time complexity: O(j * (n * (log n))) -> traversing once to create dictionary with all senators => O(n) ->
-# n - len of input_string^^| -> for every round traversing once whole input_string and in the worst case,
-# j - number of rounds^^|    for every index we check calling nested loop to extra check part of input_string again =>
-#                            => O(j * (n * (log n))) -> O(n + j * (n * (log n)))
-# Space complexity: O(n) -> extra constants and dictionary of size n => O(n)
+# Time complexity: O(n) -> creating two deque() lists with summarized size of n => O(n) -> banning senators
+# n - len of input_string^^| for every value in both lists, there n indexes => O(n) -> O(n + n) -> O(n)
+# !
+# Don't see options where's we cannot do this in 1 round, so I'm counting them.
+# Because there's always faction with higher senators, and we're banning active senators with these extras. !
+# -------------------
+# Auxiliary space: O(n + (log n)) -> two deque() lists with summarized size of n => O(n) ->
+#                       -> extra two deque() lists with number of senators left after each round => O(log n) ->
+#                       -> O(n + (log n)) <- don't count number of rounds because we're overriding them.
+# -------------------
+# For a future use -> If I want to delete from a list with O(1) not just from right_side, use deque() ->
+#                     -> insert, delete from both ends in O(1).
+# -------------------
+# Failed to do:
+#   1) I was thinking about deleting consuls one by one depending on their input,
+#      but I didn't know about lists with O(1) popleft(), so I used dictionary to store indexes
+#      and was scrolling input_string. If I tried to remove from this list not just scroll it could cost me even more
+#      because it's always O(n)=> O(j * (n * (log n) * n)
+#   2) Failed to actually see better solution without extra checks and repeating, not just deque() miss.
+# So after peaking at top_tiers with <100ms, I learnt about deque() and rebuild solution.
+# Now we're just creating 2 deque() lists with radiant, dire senators in them ->
+# -> after than we're creating 2 extra deque() lists to store senators who's not going to be banned in this round ->
+# -> if we have senators in both ques we can simply check their indexes to get idea who is forward and who can ban them
+#   (because we're always going in left_right order), one who's forward is going to be banned, banning opposites
+#   and saving those who did the banning -> repeating until we run out of senators from one faction,
+#   because now there's no opposite faction in right_side(forward) and we can check if there's any senators left,
+#   who can ban one's behind (who_did_the_banning) -> every index of senators who's still left in some faction,
+#   after we run out of 1 faction, is always higher than anyone in saved active_senators ->
+# -> simply deleting everyone behind until we run out of senators in que -> and if there's still someone left active
+#   on both sides, we're going to repeat round.
+# ^^Stolen(peaked) solution, but I didn't know about deque() at all, so even if I wanted to make index_check
+#   and remove banned senators, it would be even slower than my solution with dictionary.
+# -------------------
+# Ok. Time to learn how to use deque(), cuz 3800 diff is not ok.
+# !
+# Deque is preferred over a list in the cases where we need quicker append and pop operations
+# from both the ends of the container! https://www.geeksforgeeks.org/deque-in-python/
 # -------------------
 # !
 # Suppose every senator is smart enough and will play the best strategy for his own party. !
