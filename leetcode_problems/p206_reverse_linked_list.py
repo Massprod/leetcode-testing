@@ -2,6 +2,8 @@
 # ---------------------
 # The number of nodes in the list is the range [0, 5000].
 # -5000 <= Node.val <= 5000
+# ---------------------
+# Follow up: A linked list can be reversed either iteratively or recursively. Could you implement both?
 
 
 class ListNode:
@@ -34,11 +36,48 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def reverse_list(head: ListNode) -> ListNode:
-    pass
+    # working_sol (33.92%, 7.87%) -> (54ms, 22.9mb)  time: O(n) | space: O(1)
+    if not head:
+        return head
+
+    def reverse(last_node: ListNode, first_call: bool = True) -> tuple[ListNode, ListNode]:
+        if not last_node.next:
+            start: ListNode = last_node
+            return last_node, start
+        if node := reverse(last_node.next, False):
+            last_node.next = None
+            node[0].next = last_node
+            if first_call:
+                last_node.next = None
+            return node[0].next, node[1]
+    return reverse(head)[1]
 
 
-test1 = [1, 2, 3, 4, 5]
+# Time complexity: O(n) -> traversing whole input_list once to get last_node => O(n) ->
+# n - len of input_list^^| -> reassigning every node from input_list as a next_nodes for last_node we found => O(n).
+# Auxiliary space: O(1) -> not creating anything, using only links to already existed nodes => O(1)
+# !
+# ignoring recursion stack, because there's p148 and official solution to that ignores it, calling 3 recursions O(1) !
+# ---------------------
+# Ok. It was harder than I expected and I can't find a way how to save, new_start after reaching END.
+# Not in tuple or extra place to save, but we need to store this last node, so I guess there's no way around it.
+# Tried some ways to make it link to head, or prev nodes, but it's either recursion or I get some nodes deleted.
+# So either there's no way to skip this, or I don't know how, for now.
+# Won't google for it, there's a lot of tasks on this matter anyway, if I stuck at one of them than google is a way.
+# ---------------------
+# Always solving linked_list iteratively, time to check recursion.
+
+
+test1 = create_linked([1, 2, 3, 4, 5])
 test1_out = [5, 4, 3, 2, 1]
+test = reverse_list(test1)
+print(test)
+t_one_linked(test, test1_out)
+del test
 
-test2 = [1, 2]
+test2 = create_linked([1, 2])
 test2_out = [2, 1]
+test = reverse_list(test2)
+print(test)
+t_one_linked(test, test2_out)
+del test
