@@ -19,6 +19,7 @@ class ListNode:
 
 
 def insertion_sort_list(head: ListNode) -> ListNode:
+    # working_sol (76.52%, 31.93%) -> (170ms, 18.9mb)  time: !O(n * (log n))! | space: O(1)
     if not head:
         return head
     if head.next is None:
@@ -53,14 +54,17 @@ def insertion_sort_list(head: ListNode) -> ListNode:
     return min_node
 
 
-# Time complexity: O(n * n) -> can't see how it's not (n * (log n)), but it can't be (n * (log n)),
-#                           because failing TimeLimit in p148 vs merge_sort, which is actual (n * (log n)) ->
+# Time complexity: !O(n * (log n))! -> can't see how it's not (n * (log n)), but it can't be (n * (log n)),
+# n - num of nodes in input_list^^| it's failing TimeLimit in p148 vs merge_sort, which is actual O(n * (log n)) ->
 #                           -> traversing input_list once, in the worst case each node we encounter after 3 node
 #                           will search it place in between min, max nodes -> distance between min, max nodes is
 #                           expanding on each step starting from 1 to n - 2 =>
 #                           => so with each step we're searching (n - m), where's m is number of unchecked nodes ->
 #                           => should be O((n - m1) + (n - m2) + (n - m3) + ... + (n - n - 2 )) ->
-#
+#                           -> in case of values lower than min, or higher than max =>
+#                           => just switching links of 3 nodes => O(1) -> !O(n * (log n))!.
+#                                                                   Incorrect^^Can't calc it correctly, for now.
+# Auxiliary space: O(1) -> nothing extra, only original nodes with switched links => O(1)
 # ------------------------
 # Won't use tests or something, because I already did this in p148.
 # But in p148 my solution is ultra_slow, because it's constant space without Merge_sort and failing TimeLimit.
