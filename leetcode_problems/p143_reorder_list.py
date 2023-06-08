@@ -38,11 +38,54 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def reorder_list(head: ListNode) -> None:
-    pass
+    # working_sol (93.67%, 37.8%) -> (86ms, 26.2mb)  time: O(n + m) | space: O(n)
+    all_nodes: list[ListNode] = []
+    while head:
+        all_nodes.append(head)
+        head = head.next
+    switches: int = (len(all_nodes) - 1) // 2
+    left: int = 1
+    right: int = -1
+    start_node: ListNode = all_nodes[0]
+    if (len(all_nodes) - 1) % 2 == 0:
+        even: bool = True
+    else:
+        even: bool = False
+    while switches:
+        left_node: ListNode = all_nodes[left]
+        right_node: ListNode = all_nodes[right]
+        start_node.next = right_node
+        right_node.next = left_node
+        start_node = left_node
+        if switches == 1 and not even:
+            all_nodes[left + 1].next = None
+        if switches == 1 and even:
+            start_node.next = None
+        left += 1
+        right -= 1
+        switches -= 1
 
 
-test1 = [1, 2, 3, 4]
+# Time complexity: O(n + m) -> traversing input_list once to create list with all node_links => O(n) ->
+# n - nodes in input_list^^| -> switching nodes for (n - 1 // 2) times => O(m) -> O(n + m).
+# m - number of switches^^ |
+# Auxiliary space: O(n) -> creating extra list with links of every node in input_list => O(n)
+# ------------------------
+# No limits on space, so just store every node in a list and reassign them?
+# 0 index always stays, -1 to 1, -2 to 2, -3 to 3, etc.
+
+
+test1 = create_linked([1, 2, 3, 4])
 test1_out = [1, 4, 2, 3]
+reorder_list(test1)
+t_one_linked(test1, test1_out)
 
-test2 = [1, 2, 3, 4, 5]
+test2 = create_linked([1, 2, 3, 4, 5])
 test2_out = [1, 5, 2, 4, 3]
+reorder_list(test2)
+t_one_linked(test2, test2_out)
+
+test3 = create_linked([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+test3_out = [1, 14, 2, 13, 3, 12, 4, 11, 5, 10, 6, 9, 7, 8]
+reorder_list(test3)
+t_one_linked(test3, test3_out)
