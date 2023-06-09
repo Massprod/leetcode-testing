@@ -17,7 +17,7 @@ from random import randint
 
 
 def find_min(nums: list[int]) -> int:
-    # working_sol (50.49%, 42.67%) -> (66ms, 16.9mb)  time: O( ) | space: O( )
+    # working_sol (50.49%, 42.67%) -> (66ms, 16.9mb)  time: O(n) | space: O(n)
     def slice_search(sliced: list[int], duplicate: bool = False) -> int:
         if len(sliced) == 1:
             return sliced[0]
@@ -44,8 +44,12 @@ def find_min(nums: list[int]) -> int:
     return slice_search(nums)
 
 
-# Time complexity: O( ) ->
-# Auxiliary space: O(n) ->
+# Time complexity: O(n) -> in the worst case, now we're having all duplicates except one value ->
+# n - len of input_list^^| -> checking first half with duplicates and after that checking other half => O(n).
+# Auxiliary space: O(n) -> same approach as p153, but now we're checking whole input_list when we have duplicates
+#                          on middle and end -> and now we're storing double size of n in recursion_calls
+#                          because checking one half and after that checking other half,
+#                          doubles our calls for the same size => O(2n) -> O(n)
 # ----------------------
 # Ok. Solved this case, but now we're checking both sides, and I need more cases to see mistakes.
 # Tested with some random cases for constraints sizes, it's working, time to check commit.
