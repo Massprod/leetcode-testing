@@ -17,7 +17,7 @@ from random import randint
 
 
 def find_min(nums: list[int]) -> int:
-
+    # working_sol (50.49%, 42.67%) -> (66ms, 16.9mb)  time: O( ) | space: O( )
     def slice_search(sliced: list[int], duplicate: bool = False) -> int:
         if len(sliced) == 1:
             return sliced[0]
@@ -34,15 +34,19 @@ def find_min(nums: list[int]) -> int:
                 return correct
             if not duplicate:
                 check_correct: int = slice_search(sliced[1: middle + 1])
-                if check_correct:
+                if check_correct is not None:
                     return min(correct, check_correct)
         if sliced[middle] > sliced[-1]:
             return slice_search(sliced[middle + 1:])
         if sliced[middle] < sliced[-1]:
             return slice_search(sliced[: middle + 1])
+
     return slice_search(nums)
 
 
+# Time complexity: O( ) ->
+# Auxiliary space: O(n) ->
+# ----------------------
 # Ok. Solved this case, but now we're checking both sides, and I need more cases to see mistakes.
 # Tested with some random cases for constraints sizes, it's working, time to check commit.
 # ----------------------
@@ -61,16 +65,28 @@ def find_min(nums: list[int]) -> int:
 
 test1 = [1, 3, 5]
 test1_out = 1
+assert test1_out == find_min(test1)
 
 test2 = [2, 2, 2, 0, 1]
 test2_out = 0
+assert test2_out == find_min(test2)
 
 test3 = [2, 2, 1, 2, 2, 2, 2]
 test3_out = 1
 print(find_min(test3))
+assert test3_out == find_min(test3)
 
 test4 = [2500, 2500, -2500, -2500]
+test4_out = -2500
 print(find_min(test4))
+assert test4_out == find_min(test4)
+
+# test5 - failed -> I was checking if value we return is True or exist, and as always 0 is False.
+#                   4+ time I made this mistake...
+test5 = [0, 0, 0, 0, 0]
+test5_out = 0
+print(find_min(test5))
+assert test5_out == find_min(test5)
 
 test_case: list[int] = [randint(-2500, 2500) for num in range(5000)]
 test_case = test_case + test_case.copy()
@@ -79,3 +95,4 @@ test_case.sort()
 test_case = test_case[-3453:] + test_case[:-3453]
 print(min(test_case))
 print(find_min(test_case))
+assert min(test_case) == find_min(test_case)
