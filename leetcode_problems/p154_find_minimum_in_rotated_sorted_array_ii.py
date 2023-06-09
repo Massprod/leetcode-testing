@@ -27,13 +27,16 @@ def find_min(nums: list[int]) -> int:
             return sliced[0]
         middle: int = ceil((len(sliced) - 1) / 2)
         if sliced[middle] == sliced[-1]:
+            # duplicate to skip other half check, inside the duplicate_half call
             correct: int = slice_search(sliced[middle + 1:], True)
             if duplicate:
                 return correct
             if correct < sliced[middle]:
                 return correct
+            # to check other half only inside initial_call
             if not duplicate:
                 check_correct: int = slice_search(sliced[1: middle + 1])
+                # I can change a slice to [:middle + 1], so it will never return None, but it's extra checks
                 if check_correct is not None:
                     return min(correct, check_correct)
         if sliced[middle] > sliced[-1]:
