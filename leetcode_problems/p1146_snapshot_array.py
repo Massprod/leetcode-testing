@@ -15,27 +15,54 @@
 class SnapshotArray:
 
     def __init__(self, length: int):
-        self.snap_array: list[list[int]] = [[0] for _ in range(length)]
+        self.snap_dict: dict[int] = {}
+        for _ in range(length):
+            self.snap_dict[_] = [(0, 0)]
         self.snap_id: int = -1
-        self.changed: bool = False
+        self.length: int = length
 
     def set(self, index: int, val: int) -> None:
-        if index in range(len(self.snap_array)):
-            self.snap_array[index][-1] = val
-            self.changed = True
+        if index in range(self.length):
+            if self.snap_id + 1 > 0:
+                if val != self.snap_dict[index][-1][0]:
+                    self.snap_dict[index].append((val, self.snap_id + 1))
+            if self.snap_id + 1 == 0:
+                if val != self.snap_dict[index][-1][0]:
+                    self.snap_dict[index][0] = (val, 0)
 
     def snap(self) -> int:
-        if self.changed:
-            self.snap_id += 1
-            for lis in self.snap_array:
-                lis.append(lis[-1])
-            self.changed = False
-            return self.snap_id
+        self.snap_id += 1
+        return self.snap_id
 
-    def get(self, index: int, snap_id: int) -> int:
-        return self.snap_array[index][snap_id]
+    def get(self, index: int, snap_id: int) -> int | None:
+        if self.snap_id < snap_id < 0:
+            return None
+        array: list[tuple[int, int]] = self.snap_dict[index]
+        if len(array) == 1:
+            return array[0][0]
+        snap_id = snap_id
+        left: int = 0
+        right: int = len(array) - 1
+        if array[right][1] == snap_id:
+            return array[right][0]
+        if array[left][1] == snap_id:
+            return array[left][0]
+        while (right - left) != 1:
+            if array[right][1] == snap_id:
+                return array[right][0]
+            if array[left][1] == snap_id:
+                return array[left][0]
+            middle: int = int((left + right) / 2)
+            if array[middle][1] == snap_id:
+                return array[middle][0]
+            if array[middle][1] < snap_id < right:
+                left = middle
+            if array[middle][1] > snap_id:
+                right = middle
+        return array[left][0]
 
 
+# -------------------
 # Still not enough, lists in list rebuild time.
 # Lists in lists to save snaps is not working, last I consider might work is to store values in a list,
 # and as I ignore snaps for same array calls, we can just return index from this list.
@@ -75,3 +102,13 @@ test2 = ["SnapshotArray", "set", "snap", "set", "snap", "get", "set", "snap", "s
 test2_vals = [[5], [0, 12], [], [0, 14], [], [0, 0], [4, 14], [], [4, 28], [5, 11], [], [4, 2], [4, 3]]
 test2_out = [None, None, 0, None, 1, 12, None, 2, None, None, 3, 14, 28]
 t(test2, test2_vals, test2_out)
+
+test3 = ["SnapshotArray", "snap", "snap", "get", "set", "snap", "set", "set", "get"]
+test3_vals = [[4], [], [], [3, 1], [2, 4], [], [2, 6], [2, 8], [2, 2]]
+test3_out = [None, 0, 1, 0, None, 2, None, None, 4]
+t(test3, test3_vals, test3_out)
+
+test4 = ["SnapshotArray", "set", "snap", "set", "snap", "get", "get", "set", "get", "set"]
+test4_vals = [[2], [0, 4], [], [1, 13], [], [1, 1], [1, 0], [1, 3], [1, 0], [0, 5]]
+test4_out = [None, None, 0, None, 1, 13, 0, None, 0, None]
+t(test4, test4_vals, test4_out)
