@@ -13,7 +13,7 @@
 
 
 class SnapshotArray:
-
+    # working_sol (17.44%, 32.15%) -> (832ms, 45.8mb)  time: below | space: O(n + m)
     def __init__(self, length: int):
         self.snap_dict: dict[int] = {}
         for _ in range(length):
@@ -25,12 +25,14 @@ class SnapshotArray:
         if index in range(self.length):
             if self.snap_id + 1 > 0:
                 if len(self.snap_dict[index]) == (self.snap_id + 2):
+                    # overriding duplicates
                     if val != self.snap_dict[index][-1][0] and self.snap_dict[index][self.snap_id + 1]:
                         self.snap_dict[index][self.snap_id + 1] = (val, self.snap_id + 1)
                         return
                 if val != self.snap_dict[index][-1][0]:
                     self.snap_dict[index].append((val, self.snap_id + 1))
             if self.snap_id + 1 == 0:
+                # correct insertion for a -1 snap_id
                 if val != self.snap_dict[index][-1][0]:
                     self.snap_dict[index][0] = (val, 0)
 
@@ -67,6 +69,26 @@ class SnapshotArray:
         return array[left][0]
 
 
+# Time complexity:
+#                 initial: O(n) -> creating dictionary with keys == lengths => O(n).
+#                   n - length_input^^|
+#                 set: O(1) -> 2 options, we either overriding duplicates, or appending new tuple into list => O(1).
+#                 snap: O(1) -> incrementing snap_id by 1 => O(1)
+#                 get: O(log m) -> really bad, but still binary_search in array of m size => O(m)
+#                   m - length of array holding all changes for a chosen index^^|
+# Auxiliary space: O(n + m) -> creating dictionary with keys == lengths, and list[tuple[0, 0]] inside as basic values
+# n - length_input   ^^|    basic values doesn't depend on input => O(n) -> for every call to set()
+# m - all set() calls  |    we're either reassign already existed values, or appending new ones
+#     for unique snap^^|    into chosen index_list if before that snap() was called, at least once ->
+#                           -> so every snap holding only its own values, without duplicates => O(m)
+# -------------------
+# Ok. Fun daily_adventure for 3+ hours. At least now I know how to better save memory, and
+# use binary search in cases when we need to find values that doesn't exist in searching array.
+# Terrible to read solution, but at least I made this working and beaten time_memory limits.
+# Well for me, who did only 3 tasks based on binary_search and all of them were on different
+# search_patterns, it's good to at least beat this. But in the future totally should rebuild.
+# Especially need to think about self.snap_id part, because this one is terrible to maintain/read
+# and this is why it's so ugly looking in set(). But not today.
 # -------------------
 # Still not enough, lists in list rebuild time.
 # Lists in lists to save snaps is not working, last I consider might work is to store values in a list,
@@ -77,7 +99,7 @@ class SnapshotArray:
 # and it's still will take an extra space. Need to check if we can ignore already taken snaps.
 # -------------------
 # No info about what we return on incorrect calls, on no info about if there's incorrect calls in tests.
-# Because if we call with index > len(snap_array) it's error, but we better let people know about this,
+# Because if we call with index > len(snap_array) it's an error, but we better let people know about this,
 # not just return None. No info so I will leave it like None, maybe this is what expected in tests.
 # Same goes for dictionary(snaps), and SNAP() should I consider duplicates and ignore them?
 # Or we don't care about duplicates and allowing to SNAP() w.e times same lists.
@@ -128,15 +150,23 @@ test6_vals = [[3], [1, 6], [], [], [1, 19], [0, 4], [2, 1], [2, 0], [0, 1]]
 test6_out = [None, None, 0, 1, None, None, 0, 0, 0]
 t(test6, test6_vals, test6_out)
 
-test7 = ["SnapshotArray", "set", "snap", "get", "set", "snap", "set", "get", "snap", "snap", "set", "snap", "set",
-         "get", "get"]
-test7_vals = [[2], [1, 16], [], [1, 0], [1, 15], [], [0, 2], [1, 0], [], [], [1, 6], [], [0, 12], [1, 4], [0, 4]]
+test7 = [
+    "SnapshotArray", "set", "snap", "get", "set", "snap", "set",
+    "get", "snap", "snap", "set", "snap", "set", "get", "get",
+]
+test7_vals = [
+    [2], [1, 16], [], [1, 0], [1, 15], [], [0, 2], [1, 0], [], [], [1, 6], [], [0, 12], [1, 4], [0, 4],
+]
 test7_out = [None, None, 0, 16, None, 1, None, 16, 2, 3, None, 4, None, 6, 2]
 t(test7, test7_vals, test7_out)
 
-test8 = ["SnapshotArray", "snap", "set", "get", "set", "snap", "snap", "snap", "get", "set", "get", "get", "set", "get",
-         "get", "get", "get", "snap"]
-test8_vals = [[1], [], [0, 2], [0, 0], [0, 16], [], [], [], [0, 3], [0, 1], [0, 2], [0, 1], [0, 9], [0, 3], [0, 2],
-              [0, 0], [0, 0], []]
+test8 = [
+    "SnapshotArray", "snap", "set", "get", "set", "snap", "snap", "snap",
+    "get", "set", "get", "get", "set", "get", "get", "get", "get", "snap",
+]
+test8_vals = [
+    [1], [], [0, 2], [0, 0], [0, 16], [], [], [], [0, 3], [0, 1],
+    [0, 2], [0, 1], [0, 9], [0, 3], [0, 2], [0, 0], [0, 0], [],
+]
 test8_out = [None, 0, None, 0, None, 1, 2, 3, 16, None, 16, 16, None, 16, 16, 0, 0, 4]
 t(test8, test8_vals, test8_out)
