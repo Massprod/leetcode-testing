@@ -24,6 +24,10 @@ class SnapshotArray:
     def set(self, index: int, val: int) -> None:
         if index in range(self.length):
             if self.snap_id + 1 > 0:
+                if len(self.snap_dict[index]) == (self.snap_id + 2):
+                    if val != self.snap_dict[index][-1][0] and self.snap_dict[index][self.snap_id + 1]:
+                        self.snap_dict[index][self.snap_id + 1] = (val, self.snap_id + 1)
+                        return
                 if val != self.snap_dict[index][-1][0]:
                     self.snap_dict[index].append((val, self.snap_id + 1))
             if self.snap_id + 1 == 0:
@@ -43,11 +47,12 @@ class SnapshotArray:
         snap_id = snap_id
         left: int = 0
         right: int = len(array) - 1
-        if array[right][1] == snap_id:
+        # unique case for unchanged lists
+        if array[right][1] < snap_id:
             return array[right][0]
-        if array[left][1] == snap_id:
-            return array[left][0]
-        while (right - left) != 1:
+        while left < right:
+            if (right - left == 1) and array[left][1] < snap_id < array[right][1]:
+                return array[left][0]
             if array[right][1] == snap_id:
                 return array[right][0]
             if array[left][1] == snap_id:
@@ -55,7 +60,7 @@ class SnapshotArray:
             middle: int = int((left + right) / 2)
             if array[middle][1] == snap_id:
                 return array[middle][0]
-            if array[middle][1] < snap_id < right:
+            if array[middle][1] < snap_id < array[right][1]:
                 left = middle
             if array[middle][1] > snap_id:
                 right = middle
@@ -112,3 +117,26 @@ test4 = ["SnapshotArray", "set", "snap", "set", "snap", "get", "get", "set", "ge
 test4_vals = [[2], [0, 4], [], [1, 13], [], [1, 1], [1, 0], [1, 3], [1, 0], [0, 5]]
 test4_out = [None, None, 0, None, 1, 13, 0, None, 0, None]
 t(test4, test4_vals, test4_out)
+
+test5 = ["SnapshotArray", "set", "snap", "set", "snap", "set", "snap", "set", "get", "get", "snap"]
+test5_vals = [[4], [1, 5], [], [0, 16], [], [2, 15], [], [2, 5], [1, 0], [0, 2], []]
+test5_out = [None, None, 0, None, 1, None, 2, None, 5, 16, 3]
+t(test5, test5_vals, test5_out)
+
+test6 = ["SnapshotArray", "set", "snap", "snap", "set", "set", "get", "get", "get"]
+test6_vals = [[3], [1, 6], [], [], [1, 19], [0, 4], [2, 1], [2, 0], [0, 1]]
+test6_out = [None, None, 0, 1, None, None, 0, 0, 0]
+t(test6, test6_vals, test6_out)
+
+test7 = ["SnapshotArray", "set", "snap", "get", "set", "snap", "set", "get", "snap", "snap", "set", "snap", "set",
+         "get", "get"]
+test7_vals = [[2], [1, 16], [], [1, 0], [1, 15], [], [0, 2], [1, 0], [], [], [1, 6], [], [0, 12], [1, 4], [0, 4]]
+test7_out = [None, None, 0, 16, None, 1, None, 16, 2, 3, None, 4, None, 6, 2]
+t(test7, test7_vals, test7_out)
+
+test8 = ["SnapshotArray", "snap", "set", "get", "set", "snap", "snap", "snap", "get", "set", "get", "get", "set", "get",
+         "get", "get", "get", "snap"]
+test8_vals = [[1], [], [0, 2], [0, 0], [0, 16], [], [], [], [0, 3], [0, 1], [0, 2], [0, 1], [0, 9], [0, 3], [0, 2],
+              [0, 0], [0, 0], []]
+test8_out = [None, 0, None, 0, None, 1, 2, 3, 16, None, 16, 16, None, 16, 16, 0, 0, 4]
+t(test8, test8_vals, test8_out)
