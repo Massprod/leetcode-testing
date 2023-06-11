@@ -15,24 +15,35 @@
 class SnapshotArray:
 
     def __init__(self, length: int):
-        self.snap_array: list[int] = [0 for _ in range(length)]
-        self.snaps: dict[int] = {}
+        self.snap_array: list[list[int]] = [[0] for _ in range(length)]
         self.snap_id: int = -1
+        self.changed: bool = False
 
     def set(self, index: int, val: int) -> None:
         if index in range(len(self.snap_array)):
-            self.snap_array[index] = val
+            self.snap_array[index][-1] = val
+            self.changed = True
 
     def snap(self) -> int:
-        self.snap_id += 1
-        self.snaps[self.snap_id] = self.snap_array.copy()
-        return self.snap_id
+        if self.changed:
+            self.snap_id += 1
+            for lis in self.snap_array:
+                lis.append(lis[-1])
+            self.changed = False
+            return self.snap_id
 
     def get(self, index: int, snap_id: int) -> int:
-        if snap_id in self.snaps:
-            return self.snaps[snap_id][index]
+        return self.snap_array[index][snap_id]
 
 
+# Still not enough, lists in list rebuild time.
+# Lists in lists to save snaps is not working, last I consider might work is to store values in a list,
+# and as I ignore snaps for same array calls, we can just return index from this list.
+# -------------------
+# Ok. Memory is limited, we can't save all snap_id's.
+# But in a HINT they want us to use lists in list, I was thinking about that, but it's harder to read,
+# and it's still will take an extra space. Need to check if we can ignore already taken snaps.
+# -------------------
 # No info about what we return on incorrect calls, on no info about if there's incorrect calls in tests.
 # Because if we call with index > len(snap_array) it's error, but we better let people know about this,
 # not just return None. No info so I will leave it like None, maybe this is what expected in tests.
