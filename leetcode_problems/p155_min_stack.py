@@ -13,6 +13,7 @@
 
 
 class MinStack:
+    # working_sol (92.59%, 22,53%) -> (60ms, 20.6mb)  time: below | space: O(n)
 
     def __init__(self):
         self.min_stack: list[tuple[int, int]] = []
@@ -37,6 +38,15 @@ class MinStack:
         return self.min_stack[-1][1]
 
 
+# Time complexity:
+#                 init:   O(1) -> creating empty list and constant => O(1)
+#                 push:   O(1) -> appending tuple into a list => O(1)
+#                 pop:    O(1) -> pop() last element from list and reassigning min_val => O(1)
+#                 top:    O(1) -> returning first element from a last tuple of the list => O(1)
+#                 getMin: O(1) -> returning second element from a last tuple of the list => O(1)
+# Auxiliary space: O(n) -> for every push() call we're appending elements into a list => O(n)
+# n - num of call to push^^|
+# --------------------
 # !
 # Methods pop, top and getMin operations will always be called on non-empty stacks. !
 # ^^This is why I ignore every check we actually should do, because pop() on empty is error, etc.
