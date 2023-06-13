@@ -8,36 +8,40 @@
 
 
 def equal_pairs(grid: list[list[int]]) -> int:
-    # working_sol (14.93%, 56.95%) -> (800ms, 21.5mb)  time: O(m * n) | space: O(m * n)
+    # working_sol (72.9%, 56.95%) -> (496ms, 21.6mb)  time: O(m * n) | space: O(m * n)
     column_length: int = len(grid)
     row_length: int = len(grid[0])
-    rows: dict[int, list[int]] = {}
-    columns: dict[int, list[int]] = {}
-    for y in range(column_length):
-        for x in range(row_length):
-            value: int = grid[y][x]
-            if x not in columns:
-                columns[x] = [value]
-            else:
-                columns[x].append(value)
-            if y not in rows:
-                rows[y] = [value]
-            else:
-                rows[y].append(value)
+    rows: dict[tuple[int], int] = {}
     pairs: int = 0
-    for row in rows.values():
-        for column in columns.values():
-            if row == column:
-                pairs += 1
+    for row in grid:
+        t_row: tuple[int] = tuple(row)
+        # counting rows and their duplicates
+        if t_row not in rows:
+            rows[t_row] = 1
+            continue
+        rows[t_row] += 1
+    for x in range(row_length):
+        column: list[int] = []
+        for y in range(column_length):
+            column.append(grid[y][x])
+        t_column: tuple[int] = tuple(column)
+        # adding number of rows with duplicates, to ignore looping through all rows
+        if t_column in rows:
+            pairs += rows[t_column]
     return pairs
 
 
-# Time complexity: O(m * n) -> traversing input_matrix once to create all rows, columns and store them => O(m * n) ->
-# m - len of matrix_column^^| -> traversing created dictionaries with stored values, to find duplicates => O(m * n) ->
-# n - len of matrix_row^^|    -> O(2 * (m * n)) => O(m * n).
-# Auxiliary space: O(m * n) -> creating dictionary with keys equal to m and values equal to rows => O(m * n) ->
-#                             -> creating second dictionary with keys equal to n and values equal to columns =>
-#                             => O(n * m) -> O(2 * (m * n)) => O(m * n).
+# Time complexity: O(m * n) -> traversing input_matrix once to store all presented rows => O(m) ->
+# m - len of matrix_column^^| -> traversing input_matrix once again to count every column which equal to a row =>
+# n - len of matrix_row^^|       => O(m * n) -> O(m + (m * n)) => O(m * n).
+# Auxiliary space: O(m * n) -> creating dictionary with keys equal to tuple(row) for every row in input_matrix,
+#                              and values equal to their occurrences(counting duplicates) => O(m * n) ->
+#                              -> creating/changing one list(column) for every column in input_matrix => O(m) ->
+#                              -> creating/changing one tuple(column) for every column in input_matrix => O(m) ->
+#                              -> O(m + m + m * n) => O(m * n).
+# ----------------
+# Rebuild solution is faster, because now we're not checking every row for a column in dictionaries,
+# but simply checking if at least one column is IN rows which is O(1) instead of O(m) before.
 # ----------------
 # Don't why this task is marked Medium, but there's some tricky_part I don't see.
 # Either it's TimeLimit and I need to find better searching way, or it's some reading of columns, rows.
