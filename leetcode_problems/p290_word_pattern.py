@@ -11,6 +11,7 @@
 
 
 def word_pattern(pattern: str, s: str) -> bool:
+    # working_sol (79.34%, 69.6%) -> (39ms, 16.3mb)  time: O(n + m) | space: O(n + m)
     assigned_words: dict[str, str] = {}
     index: int = 0
     for _ in pattern:
@@ -24,6 +25,9 @@ def word_pattern(pattern: str, s: str) -> bool:
                     if x == len(s) - 1:
                         word += s[x]
                     index += 1
+                    # if reassign happens -> insta False
+                    if word in assigned_words.values() and _ not in assigned_words:
+                        return False
                     assigned_words[_] = word
                     break
                 word += s[x]
@@ -34,6 +38,9 @@ def word_pattern(pattern: str, s: str) -> bool:
                     if x == len(s) - 1:
                         word += s[x]
                     index += 1
+                    # if reassign happens -> insta False
+                    if word in assigned_words.values() and _ not in assigned_words:
+                        return False
                     if not assigned_words[_] == word:
                         return False
                     break
@@ -44,7 +51,20 @@ def word_pattern(pattern: str, s: str) -> bool:
         return False
     return True
 
-
+# Time complexity: O(n + m) -> traversing whole pattern once => O(n) ->
+# n - len of input_pattern^^| -> but for every symbol in a pattern we're starting word_search in s,
+# m - len of input_s^^|       in the worst case, it can be a pattern with 1 symbol and s with only 1 word ->
+#                             -> so we're traversing pattern as O(n) and extra checking all indexes in s => O(m) ->
+#                             -> overall we're checking whole pattern and whole s => O(n + m).
+#                  Θ((log n) + (log m)) -> on the median we're breaking at some part of pattern ->
+#                                       -> or we're checking whole pattern and only part of s. => O((log n) + (log m)).
+# Auxiliary space: O(n + m) -> in the worst case, we're storing every symbol in pattern and
+#                              their counterpart(word) from s, as key=value pairs => O(n + m).
+#                           ! there's extra spaces between words, so it's (m - spaces_num)^^,
+#                             but they're constant -> because every word is separated by other with 1 space. !
+# --------------------
+# Failed first commit, because missed part with reassigning same word for a multiple times.
+# --------------------
 # Well according to test5, order of reading should be considered,
 # because there's a -> cat and b -> dog and if we ignore order it's should be correct(True).
 # But correct answer is False, so we're reading in order.
@@ -67,23 +87,35 @@ test1 = "abba"
 test1_s = "dog cat cat dog"
 test1_out = True
 print(word_pattern(test1, test1_s))
+assert test1_out == word_pattern(test1, test1_s)
 
 test2 = "abba"
 test2_s = "dog cat cat fish"
 test2_out = False
 print(word_pattern(test2, test2_s))
+assert test2_out == word_pattern(test2, test2_s)
 
 test3 = "aaaa"
 test3_s = "dog cat cat dog"
 test3_out = False
 print(word_pattern(test3, test3_s))
+assert test3_out == word_pattern(test3, test3_s)
 
 test4 = "abb"
 test4_s = "dog cat cat dog"
 test4_out = False
 print(word_pattern(test4, test4_s))
+assert test4_out == word_pattern(test4, test4_s)
 
 test5 = "baba"
 test5_s = "dog cat cat dog"
 test5_out = False
 print(word_pattern(test5, test5_s))
+assert test5_out == word_pattern(test5, test5_s)
+
+# test6 - failed -> missed part with reassigning same word for a multiple times.
+test6 = "abba"
+test6_s = "dog dog dog dog"
+test6_out = False
+print(word_pattern(test6, test6_s))
+assert test6_out == word_pattern(test6, test6_s)
