@@ -19,21 +19,22 @@
 
 
 def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list[str]]:
+    word_list: set[str] = set(wordList)
     if endWord not in wordList:
         return []
 
     def single_diff(word1: str, word2: str) -> bool:
         count: int = 0
-        for _ in word1:
+        for x in range(len(word1)):
             if count > 1:
                 return False
-            elif _ not in word2:
+            elif word1[x] != word2[x]:
                 count += 1
         if count == 1:
             return True
         return False
 
-    def ladder_search(start_index: int, path: list[str]) -> None:
+    def ladder_search(path: list[str]) -> None:
         if min_length[-1] - 1 < len(path):
             return
         if single_diff(path[-1], endWord):
@@ -52,21 +53,25 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
             elif min_length[-1] < path_length:
                 path.pop()
                 return
-        for x in range(start_index, len(wordList)):
-            word: str = wordList[x]
-            if single_diff(path[-1], word):
+        for word in word_list:
+            if (word not in used) and single_diff(path[-1], word):
+                used.add(word)
                 path.append(word)
-                ladder_search(x + 1, path)
+                ladder_search(path)
                 path.pop()
+                used.remove(word)
 
     if single_diff(beginWord, endWord):
         return [[beginWord, endWord]]
-    min_length: list[int] = [len(wordList)]
+    used: set[str] = set()
+    min_length: list[int] = [len(word_list)]
     correct_paths: list[list[str]] = []
-    for index in range(len(wordList)):
-        word_to_check: str = wordList[index]
-        if single_diff(beginWord, word_to_check):
-            ladder_search(index + 1, [beginWord, word_to_check])
+    for check in word_list:
+        if single_diff(beginWord, check):
+            used.add(check)
+            used.add(beginWord)
+            ladder_search([beginWord, check])
+            used.clear()
     return correct_paths
 
 
@@ -104,6 +109,18 @@ test3_end = "cog"
 test3_out = [["hit", "hot", "dot", "dog", "cog"], ["hit", "hot", "lot", "log", "cog"]]
 print(find_ladders(test3_begin, test3_end, test3))
 
-test4 = ["ted","tex","red","tax","tad","den","rex","pee"]
+# test4 - Failed -> I was trying to speed things up and assumed that we can ignore double checks,
+#                   but we can't ignore double checks inside a recursion, because it gives us different paths.
+test4 = ["ted", "tex", "red", "tax", "tad", "den", "rex", "pee"]
 test4_begin = "red"
 test4_end = "tax"
+test4_out = [["red", "ted", "tad", "tax"], ["red", "ted", "tex", "tax"], ["red", "rex", "tex", "tax"]]
+print(find_ladders(test4_begin, test4_end, test4))
+
+# test5 - Failed -> I was incorrect on checking 2 words, focused on recursion too much,
+#                   and I can actually use sets(), because we're checking every index anyway.
+test5 = ["lest", "leet", "lose", "code", "lode", "robe", "lost"]
+test5_begin = "leet"
+test5_end = "code"
+test5_out = [["leet", "lest", "lost", "lose", "lode", "code"]]
+print(find_ladders(test5_begin, test5_end, test5))
