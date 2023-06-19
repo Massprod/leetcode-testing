@@ -34,16 +34,22 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
             return True
         return False
 
-    def ladder_search(path: list[str]) -> None:
+    def ladder_search(path: list[str]) -> None | bool:
         if min_length[-1] - 1 < len(path):
-            return
+            return False
         if single_diff(path[-1], endWord):
             path.append(endWord)
             path_length: int = len(path)
             if min_length[-1] > path_length:
                 min_length[-1] = path_length
+                copy: list[str] = path.copy()
                 correct_paths.clear()
-                correct_paths.append(path.copy())
+                correct_paths.append(copy)
+                for g in range(len(path)):
+                    if path[g] not in correct_parts:
+                        correct_parts[path[g]] = [path[g + 1:]]
+                    else:
+                        correct_parts[path[g]].append(path[g + 1:])
                 path.pop()
                 return
             elif min_length[-1] == path_length:
@@ -57,17 +63,32 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
             if (word not in used) and single_diff(path[-1], word):
                 used.add(word)
                 path.append(word)
-                ladder_search(path)
+                if ladder_search(path) is False:
+                    path.pop()
+                    used.remove(word)
+                    return
                 path.pop()
                 used.remove(word)
 
     if single_diff(beginWord, endWord):
         return [[beginWord, endWord]]
+    correct_parts: dict[str, list[list[str]]] = {}
     used: set[str] = set()
     min_length: list[int] = [len(word_list)]
     correct_paths: list[list[str]] = []
     for check in word_list:
         if single_diff(beginWord, check):
+            if check in correct_parts:
+                for _ in correct_parts[check]:
+                    correct_path: list[str] = [beginWord, check] + _
+                    correct_length: int = len(correct_path)
+                    if correct_length < min_length[-1]:
+                        min_length[-1] = len(correct_path)
+                        correct_paths.clear()
+                        correct_paths.append(correct_path)
+                    elif correct_length == min_length[-1]:
+                        correct_paths.append(correct_path)
+                continue
             used.add(check)
             used.add(beginWord)
             ladder_search([beginWord, check])
@@ -75,6 +96,8 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
     return correct_paths
 
 
+# Working but hits TimeLimit.
+# -------------------
 # Rushed commit and forgot about part with different lengths, if we meet something smaller
 # we should fully clear correct_paths.
 # -------------------
