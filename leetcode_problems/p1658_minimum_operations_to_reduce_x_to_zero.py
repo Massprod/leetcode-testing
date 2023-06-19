@@ -5,7 +5,6 @@
 # Return the minimum number of operations to reduce x to exactly 0 if it is possible, otherwise, return -1.
 # ---------------------------------
 # 1 <= nums.length <= 10 ** 5  ,  1 <= nums[i] <= 10 ** 4  ,  1 <= x <= 10 ** 9
-from math import ceil
 
 
 def min_operations(nums: list[int], x: int) -> int:
@@ -19,6 +18,7 @@ def min_operations(nums: list[int], x: int) -> int:
     # whole array gives sum of x
     if max_sub_target == 0:
         return length
+    # whole array gives less than x
     elif max_sub_target < 0:
         return -1
     # assume it's whole array to use
@@ -39,6 +39,13 @@ def min_operations(nums: list[int], x: int) -> int:
     return minimum_operations
 
 
+# Time complexity: O(n + (log n)) -> traversing whole input_list once => O(n) ->
+# n - len of input_list^^|  -> but on the way we're creating window, on encounter of window_sum > max_sub_target
+#                           changing its size until we hit correct window_sum < max_sub_target ->
+#                           -> like in this case [1, 1, 1, 1, 1, 1], x = 2 =>
+#                           => we're going to check every index in input_list and 2 extras
+#                           due to a change of window size => O(log n) -> O(n + log n).
+# Auxiliary space: O(1) -> only extra constants created, creation of them doesn't depends on input => O(1).
 # ---------------------------------
 # Failed to see that we can't insta return is operations < half, because there can be
 # even bigger subarray further to the right to exclude.
