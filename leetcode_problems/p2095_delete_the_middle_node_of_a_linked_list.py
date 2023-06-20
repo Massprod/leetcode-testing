@@ -37,14 +37,58 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def delete_middle(head: ListNode) -> ListNode:
-    pass
+    # working_sol (91.30%, 60.8%) -> (1669ms, 63mb)  time: O(n) | space: O(n)
+    temp: ListNode = head
+    nodes: list[ListNode] = []
+    while temp:
+        nodes.append(temp)
+        temp = temp.next
+    middle: int = int(len(nodes) / 2)
+    if middle == 0:
+        head = head.next
+        return head
+    if middle == 1:
+        nodes[middle - 1].next = nodes[middle].next
+        return head
+    nodes[middle - 1].next = nodes[middle + 1]
+    return head
+
+
+# Time complexity: O(n) -> traversing whole input_linked_list once => O(n) ->
+# n - nodes in input_list^^| -> deleting middle node => O(1) -> O(n).
+# Auxiliary space: O(n) -> storing links to every node in a list of n size => O(n)
+# --------------------------
+# Don't actually understand why they're giving us a hint about tort_hare method, because we're
+# going to travel all linked_list anyway and how it's faster to find middle with that?
+# Especially if we're using this method we need to hold not only tortoise but node before it,
+# and in cases of lists of 1 node, hare is insta error because it's node.next == None.
+# It's cleaner and simpler just to create list of all, and find middle after.
+# But it's taking O(n) space, tortoise will give us O(1), cuz we could hold only 3 links of nodes:
+#   middle_node(tortoise), prev_middle_node, last_node(hare).
+# So I guess for a future use I will remember that. But in this case we're not restricted to that.
+# --------------------------
+# Don't see how it's medium task, either it's some trick or strict TimeLimit.
+# Taking a HINT, and I suppose it's TimeLimit because they're saying to use tortoise_hare method.
+# Actually let's try to just use list, because there's no restriction on space, and why bother with
+# extra check on lists of size 1 and other minors.
 
 
 test1 = create_linked([1, 3, 4, 7, 1, 2, 6])
 test1_out = [1, 3, 4, 1, 2, 6]
+delete_middle(test1)
+t_one_linked(test1, test1_out)
 
 test2 = create_linked([1, 2, 3, 4])
 test2_out = [1, 2, 4]
+delete_middle(test2)
+t_one_linked(test2, test2_out)
 
-test3 = [2, 1]
+test3 = create_linked([2, 1])
 test3_out = [2]
+delete_middle(test3)
+t_one_linked(test3, test3_out)
+
+test4 = create_linked([1, 2, 3])
+test4_out = [1, 3]
+delete_middle(test4)
+t_one_linked(test4, test4_out)
