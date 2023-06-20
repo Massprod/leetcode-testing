@@ -14,27 +14,34 @@
 
 
 def get_averages(nums: list[int], k: int) -> list[int]:
-    # working_sol (
+    # working_sol (30.84%, 53.16%) -> (1773ms, 34.9mb)  time: O(n) | space: O(n)
     length: int = len(nums)
     for x in range(1, length):
         nums[x] = nums[x] + nums[x - 1]
-    averages: list[int] = [-1 for _ in range(length)]
+    averages: list[int] = []
     shift: int | None = None
-    for y in range(k, length):
-        if (y + k) < length:
+    for y in range(length):
+        if y < k:
+            averages.append(-1)
+        elif (y + k) < length:
             if shift is None:
                 shift = 0
-                averages[y] = int(nums[y + k] / (k + k + 1))
+                averages.append(int(nums[y + k] / (k + k + 1)))
                 continue
-            averages[y] = int((nums[y + k] - nums[shift]) / (k + k + 1))
+            averages.append(int((nums[y + k] - nums[shift]) / (k + k + 1)))
             shift += 1
+        elif (y + k) >= length:
+            averages.append(-1)
     return averages
 
 
 # Time complexity: O(n) -> traversing once to sum everything in input_list(nums) => O(n) ->
-# n - len of input_list^^| -> creating extra list to store averages with same size as input_list => O(n) ->
-#                          -> for indexes in range(k, len(nums)) calculating average sum of subarray => O(log n) ->
-#                          -> O(n) + O(n) + O(log n) => O(n).
+# n - len of input_list^^| -> creating extra list to store averages which going to be the same size as input_list
+#                          and populating it with sums of correct sub_arrays with size (k + k + 1) => O(n).
+#                          ^^Changed from populating list with -1 at size of n to appending it 1 value at a time,
+#                            didn't actually make it faster, but some gain is here.
+#                            Now we're not creating extra list of n-size but creating and calculating at
+#                            the same time.
 # Auxiliary space: O(n) -> creating extra list of size n to store every average sums of sub_arrays => O(n).
 # -------------------------
 # SumUp everything and take values from index == (k + k + 1) - 1 (for zero index)??
