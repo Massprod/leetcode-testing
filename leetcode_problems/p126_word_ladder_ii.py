@@ -73,6 +73,7 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
         return paths
     return []
 
+
 # Time complexity: O(m * (m * g)) -> creating all_prefix_options, looping for every symbol in every node => O(m * g) ->
 # m - len of wordList^^|  -> in the worst case every word in wordList will be like: 1 -> 2 -> 3 -> 4 etc -> endWord
 # g - len of beginWord^^| so we're having to check every word in wordList and for every word we're checking
