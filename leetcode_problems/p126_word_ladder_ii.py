@@ -16,136 +16,100 @@
 # beginWord != endWord
 # All the words in wordList are unique.
 # The sum of all shortest transformation sequences does not exceed 10 ** 5.
-from itertools import product
-from collections import defaultdict
+from collections import deque, defaultdict
 
 
 def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list[str]]:
-    if endWord not in wordList:
-        return []
-    pairs2: dict[str, list[str]] = defaultdict(list)
-    for hm in wordList:
-        for j in range(len(hm)):
-            bucket: str = f"{hm[:j]}[]{hm[j + 1:]}"
-            pairs2[bucket].append(hm)
-    pairs: dict[str, set[str]] = defaultdict(set)
-    for bucket, neighbours in pairs2.items():
-        for word11, word22 in product(neighbours, repeat=2):
-            if word11 != word22:
-                pairs[word11].add(word22)
-                pairs[word22].add(word11)
+    # semigoogled_solution (84.23%, 43.8%) -> (59ms, 17ms)  time: O(m * (m * g)) | space: O(log(m * g) + m)
+    all_prefix_options: dict[str, list[str]] = defaultdict(list)
+    for word in wordList:
+        for x in range(len(word)):
+            # adding every option which differs by 1 symbol
+            option: str = f"{word[:x]}*{word[x + 1:]}"
+            all_prefix_options[option].append(word)
+    # creating graph to store nodes
+    graph: dict[str, list[str]] = {beginWord: None}
+    # que with nodes to start search from
+    que: deque = deque([beginWord])
+    # BFS -> first time we find endWord its shortest path to it, so we're breaking search
+    end: bool = False
+    while que and not end:
+        # correct pairs of node we can go from and to, node1 <-> node2 both differs by 1 symbol
+        correct_graph: dict[str, list[str]] = defaultdict(list)
+        # to check every node in a que, que is changing, and we can't use just ! _ in que !
+        # que is holding every node(word) on current level
+        for _ in range(len(que)):
+            word: str = que.popleft()
+            for y in range(len(word)):
+                # same approach to find word which differs by 1 symbol
+                for option in all_prefix_options[f"{word[:y]}*{word[y + 1:]}"]:
+                    if option == endWord:
+                        end = True
+                    if option not in graph:
+                        # we can continue search from this node(word), adding into que
+                        if option not in correct_graph:
+                            correct_graph[option] = [word]
+                            que.append(option)
+                            continue
+                        # ignore if we already started from this node(word)
+                        correct_graph[option].append(word)
+        # update/add correct pairs of nodes
+        graph.update(correct_graph)
+    paths: list[list[str]] = []
 
-    def single_diff(word1: str, word2: str) -> bool:
-        if word1 in pairs:
-            if word2 in pairs[word1]:
-                return True
-        if word2 in pairs:
-            if word1 in pairs[word2]:
-                return True
-        return False
+    def backtrack(path: list[str], node: str):
+        path = path + [node]
+        # beginWord leads nowhere so it's always value of None
+        if graph[node] is None:
+            paths.append(path[::-1])  # list slicing creates new list, no reasons to copy.
+            return
+        # endWord = [node1, node2] both nodes can lead to beginWord,
+        # node1 = [node3, node5] , node5 = [beginWord]
+        # we're just taking them one by one until we hit beginWord.
+        for next_node in graph[node]:
+            backtrack(path, next_node)
+    if endWord in graph:
+        backtrack([], endWord)
+        return paths
+    return []
 
-    def ladder_search(path: list[str]) -> None | bool:
-        if min_length[-1] - 1 < len(path):
-            path.append(endWord)
-            for g in range(1, len(path) - 1):
-                if path[g] not in correct_parts:
-                    correct_parts[path[g]] = [path[g + 1:]]
-                else:
-                    correct_parts[path[g]].append(path[g + 1:])
-            path.pop()
-            return False
-        if single_diff(path[-1], endWord):
-            path.append(endWord)
-            path_length: int = len(path)
-            if min_length[-1] > path_length:
-                min_length[-1] = path_length
-                copy: list[str] = path.copy()
-                correct_paths.clear()
-                correct_paths.append(copy)
-                for g in range(1, len(path) - 1):
-                    if path[g] not in correct_parts:
-                        correct_parts[path[g]] = [path[g + 1:]]
-                    else:
-                        correct_parts[path[g]].append(path[g + 1:])
-                path.pop()
-                return
-            elif min_length[-1] == path_length:
-                correct_paths.append(path.copy())
-                path.pop()
-                return
-            elif min_length[-1] < path_length:
-                path.pop()
-                return
-        for y in range(len(wordList)):
-            word: str = wordList[y]
-            if (word != endWord) and (word not in used) and single_diff(path[-1], word):
-                if word in correct_parts:
-                    for _ in correct_parts[word]:
-                        correct_path2: list[str] = path + [word] + _
-                        correct_length2: int = len(correct_path2)
-                        if correct_length2 < min_length[-1]:
-                            min_length[-1] = len(correct_path2)
-                            correct_paths.clear()
-                            correct_paths.append(correct_path2)
-                        elif correct_length2 == min_length[-1]:
-                            correct_paths.append(correct_path2)
-                    continue
-                used.add(word)
-                path.append(word)
-                ladder_search(path)
-                path.pop()
-                used.remove(word)
-
-    if single_diff(beginWord, endWord):
-        return [[beginWord, endWord]]
-    correct_parts: dict[str, list[list[str]]] = {}
-    used: set[str] = set()
-    min_length: list[int] = [len(wordList)]
-    correct_paths: list[list[str]] = []
-    for x in range(len(wordList)):
-        check: str = wordList[x]
-        if (check != endWord) and single_diff(beginWord, check):
-            if check in correct_parts:
-                for _ in correct_parts[check]:
-                    correct_path: list[str] = [beginWord, check] + _
-                    correct_length: int = len(correct_path)
-                    if correct_length < min_length[-1]:
-                        min_length[-1] = len(correct_path)
-                        correct_paths.clear()
-                        correct_paths.append(correct_path)
-                    elif correct_length == min_length[-1]:
-                        correct_paths.append(correct_path)
-                continue
-            used.add(check)
-            used.add(beginWord)
-            ladder_search([beginWord, check])
-            used.clear()
-    return correct_paths
-
-
-# Don't see what im missing, but I need to cull recursion checks, but how?
+# Time complexity: O(m * (m * g)) -> creating all_prefix_options, looping for every symbol in every node => O(m * g) ->
+# m - len of wordList^^|  -> in the worst case every word in wordList will be like: 1 -> 2 -> 3 -> 4 etc -> endWord
+# g - len of beginWord^^| so we're having to check every word in wordList and for every word we're checking
+#                         all it's symbols to decide if we can use it as correct node or not => O(m * (m * g)) ->
+#                         -> if we found correct path leading to a endWord we're doing backtracking to find
+#                         all possible path from it to beginWord, in the case if every word was used =>
+#                         => O(m) or O(log m), if only part of the words used -> O(m * g) + O(m * (m * g)) + O(m) =>
+#                         => O(m * (m * g)).
+# Auxiliary space: O(log(m * g) + m) -> creating dictionary with keys: log(m * g), values: log(m) => O(log(m * g))
+#                          because there's cases like h*t(hit) <-> h*t(hot) they will be added in the same key ->
+#                       -> creating graph(dictionary) with size of m, if we assume worst case is that
+#                          we're using all words in wordList, so graph is holding all pairs from beginWord to
+#                          endWord and number of pairs is equal to words in wordList => O(m) ->
+#                       -> creating dictionary to store all nodes on current level which can be used to go deeper =>
+#                       => O(log m) -> backtracking from endWord to beginWord in created graph, for every correct
+#                          path leading to a beginWord adding this path into paths, in assumed case it's going to
+#                          have only one path but with size of m => O(m), if there's multiple paths than only part
+#                          of wordList can be used => O(log m) ->
+#                       -> O(log(m * g)) + O(m) + O(log m) + O(m) => O(log(m * g) + m).
 # -------------------
-# Added remembering of already travelled paths, so now if we're going to check first word in
-# sequence, and it's already been used in recursion, we will reuse built paths.
-# But it's not enough and I need to cull recursion calls.
+# Flow:
+#  using defaultdict() to avoid key_errors and extra checks ->
+# -> creating dictionary with all_prefix_options (every word with only 1 symbol changed):
+#   *it, h*t, hi*, etc. - allowing us to add every other word with same pattern as one_symbol diff pairs ->
+# -> we're using BFS to search correct path in all nodes from node==beginWord to node==endWord, for this
+#   creating standard graph as dictionary with every node(word), and it's correct pair(one symbol diff word) ->
+# -> holding every node we can start search in a que, ignoring one we already checked, starting from beginWord ->
+# -> for every node(word) in a que, checking if it's correct option (differs by 1 symbol) go to, if it's correct,
+#   and we didn't start from it adding into a que and correct_graph, otherwise only correct_graph ->
+# -> repeating search for every node on level, going deeper until we hit node==endWord, breaking on it =>
+# => after all of that, we're having all nodes(words) pairs in graph which hold what nodes can be connected between
+#   and we can backtrack from endWord to beginWord using this graph ->
+# -> creating new path with all nodes from endWord to beginWord if endWord present in graph, otherwise
+#   there's no endWord in it and we can't find any path to it.
 # -------------------
-# Working but hits TimeLimit.
-# -------------------
-# Rushed commit and forgot about part with different lengths, if we meet something smaller
-# we should fully clear correct_paths.
-# -------------------
-# What about case when beginWord is 1 letter changed endWord?
-# can we just return it => [beginWord, endWord]
-# Yeah, tested this case, it's correct assumption.
-# -------------------
-# No info on what position endWord will have, so I assume that it can be any position.
-# So we obliged to check every possible index to find this and build ladder using any other words.
-# We can ignore any starting words we already checked.
-# Like in test1 -> started with HOT there's ro reasons to check DOR + HOT after HOT ->
-# -> so it's only left to right walk to find ladder, everything we already started from can be ignored.
-# -------------------
-# No idea about TimeLimit, but I can solve it with recursion.
-# If I hit TLE than rebuild, but let's try recursion first.
+# Unsolvable without BFS(BreadthFirstSearch) -> https://bradfieldcs.com/algos/graphs/word-ladder/
+# As always HARD task which can't be solved if you're not aware of a method.
 
 
 test1 = ["hot", "dot", "dog", "lot", "log", "cog"]
@@ -153,18 +117,21 @@ test1_begin = "hit"
 test1_end = "cog"
 test1_out = [["hit", "hot", "dot", "dog", "cog"], ["hit", "hot", "lot", "log", "cog"]]
 print(find_ladders(test1_begin, test1_end, test1))
+assert test1_out == find_ladders(test1_begin, test1_end, test1)
 
 test2 = ["hot", "dot", "dog", "lot", "log"]
 test2_begin = "hit"
 test2_end = "cog"
 test2_out = []
 print(find_ladders(test2_begin, test2_end, test2))
+assert test2_out == find_ladders(test2_begin, test2_end, test2)
 
 test3 = ["hot", "dot", "dog", "lot", "log", "cog", "mog"]
 test3_begin = "hit"
 test3_end = "cog"
 test3_out = [["hit", "hot", "dot", "dog", "cog"], ["hit", "hot", "lot", "log", "cog"]]
 print(find_ladders(test3_begin, test3_end, test3))
+assert test3_out == find_ladders(test3_begin, test3_end, test3)
 
 # test4 - Failed -> I was trying to speed things up and assumed that we can ignore double checks,
 #                   but we can't ignore double checks inside a recursion, because it gives us different paths.
@@ -173,6 +140,7 @@ test4_begin = "red"
 test4_end = "tax"
 test4_out = [["red", "ted", "tad", "tax"], ["red", "ted", "tex", "tax"], ["red", "rex", "tex", "tax"]]
 print(find_ladders(test4_begin, test4_end, test4))
+assert test4_out == find_ladders(test4_begin, test4_end, test4)
 
 # test5 - Failed -> I was incorrect on checking 2 words, focused on recursion too much,
 #                   and I can actually use sets(), because we're checking every index anyway.
@@ -181,6 +149,7 @@ test5_begin = "leet"
 test5_end = "code"
 test5_out = [["leet", "lest", "lost", "lose", "lode", "code"]]
 print(find_ladders(test5_begin, test5_end, test5))
+assert test5_out == find_ladders(test5_begin, test5_end, test5)
 
 test6 = ["kid", "tag", "pup", "ail", "tun", "woo", "erg", "luz", "brr", "gay", "sip", "kay", "per", "val", "mes", "ohs",
          "now", "boa", "cet", "pal", "bar", "die", "war", "hay", "eco", "pub", "lob", "rue", "fry", "lit", "rex", "jan",
@@ -217,3 +186,14 @@ test6 = ["kid", "tag", "pup", "ail", "tun", "woo", "erg", "luz", "brr", "gay", "
 test6_begin = "cet"
 test6_end = "ism"
 print(find_ladders(test6_begin, test6_end, test6))
+test6_out = [['cet', 'cot', 'con', 'ion', 'inn', 'ins', 'its', 'ito', 'ibo', 'ibm', 'ism'],
+             ['cet', 'cat', 'can', 'ian', 'inn', 'ins', 'its', 'ito', 'ibo', 'ibm', 'ism']
+             ]
+assert test6_out == find_ladders(test6_begin, test6_end, test6)
+
+test7 = ["hot", "dog"]
+test7_begin = "hot"
+test7_end = "dog"
+test7_out = []
+print(find_ladders(test7_begin, test7_end, test7))
+assert test7_out == find_ladders(test7_begin, test7_end, test7)
