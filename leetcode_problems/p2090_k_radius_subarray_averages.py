@@ -14,17 +14,45 @@
 
 
 def get_averages(nums: list[int], k: int) -> list[int]:
-    pass
+    # working_sol (
+    length: int = len(nums)
+    for x in range(1, length):
+        nums[x] = nums[x] + nums[x - 1]
+    averages: list[int] = [-1 for _ in range(length)]
+    shift: int | None = None
+    for y in range(k, length):
+        if (y + k) < length:
+            if shift is None:
+                shift = 0
+                averages[y] = int(nums[y + k] / (k + k + 1))
+                continue
+            averages[y] = int((nums[y + k] - nums[shift]) / (k + k + 1))
+            shift += 1
+    return averages
+
+
+# Time complexity: O(n) -> traversing once to sum everything in input_list(nums) => O(n) ->
+# n - len of input_list^^| -> creating extra list to store averages with same size as input_list => O(n) ->
+#                          -> for indexes in range(k, len(nums)) calculating average sum of subarray => O(log n) ->
+#                          -> O(n) + O(n) + O(log n) => O(n).
+# Auxiliary space: O(n) -> creating extra list of size n to store every average sums of sub_arrays => O(n).
+# -------------------------
+# SumUp everything and take values from index == (k + k + 1) - 1 (for zero index)??
+# How is it medium_task then?
+# Don't see how it could not work, let's try.
 
 
 test1 = [7, 4, 3, 9, 1, 8, 5, 2, 6]
 test1_k = 3
 test1_out = [-1, -1, -1, 5, 4, 4, -1, -1, -1]
+assert test1_out == get_averages(test1, test1_k)
 
 test2 = [100000]
 test2_k = 0
 test2_out = [100000]
+assert test2_out == get_averages(test2, test2_k)
 
 test3 = [8]
 test3_k = 100000
 test3_out = [-1]
+assert test3_out == get_averages(test3, test3_k)
