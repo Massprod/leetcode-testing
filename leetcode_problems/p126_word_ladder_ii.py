@@ -16,12 +16,24 @@
 # beginWord != endWord
 # All the words in wordList are unique.
 # The sum of all shortest transformation sequences does not exceed 10 ** 5.
+from itertools import product
+from collections import defaultdict
 
 
 def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list[str]]:
     if endWord not in wordList:
         return []
-    pairs: dict[str, set[str]] = {}
+    pairs2: dict[str, list[str]] = defaultdict(list)
+    for hm in wordList:
+        for j in range(len(hm)):
+            bucket: str = f"{hm[:j]}[]{hm[j + 1:]}"
+            pairs2[bucket].append(hm)
+    pairs: dict[str, set[str]] = defaultdict(set)
+    for bucket, neighbours in pairs2.items():
+        for word11, word22 in product(neighbours, repeat=2):
+            if word11 != word22:
+                pairs[word11].add(word22)
+                pairs[word22].add(word11)
 
     def single_diff(word1: str, word2: str) -> bool:
         if word1 in pairs:
@@ -30,22 +42,6 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
         if word2 in pairs:
             if word1 in pairs[word2]:
                 return True
-        count: int = 0
-        for z in range(len(word1)):
-            if count > 1:
-                return False
-            elif word1[z] != word2[z]:
-                count += 1
-        if count == 1:
-            if word1 not in pairs:
-                pairs[word1] = {word2}
-            else:
-                pairs[word1].add(word2)
-            if word2 not in pairs:
-                pairs[word2] = {word1}
-            else:
-                pairs[word2].add(word1)
-            return True
         return False
 
     def ladder_search(path: list[str]) -> None | bool:
