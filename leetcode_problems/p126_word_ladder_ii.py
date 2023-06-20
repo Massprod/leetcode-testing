@@ -20,7 +20,8 @@ from collections import deque, defaultdict
 
 
 def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list[str]]:
-    # semigoogled_solution (84.23%, 43.8%) -> (59ms, 17ms)  time: O(m * (m * g)) | space: O(log(m * g) + m)
+    # semigoogled_solution (84.23%, 43.8%) -> (59ms, 17ms)  time: O(m * (m * g))
+    #                                                       space: O((log(m * g) + (log m)) + (n * m))
     all_prefix_options: dict[str, list[str]] = defaultdict(list)
     for word in wordList:
         for x in range(len(word)):
@@ -75,14 +76,15 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
 
 
 # Time complexity: O(m * (m * g)) -> creating all_prefix_options, looping for every symbol in every node => O(m * g) ->
-# m - len of wordList^^|  -> in the worst case every word in wordList will be like: 1 -> 2 -> 3 -> 4 etc -> endWord
+# n - num of correct paths^^| -> in the worst case every word in wordList will be like: 1 -> 2 -> 3 -> 4 etc -> endWord
 # g - len of beginWord^^| so we're having to check every word in wordList and for every word we're checking
-#                         all it's symbols to decide if we can use it as correct node or not => O(m * (m * g)) ->
+# m - len of wordList^^|  all it's symbols to decide if we can use it as correct node or not => O(m * (m * g)) ->
 #                         -> if we found correct path leading to a endWord we're doing backtracking to find
-#                         all possible path from it to beginWord, in the case if every word was used =>
-#                         => O(m) or O(log m), if only part of the words used -> O(m * g) + O(m * (m * g)) + O(m) =>
-#                         => O(m * (m * g)).
-# Auxiliary space: O(log(m * g) + m) -> creating dictionary with keys: log(m * g), values: log(m) => O(log(m * g))
+#                         all possible path from it to beginWord, in the case if every word was used, on diff paths =>
+#                         => O(n * m) or O(n * log m), if only part of the wordList used ->
+#                         -> O(m * g) + O(m * (m * g)) + O(n * m) => O(m * (m * g)).
+# Auxiliary space: O((log(m * g) + (log m)) + (n * m)) -> creating dictionary with keys: log(m * g), values: (log m) =>
+#                       => O(log(m * g) + (log m))
 #                          because there's cases like h*t(hit) <-> h*t(hot) they will be added in the same key ->
 #                       -> creating graph(dictionary) with size of m, if we assume worst case is that
 #                          we're using all words in wordList, so graph is holding all pairs from beginWord to
@@ -90,9 +92,9 @@ def find_ladders(beginWord: str, endWord: str, wordList: list[str]) -> list[list
 #                       -> creating dictionary to store all nodes on current level which can be used to go deeper =>
 #                       => O(log m) -> backtracking from endWord to beginWord in created graph, for every correct
 #                          path leading to a beginWord adding this path into paths, in assumed case it's going to
-#                          have only one path but with size of m => O(m), if there's multiple paths than only part
-#                          of wordList can be used => O(log m) ->
-#                       -> O(log(m * g)) + O(m) + O(log m) + O(m) => O(log(m * g) + m).
+#                          have paths with size of m => O(n * m), if paths uses only part of wordList =>
+#                          => O(n * (log m)) -> O(log(m * g) + (log m)) + O(m) + O(log m) + O(n * m) =>
+#                          => O((log(m * g) + (log m)) + (n * m)).
 # -------------------
 # Flow:
 #  using defaultdict() to avoid key_errors and extra checks ->
