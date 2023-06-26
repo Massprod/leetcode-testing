@@ -87,6 +87,7 @@ def total_cost(costs: list[int], k: int, candidates: int) -> int:
         k -= 1
     return cost_to_hire
 
+
 # Time complexity: O(n) -> overall we're just traversing whole input_list once to add values into a heapq and
 # n - len of input_list^^| compare them between left_right part, or just taking min_values from one heapq => O(n)
 #                          ^^There's sorting part, but we're sorting only left and right lists, which is
