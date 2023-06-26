@@ -41,9 +41,13 @@ def total_cost(costs: list[int], k: int, candidates: int) -> int:
             cost_to_hire += heapq.heappop(left_list)
             k -= 1
         return cost_to_hire
+    left_list.sort()
+    right_list.sort()
+    print(left_list)
+    print(right_list)
     while k and left_index <= right_index:
-        left_candi: int = left_list[0]
-        right_candi: int = right_list[0]
+        left_candi: int | None = left_list[0]
+        right_candi: int | None = right_list[0]
         if left_candi < right_candi:
             cost: int = heapq.heappop(left_list)
             cost_to_hire += cost
@@ -64,10 +68,34 @@ def total_cost(costs: list[int], k: int, candidates: int) -> int:
             right_index -= 1
     if k == 0:
         return cost_to_hire
-    merged: iter = iter(heapq.merge(left_list, right_list))
     while k:
-        cost_to_hire += next(merged)
-        k -= 1
+        if len(left_list) > 0:
+            left_candi = left_list[0]
+        else:
+            left_candi = None
+        if len(right_list) > 0:
+            right_candi = right_list[0]
+        else:
+            right_candi = None
+        if left_candi and right_candi:
+            if left_candi < right_candi:
+                cost: int = heapq.heappop(left_list)
+                cost_to_hire += cost
+                k -= 1
+            elif right_candi < left_candi:
+                cost: int = heapq.heappop(right_list)
+                cost_to_hire += cost
+                k -= 1
+            elif left_candi == right_candi:
+                cost: int = heapq.heappop(left_list)
+                cost_to_hire += cost
+                k -= 1
+        elif left_candi:
+            cost_to_hire += heapq.heappop(left_list)
+            k -= 1
+        elif right_candi:
+            cost_to_hire += heapq.heappop(right_list)
+            k -= 1
     return cost_to_hire
 
 
@@ -94,3 +122,15 @@ test4_k = 2
 test4_candidates = 2
 test4_out = 10
 print(total_cost(test4, test4_k, test4_candidates))
+
+# test5 - failed -> I was thinking merge will autosort_heaps, and we can just take next() until we want it.
+#                   Well it doesn't :)
+#                   The actual mistake here is that I'm not having much experience with HEAPS, and I was thinking,
+#                   that if I heapify() any list it's going to be sorted by default, and we can merge them together.
+#                   But I was wrong, and we need to use heap.sort() explicitly.
+test5 = [28, 35, 21, 13, 21, 72, 35, 52, 74, 92, 25, 65, 77, 1, 73, 32, 43, 68, 8, 100, 84, 80, 14, 88, 42, 53, 98, 69,
+         64, 40, 60, 23, 99, 83, 5, 21, 76, 34]
+test5_k = 32
+test5_candidates = 12
+test5_out = 1407
+print(total_cost(test5, test5_k, test5_candidates))
