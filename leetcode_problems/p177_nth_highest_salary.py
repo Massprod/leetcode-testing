@@ -86,6 +86,13 @@ postgresql_query: str = \
 # Only problem with that was, that I'm currently using PostgreSql as my local_db_practice,
 # and leetcode is MySQL. So it's better to made MySQL and practice with that.
 # But in the meantime why not practice both and see differences?
+# --------------------------
+# Differences:
+#   1) No need to SET values after DECLARE, just use walrus to set them.
+#   2) We need to declare function inside DOLLAR-QUOTED_STRING -> https://www.postgresqltutorial.com/postgresql-plpgsql/dollar-quoted-string-constants/
+#       ^^Maybe there's another way, but this is 1 encounter, we will see later.
+#   3) We need to set LANGUAGE of the function.
+
 
 db.execute(
     text(
