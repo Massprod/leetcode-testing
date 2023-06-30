@@ -1,4 +1,5 @@
 from sqlalchemy.sql import text
+from sqlalchemy.orm import Session
 from tasks_database.db import get_session
 
 # Table: Person
@@ -30,7 +31,7 @@ from tasks_database.db import get_session
 # Return the result table in any order.
 
 
-db = next(get_session())
+db: Session = next(get_session())
 db.execute(
     text(
         "DROP TABLE IF EXISTS person;"
