@@ -74,3 +74,31 @@ db.execute(
         "(1);"
     )
 )
+db.commit()
+
+
+# Select everything from customers and JOIN with orders by customerId,
+# use this to filter everything from customers?
+# What about duplicates? Names is not UNIQUE column and there's no other indication.
+# Failed on duplicates, because we can have same Name customers but diff IDs.
+# Think about duplicates and ignore them for no reason, obviously there's case with same CustomerNames,
+# and it's better to filter on unique ID.
+
+
+data: Result = db.execute(
+    text(
+        "SELECT name AS Customers "
+        "FROM customers "
+        "WHERE id NOT IN ("
+        "   SELECT e2.customerId"
+        "   FROM customers AS e1"
+        "   JOIN orders AS e2 ON e1.id = e2.customerId"
+        ");"
+    )
+)
+test_output: set[str] = {"Henry", "Max"}
+count: int = 0
+for _ in data:
+    assert _[0] in test_output
+    count += 1
+assert count == len(test_output)
