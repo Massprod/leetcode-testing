@@ -91,4 +91,36 @@ db.execute(
 db.commit()
 
 
+# Ok. After p184 searched for normal_solution, and it can be done with rank().
+# In this case we just need to group ranks by departments which can be done with PARTITION BY.
+# Same can be used on p184, just with dense_rank = 1, instead of my frankenstein_type solution.
+# But w.e, good experience on CONCAT anyway.
 
+
+data: Result = db.execute(
+    text(
+        "SELECT "
+        "Department, "
+        "Employee, "
+        "Salary "
+        "FROM ("
+        "   SELECT"
+        "   e2.name AS Department,"
+        "   e1.name AS Employee,"
+        "   e1.salary AS Salary,"
+        "   DENSE_RANK() OVER("
+        "       PARTITION BY e1.departmentId"
+        "       ORDER BY e1.salary DESC) AS dense_rank"
+        "   FROM employee AS e1"
+        "   JOIN department AS e2 ON e2.id = e1.departmentId"
+        ") AS no_name "
+        "WHERE dense_rank <= 3;"
+    )
+)
+test_out: set[str] = {'Max', 'Joe', 'Randy', 'Will', 'Henry', 'Sam'}
+count: int = 0
+for _ in data:
+    print(_)
+    assert _[1] in test_out
+    count += 1
+assert count == len(test_out)
