@@ -24,7 +24,7 @@ db.execute(
     text(
         "CREATE TABLE person("
         "   id SERIAL PRIMARY KEY,"
-        "   email VARCHAR(200) UNIQUE"
+        "   email VARCHAR(200)"
         ");"
     )
 )
@@ -33,9 +33,21 @@ db.execute(
     text(
         "INSERT INTO person(email) "
         "VALUES "
-        "('a@b.com'),"
-        "('c@d.com'),"
+        "('a@b.com'), "
+        "('c@d.com'), "
         "('a@b.com');"
     )
 )
 db.commit()
+
+# Basic Query to filter duplicates.
+
+data: Result = db.execute(
+    text(
+        "SELECT DISTINCT e1.email AS Email "
+        "FROM person AS e1 "
+        "JOIN person AS e2 ON e1.email = e2.email AND e1.id != e2.id;"
+    )
+)
+for _ in data:
+    assert _[0] == "a@b.com"
