@@ -60,3 +60,84 @@ db.execute(
     )
 )
 db.commit()
+
+
+# No idea about fancy logic we can implement here, but I know we need to take 2 options.
+# First option is every player and their first_login date. <- Already done that before.
+# Second option is every player and their first_login date + 1 day.
+# If we know this 2 options we can filter on them.
+
+# It will give us every player who have logged in and their FIRST_LOGIN_DATE.
+first_option: str = "SELECT player_id, MIN(event_date) " \
+                    "FROM activity " \
+                    "GROUP BY player_id;"
+show: Result = db.execute(text(first_option))
+print("First")
+for _ in show:
+    print(_)
+# Same query, but now we're having data on second_day in it.
+second_option: str = "SELECT player_id, (MIN(event_date) + INTERVAL '1 day') AS second_day " \
+                     "FROM activity " \
+                     "GROUP BY player_id;"
+show = db.execute(text(second_option))
+print("Second")
+for _ in show:
+    print(_)
+# No idea how to make this more pretty, or simplier, but we can just check
+# every combo of (player_id, event_date) IN this 2 options, if they're inside it's correct.
+# All it's left to combine that to work with MySQL, because we can't use INTERVAL without DATE_ADD(),
+# and correctly use ROUND() on this.
+count_2_days: str = "SELECT COUNT(DISTINCT e2.player_id) " \
+                    "FROM activity AS e1 " \
+                    "JOIN activity AS e2 ON e1.player_id = e2.player_id " \
+                    "AND (e1.player_id, e1.event_date) IN (" \
+                    "   SELECT player_id, MIN(event_date) " \
+                    "   FROM activity " \
+                    "   GROUP BY player_id" \
+                    ")" \
+                    "AND (e2.player_id, e2.event_date) IN (" \
+                    "   SELECT player_id, (MIN(event_date) + INTERVAL '1 day') AS second_day " \
+                    "   FROM activity " \
+                    "   GROUP BY player_id" \
+                    ");"
+show = db.execute(text(count_2_days))
+print("2 cons_days")
+for _ in show:
+    print(_)
+
+# ROUND() was calculating INTEGER division, floor division, and it was always 0.
+# Fixed it by changing type of data from COUNT() it was BIGINT, now it's DECIMAL.
+postgresql_query: str = "SELECT ROUND(" \
+                        "   CAST(" \
+                        "       (" \
+                        "       SELECT COUNT(DISTINCT e2.player_id) " \
+                        "       FROM activity AS e1" \
+                        "       JOIN activity AS e2 ON e1.player_id = e2.player_id " \
+                        "       AND (e1.player_id, e1.event_date) IN (" \
+                        "           SELECT player_id, MIN(event_date) " \
+                        "           FROM activity " \
+                        "           GROUP BY player_id" \
+                        "           )" \
+                        "       AND (e2.player_id, e2.event_date) IN (" \
+                        "           SELECT player_id, (MIN(event_date) + INTERVAL '1 day') AS second_day " \
+                        "           FROM activity " \
+                        "           GROUP BY player_id" \
+                        "           )" \
+                        "       ) AS DECIMAL(10, 2)" \
+                        "       )" \
+                        "   /" \
+                        "   CAST(" \
+                        "       (" \
+                        "       SELECT COUNT(DISTINCT player_id) " \
+                        "       FROM activity " \
+                        "       ) AS DECIMAL(10, 2)" \
+                        "       )," \
+                        "   2) AS fraction;" \
+
+# For MySQL Query, all changes that I need to do is replace ! + INTERVAL '1 day' ! for ->
+#     -> DATE_ADD(MIN(event_date), INTERVAL 1 day). Not going to rewrite it for this.
+
+show = db.execute(text(postgresql_query))
+print("Fraction")
+for _ in show:
+    print(_)
