@@ -92,7 +92,7 @@ def single_number(nums: list[int]) -> int:
 # https://www.careercup.com/question?id=7902674 <- solution/explanation
 
 
-test1 = [2, 2, 4, 2]
+test1 = [2, 2, 3, 2]
 test1_out = 3
 print(single_number(test1))
 assert test1_out == single_number(test1)
