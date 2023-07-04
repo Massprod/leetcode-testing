@@ -41,3 +41,65 @@ db: Session = next(get_session())
 db.execute(text(sql_schema))
 db.commit()
 
+
+# We need to options to filter on.
+# First is all holders with same tiv_2015 as at least 1 another holder.
+# Second is all holders with unique city (lat, lon) pairs.
+# If I can get them, I could filter on them easily with WHERE.
+
+# Actually we can just find value of tiv_2015 which correct for multiple holders and filter on that.
+# Now anyone who is having tiv_2015 equal to values in this subquery, is holder with equal to another holder tiv_2015.
+first_option: str = "SELECT tiv_2015 " \
+                    "FROM insurance " \
+                    "GROUP BY tiv_2015 " \
+                    "HAVING COUNT(tiv_2015) > 1;"
+first_data: Result = db.execute(text(first_option))
+print("FirstOption")
+for _ in first_data:
+    print(_)
+
+# All (lat, lon) pairs with COUNT(pid) = 1 is unique pairs, or we can use COUNT(*), same approach and result,
+# just need to find all unique rows and pid is PRIMARY_KEY, so it's better to filter on it.
+second_option: str = "SELECT lat, lon " \
+                     "FROM insurance " \
+                     "GROUP BY lat, lon " \
+                     "HAVING COUNT(pid) = 1;"
+second_data: Result = db.execute(text(second_option))
+print("\nSecondOption")
+for _ in second_data:
+    print(_)
+
+# Now we can just filter on that 2 options.
+# Only extra part we need is to change type of the SUM(), because we're having FLOAT as column values,
+# and if I want to use ROUND() I need this to be numeric, or I could leave it like SUM() without ROUND().
+# But in this case if columns will change, or they're not having 2 digits after decimal it's going to be wrong.
+# So it's better to just change type and calc ROUND()
+postgresql_query: str = "SELECT ROUND(SUM(tiv_2016)::numeric, 2) AS tiv_2016 " \
+                        "FROM insurance " \
+                        "WHERE tiv_2015 IN (" \
+                        "   SELECT tiv_2015" \
+                        "   FROM insurance" \
+                        "   GROUP BY tiv_2015" \
+                        "   HAVING COUNT(tiv_2015) > 1" \
+                        ")" \
+                        "AND" \
+                        "(lat, lon) IN (" \
+                        "   SELECT lat, lon " \
+                        "   FROM insurance " \
+                        "   GROUP BY lat, lon" \
+                        "   HAVING COUNT(pid) = 1" \
+                        ");"
+data: Result = db.execute(text(postgresql_query))
+print("\nQuery")
+for _ in data:
+    print(_)
+# For MySQL query I don't need to change type for SUM(), it's done automatically, or I would need to use CAST(),
+# than it's should be ok with Post and Mysql both.
+
+
+# Expected output:
+# +----------+
+# | tiv_2016 |
+# +----------+
+# | 45.00    |
+# +----------+
