@@ -93,7 +93,7 @@ data: Result = db.execute(
         "           FROM seat "
         "           WHERE id = e1.id - 1"
         "       )"
-        "       WHEN e1.id % 2 = 0 AND e1.id = (SELECT MAX(id) FROM SEAT) "
+        "       WHEN e1.id % 2 = 0 AND e1.id = (SELECT MAX(id) FROM seat) "
         "       THEN ("
         "           SELECT student "
         "           FROM seat "
@@ -109,6 +109,8 @@ data: Result = db.execute(
     )
 )
 
+
+
 for _ in data:
     print(_)
 
@@ -122,3 +124,36 @@ for _ in data:
 # | 4  | Emerson |
 # | 5  | Jeames  |
 # +----+---------+
+
+# Can we save (SELECT MAX(id) FROM seat) as variable?
+# WITH?
+# Working, but not much faster. But saving result to reuse it's always better.
+
+# WITH max_val AS (SELECT MAX(id) FROM seat)
+# SELECT e1.id,
+#     CASE
+#         WHEN e1.id % 2 = 1 AND e1.id < (SELECT * FROM max_val)
+# 		THEN (
+# 			SELECT student
+# 			FROM seat
+# 			WHERE id = e1.id + 1
+# 		)
+# 		WHEN e1.id % 2 = 0 AND e1.id < (SELECT * FROM max_val)
+# 		THEN (
+# 			SELECT student
+# 			FROM seat
+# 			WHERE id = e1.id - 1
+# 		)
+# 		WHEN e1.id % 2 = 0 AND e1.id = (SELECT * FROM max_val)
+# 		THEN (
+# 			SELECT student
+# 			FROM seat
+# 			WHERE id = e1.id - 1
+# 		)
+# 		ELSE (
+# 			SELECT student
+# 			FROM seat
+# 			WHERE id = e1.id
+# 		)
+#     END AS student
+# FROM seat AS e1;
