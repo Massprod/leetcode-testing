@@ -54,7 +54,7 @@ db.commit()
 # FROM accounts
 # WHERE income BETWEEN 20000 AND 50000
 # UNION ALL
-# -- table with single row of avg_salary --
+# -- table with single row of high_salary --
 # SELECT 'High Salary' AS category, COUNT(account_id) AS accounts_count
 # FROM accounts
 # WHERE income > 50000;
