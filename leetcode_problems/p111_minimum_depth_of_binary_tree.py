@@ -15,7 +15,7 @@ class TreeNode:
 
 
 def minDepth(root: TreeNode) -> int:
-    # working_sol (65.95%, 43.6%) -> (553ms, 57.2mb)  time: O(n) | space: O(n)
+    # working_sol (65.95%, 43.6%) -> (553ms, 57.2mb)  time: O(n) | space: O(log n)
     if not root:
         return 0
     min_depth: list[int | None] = [None]
@@ -39,9 +39,9 @@ def minDepth(root: TreeNode) -> int:
 
 # Time complexity: O(n) -> standard inorder traverse of the whole BT, once => O(n).
 # n - num of nodes in BT^^|
-# Auxiliary spae: O(n) -> using recursion, and for every call we're storing link_nodes in a stack,
-#                         we're not creating nodes, but still storing links to them, and they're depends on input_BT =>
-#                         => O(n).
+# Auxiliary spae: O(log n) -> using recursion, and for every call we're storing link_nodes in a stack,
+#                             we're not creating nodes, but still storing links to them, and they depend on input_BT =>
+#                             => O(log n).
 # ! Or we can call it O(1) <- because we're operating only with links to a nodes and one constant value min_depth[0] !
 # ------------------
 # What a joke. Literally tried to create EMPTY TREE with just [] used in test_case and didn't allow me.
