@@ -35,7 +35,7 @@ def levelOrder(root: TreeNode) -> list[list[int]]:
     levels_inorder(root)
     max_level: int = max(levels.keys())
     level_order: list[list[int]] = []
-    for _ in range(max_level):
+    for _ in range(1, max_level + 1):
         level_order.append(levels[_])
     return level_order
 
