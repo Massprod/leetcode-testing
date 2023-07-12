@@ -21,7 +21,6 @@ class TreeNode:
 
 
 def show_tree_level_order(root: TreeNode) -> list[int | None]:
-    # working_sol (33.71%, 6.94%) -> (211ms, 91.4mb)  time: O(n ** 2) | space: O(n)
     if not root:
         return []
     show_tree: list[int | None] = []
@@ -44,6 +43,7 @@ def show_tree_level_order(root: TreeNode) -> list[int | None]:
 
 
 def build_tree(preorder: list[int], inorder: list[int]) -> TreeNode | None:
+    # working_sol (33.71%, 6.94%) -> (211ms, 91.4mb)  time: O(n ** 2) | space: O(n)
     if not preorder and not inorder:
         return None
     root: TreeNode = TreeNode(val=preorder[0])
