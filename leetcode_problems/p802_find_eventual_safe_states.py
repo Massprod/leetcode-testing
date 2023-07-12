@@ -15,11 +15,11 @@
 # The number of edges in the graph will be in the range [1, 4 * 10 ** 4].
 
 
-def eventual_safe_nodes(graph: list[list[int]]) -> list[int]:
+def eventual_safe_nodes(graph: list[list[int]]) -> list[int] | set[int]:
     safe_nodes: set[int] = set()
     unsafe_nodes: set[int] = set()
 
-    def check_edges(graph_index: int, path: set[int]) -> bool:
+    def check_edges(graph_index: int, path: set[int], first_path: list[int]) -> bool:
         for edge in graph[graph_index]:
             if edge in path or edge in unsafe_nodes:
                 for _ in path:
@@ -28,22 +28,23 @@ def eventual_safe_nodes(graph: list[list[int]]) -> list[int]:
                         safe_nodes.remove(_)
                 return False
             path.add(edge)
-            if not check_edges(edge, path):
+            first_path.append(edge)
+            if not check_edges(edge, path, first_path):
                 return False
             path.remove(edge)
-        for _ in path:
-            safe_nodes.add(_)
+            first_path.pop()
+        safe_nodes.add(first_path[-1])
         return True
 
     for x in range(len(graph)):
         if x not in safe_nodes:
-            if (x not in unsafe_nodes) and check_edges(x, {x}):
+            if (x not in unsafe_nodes) and check_edges(x, {x}, [x]):
                 safe_nodes.add(x)
-    return safe_nodes - unsafe_nodes
+    return list(sorted(safe_nodes - unsafe_nodes))
 
 
+# Beat TLE with my solution, but it's need to be sorted afterward.
 # Ok. Extra search, there's some part I just don't know how to use faster.
-#
 # --------------------
 # 93/112 and TLE. Well it's working, but what can we cull?
 # Add extra check if X is already in unsafe_nodes which is ignoring recursion call for that,
@@ -78,3 +79,7 @@ print(eventual_safe_nodes(test2))
 test3 = [[]]
 test3_out = 0
 print(eventual_safe_nodes(test3))
+
+test4 = [[1, 3, 4, 5, 7, 9], [1, 3, 8, 9], [3, 4, 5, 8],
+         [1, 8], [5, 7, 8], [8, 9], [7, 8, 9], [3], [], []]
+print(eventual_safe_nodes(test4))
