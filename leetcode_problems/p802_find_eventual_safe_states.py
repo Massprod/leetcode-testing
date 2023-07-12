@@ -16,34 +16,57 @@
 
 
 def eventual_safe_nodes(graph: list[list[int]]) -> list[int] | set[int]:
-    safe_nodes: set[int] = set()
-    unsafe_nodes: set[int] = set()
+    # working_sol (92.41%, 84.44%) -> (643ms, 23.7mb)  time: O(n + k) | space: O(n)
+    length: int = len(graph)
+    # visited nodes, because we're using recursion to cull some calls
+    # we're marking them as checked and ignore afterward
+    checked: list[bool] = [False for _ in range(length)]
+    # nodes on a cycle path
+    unsafe: list[bool] = [False for _ in range(length)]
 
-    def check_edges(graph_index: int, path: set[int], first_path: list[int]) -> bool:
+    def check_node(graph_index: int) -> bool:
+        # if already checked and found unsafe, ignore
+        if unsafe[graph_index]:
+            return True
+        # if already visited and didn't find it unsafe, ignore
+        if checked[graph_index]:
+            return False
+        # mark as unsafe until found otherwise
+        checked[graph_index] = True
+        unsafe[graph_index] = True
+        # check every edge of the node
         for edge in graph[graph_index]:
-            if edge in path or edge in unsafe_nodes:
-                for _ in path:
-                    unsafe_nodes.add(_)
-                    if _ in safe_nodes:
-                        safe_nodes.remove(_)
-                return False
-            path.add(edge)
-            first_path.append(edge)
-            if not check_edges(edge, path, first_path):
-                return False
-            path.remove(edge)
-            first_path.pop()
-        safe_nodes.add(first_path[-1])
-        return True
+            # if node have edges, then we need to check them
+            if check_node(edge):
+                return True
+        # otherwise its TERMINAL node, and we can mark it as SAFE
+        unsafe[graph_index] = False
+        return False
 
-    for x in range(len(graph)):
-        if x not in safe_nodes:
-            if (x not in unsafe_nodes) and check_edges(x, {x}, [x]):
-                safe_nodes.add(x)
-    return list(sorted(safe_nodes - unsafe_nodes))
+    for x in range(length):
+        check_node(x)
+    safe: list[int] = [_ for _ in range(length) if unsafe[_] is False]
+    return safe
 
 
-# Beat TLE with my solution, but it's need to be sorted afterward.
+# Time complexity: O(n + k) -> creating checked and unsafe, both => O(n) + O(n) ->
+# n - len of input_graph^^|| -> looping through whole input_graph(array) => O(n) -> recursion will be called for
+# k - num of graph_edges^^|| every node only once and edges as well, afterwards insta return  => O(n + k) ->
+#                            -> creating new array safe to store all safe nodes => O(n) ->
+#                            -> O(n) + O(n) + O(n + k) + O(n) => O(4n + k) => O(n + k).
+# Auxiliary space: O(n) -> creating 3 extra arrays of the same size as input_graph => O(3n) ->
+#                          -> and making recursion calls for every node, in the worst case every node is connected
+#                          like from 0 to n, then recursion stack will be the size of n => O(n).
+# --------------------
+# Topological sorting problem.
+# We can use DFS -> and use checked as a stack to make sure we're not going into cycle and recheck any nodes.
+#   In recursion, we're marking every node as checked and unsafe, and after that checking every edge of this node.
+#   If there's NO edges, then its Terminal node, and we can mark is as safe. Otherwise, mark of the node stays as
+#   unsafe, and every node on backtrack path will be left as unsafe as well.
+#   Allows us to mark every node on the way and ignore them afterwards.
+# --------------------
+# Beat TLE with my solution, by adding backwards track adding into safe nodes from first_path,
+#   but it's needs to be sorted afterwards which is not going to work with this TimeLimit.
 # Ok. Extra search, there's some part I just don't know how to use faster.
 # --------------------
 # 93/112 and TLE. Well it's working, but what can we cull?
@@ -71,15 +94,14 @@ def eventual_safe_nodes(graph: list[list[int]]) -> list[int] | set[int]:
 test1 = [[1, 2], [2, 3], [5], [0], [5], [], []]
 test1_out = [2, 4, 5, 6]
 print(eventual_safe_nodes(test1))
+assert test1_out == eventual_safe_nodes(test1)
 
 test2 = [[1, 2, 3, 4], [1, 2], [3, 4], [0, 4], []]
 test2_out = [4]
 print(eventual_safe_nodes(test2))
+assert test2_out == eventual_safe_nodes(test2)
 
 test3 = [[]]
 test3_out = 0
 print(eventual_safe_nodes(test3))
-
-test4 = [[1, 3, 4, 5, 7, 9], [1, 3, 8, 9], [3, 4, 5, 8],
-         [1, 8], [5, 7, 8], [8, 9], [7, 8, 9], [3], [], []]
-print(eventual_safe_nodes(test4))
+assert test3_out == eventual_safe_nodes(test3)
