@@ -103,7 +103,7 @@ assert test5_out == longest_subsequence_length(test5, test5_dif)
 
 # Failed solution, due to recording of actual sequence,
 # it is actually good to get all subsequences, so it's better to store it:
-def longest_subsequence(arr: list[int], difference: int) -> dict[int, [set[int] | list[int]]]:
+def all_correct_subsequences(arr: list[int], difference: int) -> dict[int, [set[int] | list[int]]]:
     """
     Finds all correct arithmetic sequences with set difference, RESULT is unsorted.
     :param arr: sequence of integers from what we need to find
