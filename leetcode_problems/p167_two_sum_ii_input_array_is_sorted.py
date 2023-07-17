@@ -17,42 +17,27 @@ from random import randint
 
 
 def two_sum(numbers: list[int], target: int) -> list[int]:
-    # working_sol (7.33%, 94.99%) -> (188ms, 17.1mb)  time: O(n * log n) | space: O(1)
-    for x in range(len(numbers)):
-        to_find: int = target - numbers[x]
-        left: int = 0
-        right: int = len(numbers) - 1
-        # lower than lowest, higher than highest
-        if not numbers[left] <= to_find <= numbers[right]:
-            continue
-        # standard binary search
-        while right >= left:
-            middle: int = (left + right) // 2
-            # [index1, index2] left to right
-            # and zero_indexed by default, we need to return 1 indexed
-            if to_find == numbers[left]:
-                if left != x:
-                    return sorted([x + 1, left + 1])
-                break
-            if to_find == numbers[right]:
-                if right != x:
-                    return sorted([x + 1, right + 1])
-                break
-            if to_find == numbers[middle]:
-                if middle != x:
-                    return sorted([x + 1, middle + 1])
-                break
-            if to_find < numbers[middle]:
-                right = middle - 1
-                continue
-            if to_find > numbers[middle]:
-                left = middle + 1
-                continue
+    # working_sol (79.84%, 94.99%) -> (136ms, 17.1mb)  time: O(n) | space: O(1)
+    left: int = 0
+    right: int = len(numbers) - 1
+    while left < right:
+        cur_sum: int = numbers[left] + numbers[right]
+        if cur_sum == target:
+            # zero_indexed -> 1_indexed
+            return [left + 1, right + 1]
+        if cur_sum > target:
+            right -= 1
+        if cur_sum < target:
+            left += 1
 
 
-# Time complexity: O(n * log n) -> for every index(value) in input_array we're going to perform binary_search in
-# n - len of input_array^^|        this array, standard binary search is O(log n) => O(n * log n).
-# Auxiliary space: O(1) -> using 4 extra INTs, none of them depends on input => O(1).
+# Time complexity: O(n) -> in the worst_case answer is indexes: first = (len(numbers) // 2) and sec = first + 1 ->
+# n - len of input_array^^| -> then we need to travel whole input_array until we find it => O(n).
+# Auxiliary space: O(1) -> using 3 extra INTs, none of them depends on input => O(1).
+# -------------------
+# Took a peak into BIG_BOYS with 90% and I missed most simple way to do this.
+# This is just a closing_window problem, made it overcomplicated AF.
+# Rebuild.
 # -------------------
 # Rushed and didn't take a break after BT task, failed 2 commits and missed most basic parts.
 # Like middle and break when found index is same as x...
@@ -79,15 +64,12 @@ test3_out = [1, 2]
 print(two_sum(test3, test3_t))
 assert test3_out == two_sum(test3, test3_t)
 
-# test4 -> failed -> I forgot to ignore duplicated indexes...
 test4 = [0, 0, 3, 4]
 test4_t = 0
 test4_out = [1, 2]
 print(two_sum(test4, test4_t))
 assert test4_out == two_sum(test4, test4_t)
 
-# test5 -> failed -> Always take a break after hard tasks, forgot to add correct calc for the  middle
-#                    and just used -> len(numbers) // 2  ...
 test5 = [3, 24, 50, 79, 88, 150, 345]
 test5_t = 200
 test5_out = [3, 6]
