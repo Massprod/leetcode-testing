@@ -17,48 +17,51 @@ class TreeNode:
 
 
 def kth_smallest(root: TreeNode, k: int) -> int:
-    # working_sol (73.81%, 97.60%) -> (64ms, 20.29mb)  time: O(2log n) | space: O(n)
+    # working_sol (98.93%, 82.14%) -> (51ms, 20.34mb)  time: O(log n) | space: O(n)
     que: deque[TreeNode] = deque()
     que.append(root)
     # using heap with inverted values
     heap: heapq = []
     heapq.heapify(heap)
-    min_value: int | None = None
-    while que:
-        current: TreeNode = que.popleft()
+
+    def inorder(node: TreeNode) -> None:
+        # Because I'm trying to ignore turns, it's better to do this with in-order than order-level.
+        # Still going to take 1 step in most of the right_subtrees but at least not all of them.
+        # We have given CORRECT BT, so it's always => node.left.val < node.val < node.right.val
+        # If we're not populated heap, we can ADD w.e nodes we met.
         if len(heap) != k:
-            # inverting all values, so we can pop the highest value
-            # -5 < -3 reverse back 5 > 3 <- actually pop() highest
-            # * -1 for better visibility
-            heapq.heappush(heap, current.val * -1)
-            if min_value is None:
-                min_value = current.val * -1
-            min_value = max(min_value, current.val * -1)
-            # ignore left/right subtrees if their values higher than min_value and heap is already K
-            # or add left/right subtrees if their values lower than highest(heap[0]) met before ->
-            # -> otherwise we can miss cases like 3 - 1 - 2,  after 1 we won't take turn to 2.
-            # Added it as extra check here, cuz we don't need to pop() element lastly added into a heap,
-            # but we already need to decide if we're taking turns or not. Because heap is full.
+            heapq.heappush(heap, node.val * -1)
+            # Easier to check last added value like this than try to extra_check it below(after).
             if len(heap) == k:
-                if current.left and (current.left.val * -1 > min_value or current.left.val * - 1 > heap[0]):
-                    que.append(current.left)
-                if current.right and (current.right.val * -1 > min_value or current.right.val * -1 > heap[0]):
-                    que.append(current.right)
-                continue
+                # Ignore left turn if it's values going to be higher than already met MAX_VALUE(heap[0]).
+                # Mostly need to ignore nodes in right subtree of a root.
+                if node.left and node.left.val * -1 > heap[0]:
+                    inorder(node.left)
+                # Ignore right turn with same approach.
+                if node.right and node.right.val * -1 > heap[0]:
+                    inorder(node.right)
+                return
+            # If heap isn't populated, we check everything.
+            if node.left:
+                inorder(node.left)
+            if node.right:
+                inorder(node.right)
+            return
         if len(heap) == k:
-            if (current.val * -1) > heap[0]:
+            # Only add values lower than MAX_VALUE,
+            # all values inverted, so it's HIGHER than LOWEST in a heap
+            if (node.val * -1) > heap[0]:
                 heapq.heappop(heap)
-                heapq.heappush(heap, current.val * -1)
-                min_value = max(min_value, current.val * -1)
-            if current.left and (current.left.val * -1 > min_value or current.left.val * - 1 > heap[0]):
-                que.append(current.left)
-            if current.right and (current.right.val * -1 > min_value or current.right.val * -1 > heap[0]):
-                que.append(current.right)
-        else:
-            if current.left:
-                que.append(current.left)
-            if current.right:
-                que.append(current.right)
+                heapq.heappush(heap, node.val * -1)
+            else:
+                return
+            # Same approach to make a turn left or right.
+            if node.left and node.left.val * -1 > heap[0]:
+                inorder(node.left)
+            if node.right and node.right.val * -1 > heap[0]:
+                inorder(node.right)
+
+    inorder(root)
     # there's K elements in a heap, and they sorted from MAX to MIN if inverted back,
     # so we can just take [0](MAX) -> which is smallest in a heap,
     # but we need K element of smallest counted from left to right.
@@ -66,12 +69,12 @@ def kth_smallest(root: TreeNode, k: int) -> int:
     return heapq.heappop(heap) * -1
 
 
-# Time complexity: O(2log n) -> in the worst case, k == n, for every node of input_BT we will add its value,
-# n - nodes in input_BT^^| now with extra checks part of the nodes with right_subtree values higher than node on
-#                          which we decide to take turn will be ignored, so it's =>
+# Time complexity: O(log n) -> in the worst case, k == n, for every node of input_BT we will add its value,
+# n - nodes in input_BT^^| now with extra turn checks part of the nodes with left/right subtree values higher
+#                          than MAX_VALUE we already met will be ignored, so it's should be correct =>
 #                          => O(log n) + heap operations == O(log n) => O(log n)
 # Auxiliary space: O(n) -> in the same worst case, heap will be a size of n, storing every node.val() in it =>
-#                          => O(n) -> extra to this que with median size of O(log n).
+#                          => O(n) -> extra to this, recursion with median size of O(log n).
 # -------------------
 # Standard reversed heapq with len of K, store everything higher than min_value
 # and ignore everything lower than min_value, after we append K elements into a heap.
@@ -94,3 +97,7 @@ def kth_smallest(root: TreeNode, k: int) -> int:
 # Guess it's need to be done with IN-ORDER because, we're extra checking nodes on each level when we know
 # that left subtree is always lower, and we can just ignore right_subtree until we're done with left.
 # Rebuild then.
+# Ok. Version with in-order is essentially the same, and we're still stepping into a right_subtree.
+# But breaking instantly, dunno how to make it ignore first node of a right_subtree while going backwards.
+# W.e I'm still focused too much on this, but I made the solution with 98.93%. So it's good practice.
+# There's mistake, I don't need min_value because it's duplicate and didn't add anything for (node.val * -1> heap[0]).
