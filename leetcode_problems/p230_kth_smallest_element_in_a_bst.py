@@ -24,8 +24,8 @@ def kth_smallest(root: TreeNode, k: int) -> int:
     heap: heapq = []
     heapq.heapify(heap)
 
-    def inorder(node: TreeNode) -> None:
-        # Because I'm trying to ignore turns, it's better to do this with in-order than order-level.
+    def preorder(node: TreeNode) -> None:
+        # Because I'm trying to ignore turns, it's better to do this with pre-order than order-level.
         # Still going to take 1 step in most of the right_subtrees but at least not all of them.
         # We have given CORRECT BT, so it's always => node.left.val < node.val < node.right.val
         # If we're not populated heap, we can ADD w.e nodes we met.
@@ -36,16 +36,16 @@ def kth_smallest(root: TreeNode, k: int) -> int:
                 # Ignore left turn if it's values going to be higher than already met MAX_VALUE(heap[0]).
                 # Mostly need to ignore nodes in right subtree of a root.
                 if node.left and node.left.val * -1 > heap[0]:
-                    inorder(node.left)
+                    preorder(node.left)
                 # Ignore right turn with same approach.
                 if node.right and node.right.val * -1 > heap[0]:
-                    inorder(node.right)
+                    preorder(node.right)
                 return
             # If heap isn't populated, we check everything.
             if node.left:
-                inorder(node.left)
+                preorder(node.left)
             if node.right:
-                inorder(node.right)
+                preorder(node.right)
             return
         if len(heap) == k:
             # Only add values lower than MAX_VALUE,
@@ -57,11 +57,11 @@ def kth_smallest(root: TreeNode, k: int) -> int:
                 return
             # Same approach to make a turn left or right.
             if node.left and node.left.val * -1 > heap[0]:
-                inorder(node.left)
+                preorder(node.left)
             if node.right and node.right.val * -1 > heap[0]:
-                inorder(node.right)
+                preorder(node.right)
 
-    inorder(root)
+    preorder(root)
     # there's K elements in a heap, and they sorted from MAX to MIN if inverted back,
     # so we can just take [0](MAX) -> which is smallest in a heap,
     # but we need K element of smallest counted from left to right.
@@ -101,3 +101,6 @@ def kth_smallest(root: TreeNode, k: int) -> int:
 # But breaking instantly, dunno how to make it ignore first node of a right_subtree while going backwards.
 # W.e I'm still focused too much on this, but I made the solution with 98.93%. So it's good practice.
 # There's mistake, I don't need min_value because it's duplicate and didn't add anything for (node.val * -1> heap[0]).
+# -------------------
+# Forgot that if we count NODE itself first, it's pre-order not inorder.
+# They're going the same path, but recording is different.
