@@ -36,8 +36,8 @@ def invert_tree(root: TreeNode) -> TreeNode:
     return root
 
 
-# Time complexity: O(n) -> traversing whole nodes of input_BT, once => O(n).
-# n - node in input_BT^^|
+# Time complexity: O(n) -> traversing all nodes of input_BT, once => O(n).
+# n - nodes in input_BT^^|
 # Auxiliary_space: O(log n) -> there's case with 1 level only as root, and we're storing O(n) ->
 #                           -> normally we're just storing only part of the input_BT ->
 #                           -> nodes at current_level and part of the next level => O(log n).
