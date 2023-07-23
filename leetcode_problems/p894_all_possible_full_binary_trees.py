@@ -16,90 +16,51 @@ class TreeNode:
 
 
 def all_possible_fbt(n: int) -> list[TreeNode]:
-    # working_sol (19.84%, 20.7%) -> (232ms, 26.1mb)  time: O(2 ** n) | space: O(k * 2 ** n)
-    all_bts: list[TreeNode] = []
-    # If all given nodes are EVEN, we can't
-    # build COMPLETE BT, there's always going to be leftover.
-    # And we need to use EVERY given node.
-    if n % 2 == 0:
-        return all_bts
-    # First node used as ROOT.
-    root: TreeNode = TreeNode(val=0)
-    all_available: int = n - 1
-    # If there's no node available after creating of the ROOT,
-    # we can't build anything else.
-    if all_available == 0:
-        all_bts.append(root)
-        return all_bts
-
-    def build_sub(nodes: int) -> list[TreeNode]:
-        if nodes in alr_build:
-            return alr_build[nodes]
-        # Actual copy of everything, I will need to rebuild it
-        # if it's working correctly.
-        all_subs: list[TreeNode] = []
-        if nodes % 2 == 0:
-            return all_subs
-        sub_root: TreeNode = TreeNode(val=0)
-        if nodes == 1:
-            all_subs.append(sub_root)
-            return all_subs
-        # -1 node for the root^^
-        nodes -= 1
-        left_nodes: int = nodes - 1
-        right_nodes: int = 1
-        left_subs: list[TreeNode] = []
-        right_subs: list[TreeNode] = []
-        while left_nodes >= 1:
-            for _ in build_sub(left_nodes):
-                left_subs.append(_)
-            for _ in build_sub(right_nodes):
-                right_subs.append(_)
-            left_nodes -= 2
-            right_nodes += 2
-            for left_sub in left_subs:
-                for right_sub in right_subs:
-                    new_root: TreeNode = TreeNode(val=0, left=left_sub, right=right_sub)
-                    all_subs.append(new_root)
-            left_subs.clear()
-            right_subs.clear()
-        alr_build[nodes] = all_subs
-        return all_subs
-
+    # working_sol (96.69%, 70.58%) -> (168ms, 20.06mb)  time: O(2 ** n) | space: O(k * 2 ** k)
     # Right/Left subtrees can be a copies of each other with some node values.
     # Like -> left_nodes == 5, right_nodes == 3
     # after some iterations => left_nodes == 3, right_nodes == 5
     # We're building from NEW_ROOT, so it's always the same SUBTREE
     # just placed on Left/Right sides. We can just reuse it.
     alr_build: dict[int, list[TreeNode]] = {}
-    # ROOT + LEFTsub + RIGHTchild <- default tree
-    left_sub_nodes: int = all_available - 1
-    right_sub_nodes: int = 1
-    # Constructed LEFT subtree with set left/right nodes.
-    left_sub_trees: list[TreeNode] = []
-    # Constructed RIGHT subtree with set left/right nodes.
-    right_sub_trees: list[TreeNode] = []
-    while left_sub_nodes >= 1:
-        # Building of left/right subtrees
-        for _ in build_sub(left_sub_nodes):
-            left_sub_trees.append(_)
-        for _ in build_sub(right_sub_nodes):
-            right_sub_trees.append(_)
-        # Always need to take 2 nodes from left or right,
-        # we're switching nodes from left to right.
-        left_sub_nodes -= 2
-        right_sub_nodes += 2
-        # Permutations of all constructed SUBTREES between themselves,
-        # set as childs of a new_root.
-        for left_tree in left_sub_trees:
-            for right_tree in right_sub_trees:
-                new_root_: TreeNode = TreeNode(val=0, left=left_tree, right=right_tree)
-                all_bts.append(new_root_)
-        # Clearing subtrees, cuz we're getting new
-        # node values for every build_call.
-        left_sub_trees.clear()
-        right_sub_trees.clear()
-    return all_bts
+
+    def build_sub(nodes: int) -> list[TreeNode]:
+        if nodes in alr_build:
+            return alr_build[nodes]
+        all_subs: list[TreeNode] = []
+        if nodes % 2 == 0:
+            return all_subs
+        if nodes == 1:
+            return [TreeNode(val=0)]
+        # ROOT + LEFTsub + RIGHTchild <- default tree
+        # Always should be odd to even start building,
+        # root is taking -1 first,
+        # so it's always even after it.
+        # We can always take extra -1 to get correct
+        # left subtree available nodes:
+        left_avail_nodes: int = nodes - 2
+        # Right is by default at least == 1.
+        right_avail_nodes: int = 1
+        while left_avail_nodes >= 1:
+            # Constructed LEFT subtree with set left/right node values.
+            left_subs: list[TreeNode] = build_sub(left_avail_nodes)
+            # Constructed RIGHT subtree with set left/right node values.
+            right_subs: list[TreeNode] = build_sub(right_avail_nodes)
+            # To keep BT complete we need to switch 2 nodes from left or right subtrees.
+            # We're using LEFT -> RIGHT switch:
+            left_avail_nodes -= 2
+            right_avail_nodes += 2
+            # Building ROOT + LEFT + RIGHT subtrees, with all possible permutations
+            # of LEFT + RIGHT subs, with duplicates, because they can be MIRRORED.
+            for left_sub in left_subs:
+                for right_sub in right_subs:
+                    new_root: TreeNode = TreeNode(val=0, left=left_sub, right=right_sub)
+                    all_subs.append(new_root)
+        # Store permutations for used node_value.
+        alr_build[nodes] = all_subs
+        return all_subs
+
+    return build_sub(n)
 
 
 # Time complexity: O(2 ** n) -> we need all permutations of n given nodes => O(2 ** n).
