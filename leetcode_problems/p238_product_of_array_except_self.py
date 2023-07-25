@@ -12,38 +12,42 @@
 
 
 def product_except_self(nums: list[int]) -> list[int]:
-    # working_sol (40.17%, 22.78%) -> (248ms, 25.3mb)  time: O(n) | space: O(n)
-    prefix: list[int] = []
-    suffix: list[int] = []
-    # Calculate prefixes
-    prefix.append(nums[0])
+    # working_sol (69.64%, 97.8%) -> (237ms , 23.3mb)  time: O(n) | space: O(1)
+    # For constant space storing everything in products.
+    products: list[int] = [0, nums[0]]  # [0] is placeholder for last_suffix.
+    # First prefixes:
     for x in range(1, len(nums) - 1):
-        prefix.append(nums[x] * prefix[-1])
-    # Calculate suffixes
-    suffix.append(nums[-1])
-    for y in range(len(nums) - 2, 0, -1):
-        suffix.append(nums[y] * suffix[-1])
-    # [0] is always last suffix itself, cuz there's no prefix for it.
-    products: list[int] = [suffix.pop()]
-    # Last prefix is also products[-1] itself, cuz there's no suffix for it.
-    prefix_point: int = 0
-    suffix_point: int = -1
-    # prefix + suffix of any index is product except self.
-    # Populated with just append() so we need to reverse suffixes.
-    while prefix_point != len(prefix) - 1:
-        products.append(prefix[prefix_point] * suffix[suffix_point])
-        prefix_point += 1
-        suffix_point -= 1
-    # Last prefix:
-    products.append(prefix.pop())
+        products.append(nums[x] * products[-1])
+    # Last prefix is always last product of the last element except itself.
+    suffix: int = nums[-1]
+    # Last element is already set == last_prefix.
+    # So we're starting from len() - 2
+    products_point: int = len(products) - 2
+    # We can use prefixes and multiply suffix until [1].
+    # Cuz first element doesn't have prefix and last_suffix is product of [0] except_itself.
+    while products_point >= 1:
+        # Prefix * Suffix
+        products[products_point] *= suffix
+        # We're going backwards, so we can just multiply our suffix index_by_index
+        suffix *= nums[products_point]
+        # products_point -> points to a prefix of nums[pp] element and element itself,
+        # element needs to be used to multiply suffix as well.
+        products_point -= 1
+    # last_suffix == product of [0] except_itself
+    products[0] = suffix
     return products
 
 
-# Time complexity: O(n) -> traversing (n - 1) indexes of input_array, twice -> for all prefixes and suffixes ->
-# n - len of input_array^^| -> extra taking products of (n - 2) elements of created suffix/prefix arrays, cuz
-#                           suffix/prefix array is size of (n - 1) and their last elements didn't used =>
-#                           => O(n - 1) + O(n - 1) + O(n - 2) => O(n).
-# Auxiliary space: o(n) -> creating 3 extra arrays with sizes: (n - 1) + (n - 1) + (n) => O(n).
+# Time complexity: O(n) -> traversing n indexes of input_array, once -> for all prefixes ->
+# n - len of input_array^^| -> extra traverse over created products(prefix) array to multiply it by suffix => O(n).
+# Auxiliary space: O(1) -> if we ignore result_array as we asked, then only 2 extra INTs used => O(1).
+# ------------------
+# ! The output array does not count as extra space for space complexity analysis. !
+# So we allowed to use only 1 extra array^^.
+# Store every prefix as before, but skip part with suffixes?
+# Like we know that first element is SUFFIX[-1] amd last is PREFIX[-1], we can use PREFIX[-1] insta.
+# But for suffix we can walk backwards and multiply it for every index we pass until [0].
+# At [0] we need to place SUFFIX itself. Let's try.
 # ------------------
 # Any multiplies like => 1 * 2 * 3 * 4 * 5, can be broken in prefix/suffix parts.
 # 1 * 2 == suffix -> 3 <- prefix == 4 * 5.
@@ -67,3 +71,7 @@ assert test3_out == product_except_self(test3)
 test4 = [100, -100]
 test4_out = [-100, 100]
 assert test4_out == product_except_self(test4)
+
+test5 = [2, 2, 3, 4]
+test5_out = [24, 24, 16, 12]
+assert test5_out == product_except_self(test5)
