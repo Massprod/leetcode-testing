@@ -25,6 +25,7 @@ def find_kth_largest(nums: list[int], k: int) -> int:
             heapq.heappush(largest, num)
     return largest[0]
 
+
 # Time complexity: O(n * log k) -> traversing whole input_array, once => O(n) ->
 # k - num of largest to find^^|-> in the worst case like n == 10 ** 5, and k = 10 ->
 # n - len of input_array^^|    -> we will add 10 elements in heap, and it's small number comparing to whole array,
