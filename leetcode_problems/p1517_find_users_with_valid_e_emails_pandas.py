@@ -22,5 +22,10 @@ import pandas as pd
 
 
 def valid_emails(users: pd.DataFrame) -> pd.DataFrame:
+    # Standard regex:
+    # ^ -> start with.
+    # * -> any repeats
+    # . -> matches anything by default, so we need to use escape \\. or [.]
+    # $ -> END.
     users = users[users['mail'].str.match(pat='^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode\\.com$')]
     return users
