@@ -9,37 +9,59 @@
 
 def word_break(s: str, wordDict: list[str]) -> bool:
     # working_sol (94.45%, 18.55%) -> (35ms, 16.6mb)  time: O(n) | space: O(m + n)
+    # If some symbol in 's' isn't present in any word from wordDict,
+    # there's no reasons to try.
+    # Saving all symbols from all words.
     all_symbols: set[str] = set()
-    for _ in wordDict:
-        for symbol in _:
+    for word in wordDict:
+        for symbol in word:
             if symbol not in all_symbols:
                 all_symbols.add(symbol)
-    for _ in s:
-        if _ not in all_symbols:
+    # Check every symbol of 's' to be presented.
+    for symbol in s:
+        # If there's some symbol which isn't presented in all words
+        # we can't create correct sequence at all.
+        if symbol not in all_symbols:
             return False
+    # For faste access, we need to rebuild input_list into
+    # set()|dict() with O(1) search.
     all_words: set[str] = set(wordDict)
+    # Current sequence of words.
     path: list[str] = []
+    # To cull some calls, we can use max_len ->
+    # -> which is maximum length from all the words.
+    # There's no reasons to create anything higher,
+    # cuz no words with such length we can use.
     max_len: int = 0
     for _ in all_words:
         max_len = max(max_len, len(_))
+    # Actually recursion cache, just saving all calls.
     failed: dict[int] = {}
 
     def check_start(start: int):
+        # If cached, we can't build correct sequence.
         if start in failed.keys() and failed[start] is False:
             return False
+        # Insta return if correct sequence.
         if len("".join(path)) == len(s):
             return True
+        # Current call word.
         to_check: str = ""
         for y in range(start, len(s)):
+            # If exceeds max_len we can't use it.
             if len(to_check) > max_len:
                 failed[start] = False
                 return False
             to_check += s[y]
+            # If such word present, we can try to use it.
             if to_check in all_words:
+                # Path is storing all words for current sequence.
                 path.append(to_check)
                 if check_start(y + 1):
                     return True
+                # Failed -> delete.
                 path.pop()
+        # Cache.
         failed[start] = False
         return False
 
@@ -89,46 +111,40 @@ def word_break(s: str, wordDict: list[str]) -> bool:
 # Left to right walk with sample_string, which are we increasing for a 1 sign and checking to be present?
 
 
-test1 = "leetcode"
-test1_dict = ["leet", "code"]
-test1_out = True
-print(word_break(test1, test1_dict))
-assert test1_out == word_break(test1, test1_dict)
+test: str = "leetcode"
+test_dict: list[str] = ["leet", "code"]
+test_out: bool = True
+assert test_out == word_break(test, test_dict)
 
-test2 = "applepenapple"
-test2_dict = ["apple", "pen"]
-test2_out = True
-print(word_break(test2, test2_dict))
-assert test2_out == word_break(test2, test2_dict)
+test = "applepenapple"
+test_dict = ["apple", "pen"]
+test_out = True
+assert test_out == word_break(test, test_dict)
 
-test3 = "catsandog"
-test3_dict = ["cats", "dog", "sand", "and", "cat"]
-test3_out = False
-print(word_break(test3, test3_dict))
-assert test3_out == word_break(test3, test3_dict)
+test = "catsandog"
+test_dict = ["cats", "dog", "sand", "and", "cat"]
+test_out = False
+assert test_out == word_break(test, test_dict)
 
 # test4 - failed -> I was stupid enough to forget about PATH that we need to clear
 #                   element's after returning False, and bad part that I was thinking about that from a start,
 #                   but just forgot most import part of the path.
-test4 = "aaaaaaa"
-test4_dict = ["aaaa", "aaa"]
-test4_out = True
-print(word_break(test4, test4_dict))
-assert test4_out == word_break(test4, test4_dict)
+test = "aaaaaaa"
+test_dict = ["aaaa", "aaa"]
+test_out = True
+assert test_out == word_break(test, test_dict)
 
-test5 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
+test = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
-test5_dict = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa"]
-test5_out = False
-print(word_break(test5, test5_dict))
-assert test5_out == word_break(test5, test5_dict)
+test_dict = ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa"]
+test_out = False
+assert test_out == word_break(test, test_dict)
 
-test6 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
+test = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaabaabaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" \
         "aaaaaaaaaaaaa"
-test6_dict = ["aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa", "ba"]
-test6_out = False
-print(word_break(test6, test6_dict))
-assert test6_out == word_break(test6, test6_dict)
+test_dict = ["aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa", "ba"]
+test_out = False
+assert test_out == word_break(test, test_dict)
