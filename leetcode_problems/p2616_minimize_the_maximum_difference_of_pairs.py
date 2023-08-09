@@ -12,7 +12,7 @@ from random import randint
 
 
 def minimize_max(nums: list[int], p: int) -> int:
-    # working_sol (92.26%, 78.6%) -> (921ms, 30.9mb)  time: O(n * log m) | space: O(1)
+    # working_sol (92.26%, 78.6%) -> (905ms, 30.9mb)  time: O(n * log m) | space: O(1)
     # We need difference of value_pairs.
     # So we're not obligated to save index_placement.
     # It's faster and easier to check value_pairs after sorting in asc.
@@ -33,6 +33,8 @@ def minimize_max(nums: list[int], p: int) -> int:
             # -> so it's correct pair to count.
             if nums[index] - nums[index - 1] <= diff:
                 pair_count += 1
+                if pair_count >= p:
+                    return pair_count
                 # We can't reuse indexes, skipping pair.
                 index += 2
                 continue
@@ -79,5 +81,5 @@ test = []
 for _ in range(10 ** 4):
     test.append(randint(0, 10 ** 9))
 test_p = randint(0, len(test) // 2)
-print(test)
-print(test_p)
+# print(test)
+# print(test_p)
