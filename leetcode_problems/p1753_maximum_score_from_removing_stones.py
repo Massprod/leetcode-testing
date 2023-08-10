@@ -9,41 +9,34 @@ from random import randint
 
 
 def maximum_score(a: int, b: int, c: int) -> int:
-    # working_sol (49.47%, 41.28%) -> (351ms, 16.4mb)  time: O(max - (med + min)) | O((max + med + min) // 2)
-    #                                                  space: O(1)
-    score: int = 0
-    # Simplier to take min, max  from a list.
+    # working_sol (100%, 41.28%) -> (22ms, 41.28%)  time: O(1) | space: O(1)
+    # Simplier to take min, max, medium from a list.
     values: list[int] = [a, b, c]
-    # We're always exhausting current_maximum and
-    # minimum value ->
     minimum: int = values.index(min(values))
-    while values[minimum]:
-        maximum: int = values.index(max(values))
-        # Unique case when all 3 values are equal,
-        # we can take w.e want. So just changing index to any other.
-        if maximum == minimum:
-            maximum -= 1
-        values[maximum] -= 1
-        values[minimum] -= 1
-        score += 1
-    # -> delete exhausted minimum, cuz it's 0 and can't be used ->
-    del values[minimum]
-    # -> set new minimum and repeat.
-    minimum = values.index(min(values))
-    while values[minimum]:
-        maximum = values.index(max(values))
-        # Same, values can be equal, and we need just 0 or 1 index.
-        # -1  == 1 index. So it's either 0 - 1 == -1, or 1 - 1 == 0.
-        if maximum == minimum:
-            maximum -= 1
-        values[maximum] -= 1
-        values[minimum] -= 1
-        score += 1
-    return score
+    maximum: int = values.index(max(values))
+    # Unique case with all 3 values being equal.
+    # min(), max() -> return first encounter.
+    # So just taking any next index, which is equal value.
+    if minimum == maximum:
+        maximum += 1
+    # Medium is harder to take, but we have len == 3,
+    # so w.e indexes we're going to have we can just take them from 3
+    # and get correct index of what's left.
+    #  3 - 1 - 2 == 0 <- 1, 2 is taken, so it's correct.
+    #  3 - 0 - 1 == 2 <- 0, 1 is taken, so it's correct.
+    medium: int = 3 - minimum - maximum
+    # If we're going to have maximum value which can store medium and minimum,
+    # then we're going to take everything from maximum.
+    # And there's either left_overs we can't take, or all 3 exhausted.
+    if values[maximum] >= (values[medium] + values[minimum]):
+        return values[medium] + values[minimum]
+    # Otherwise, take all if sum is even or leave one if odd.
+    # We need only full score, so left_over is culled.
+    return sum(values) // 2
 
 
 # Time complexity:
-#   if max >= (med + min) => O(max - (med + min) -> we're always taking all from min_value and med_value,
+#   if max >= (med + min) => O(med + min) -> we're always taking all from min_value and med_value,
 #                            because summ of them == to max, so it's just taking all from min and then changing
 #                            med_value into a min_value and exhausting it as well.
 #   But I can't understand case when ! max < (med + min) -> we're always changing max_value and med_value.
@@ -52,6 +45,9 @@ def maximum_score(a: int, b: int, c: int) -> int:
 #   Should be correct, but how to merge them?
 #   if max < (med + min) => O((max + med + min) // 2).
 #   No idea how to merge this two cases correctly.
+#   Actually can't we just use it to solve? Like while trying and testing for complexities I'm getting correct
+#     values from both cases, so why looping and calculate iteratively, when it's just constant formulas?
+#   O(1) -> for formulas.
 # -----------------
 # Auxiliary space: O(1) -> creating extra list with size of 3 to store all input_values, always given same input,
 #                          so it's constant => O(1)
