@@ -9,7 +9,7 @@ from random import randint
 
 
 def maximum_score(a: int, b: int, c: int) -> int:
-    # working_sol (100%, 41.28%) -> (22ms, 41.28%)  time: O(1) | space: O(1)
+    # working_sol (100%, 94.31%) -> (27ms, 16.2mb)  time: O(1) | space: O(1)
     # Simplier to take min, max, medium from a list.
     values: list[int] = [a, b, c]
     minimum: int = values.index(min(values))
