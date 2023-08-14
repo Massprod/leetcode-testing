@@ -21,8 +21,7 @@ def find_kth_largest(nums: list[int], k: int) -> int:
         # there's going to be only HIGHEST values, and smallest of them is Kth.
         # Only K highest elements is stored.
         elif largest[0] < num:
-            heapq.heappop(largest)
-            heapq.heappush(largest, num)
+            heapq.heappushpop(largest, num)
     return largest[0]
 
 
@@ -36,7 +35,7 @@ def find_kth_largest(nums: list[int], k: int) -> int:
 # -------------
 # What's a trick? On first sight it's just heapq, with deleting smallest when we encounter something bigger.
 # Don't see how it's incorrect, let's try.
-# Bruh, how is that Medium? When literally all Easy today is harder.
+# Bruh, how is that Medium? When literally all Easy from today is harder.
 
 
 test: list[int] = [3, 2, 1, 5, 6, 4]
@@ -53,5 +52,5 @@ test = []
 for _ in range(10 ** 5):
     test.append(randint(-10 ** 4, 10 ** 4))
 test_k = randint(1, len(test))
-print(test)
-print(test_k)
+# print(test)
+# print(test_k)
