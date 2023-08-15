@@ -25,6 +25,16 @@ def create_linked(to_link: list[int]) -> ListNode:
     return link
 
 
+def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
+    tempo: ListNode = to_test
+    count: int = 0
+    while tempo:
+        assert testout[count] == tempo.val
+        tempo = tempo.next
+        count += 1
+    assert count == len(testout)
+
+
 def partition(head: ListNode, x: int) -> ListNode:
     # working_sol(97.27%, 55.72%) -> (34ms, 16.38mb)  time: O(n) | space: O(n)
     # Store everything lower and higher than x.
@@ -83,28 +93,16 @@ test: ListNode = create_linked([1, 4, 3, 2, 5, 2])
 test_x: int = 3
 test_out: list[int] = [1, 2, 2, 4, 3, 5]
 test_tempo: ListNode = partition(test, test_x)
-for _ in range(len(test_out)):
-    assert test_tempo.val == test_out[_]
-    test_tempo = test_tempo.next
-    if _ == len(test_out) == 0:
-        assert test.next is None
+t_one_linked(test_tempo, test_out)
 
 test = create_linked([2, 1])
 test_x = 2
 test_out = [1, 2]
 test_tempo = partition(test, test_x)
-for _ in range(len(test_out)):
-    assert test_tempo.val == test_out[_]
-    test_tempo = test_tempo.next
-    if _ == len(test_out) == 0:
-        assert test.next is None
+t_one_linked(test_tempo, test_out)
 
 test = create_linked([0])
 test_x = 1
 test_out = [0]
 test_tempo = partition(test, test_x)
-for _ in range(len(test_out)):
-    assert test_tempo.val == test_out[_]
-    test_tempo = test_tempo.next
-    if _ == len(test_out) == 0:
-        assert test.next is None
+t_one_linked(test_tempo, test_out)
