@@ -36,20 +36,26 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def reverse_list(head: ListNode) -> ListNode:
-    # working_sol (33.92%, 7.87%) -> (54ms, 22.9mb)  time: O(n) | space: O(1)
+    # working_sol (79.93%, 10.72%) -> (43ms, 22.8mb)  time: O(n) | space: O(1)
     if not head:
         return head
 
-    def reverse(last_node: ListNode, first_call: bool = True) -> tuple[ListNode, ListNode]:
+    def reverse(last_node: ListNode) -> tuple[ListNode, ListNode]:
+        """
+        :param last_node: node from who we're doing recursion call.
+        :return: tuple, with last_node called and NEW starting node after reversing.
+        """
+        # If end is reached == set as new START and assign everything to it.
         if not last_node.next:
             start: ListNode = last_node
             return last_node, start
-        if node := reverse(last_node.next, False):
+        if node := reverse(last_node.next):
+            # Reassign, to escape inf_loop.
             last_node.next = None
+            # Assign this call node to the lastly assigned node.
             node[0].next = last_node
-            if first_call:
-                last_node.next = None
             return node[0].next, node[1]
+
     return reverse(head)[1]
 
 
@@ -68,16 +74,10 @@ def reverse_list(head: ListNode) -> ListNode:
 # Always solving linked_list iteratively, time to check recursion.
 
 
-test1 = create_linked([1, 2, 3, 4, 5])
-test1_out = [5, 4, 3, 2, 1]
-test = reverse_list(test1)
-print(test)
-t_one_linked(test, test1_out)
-del test
+test: ListNode = create_linked([1, 2, 3, 4, 5])
+test_out: list[int] = [5, 4, 3, 2, 1]
+t_one_linked(reverse_list(test), test_out)
 
-test2 = create_linked([1, 2])
-test2_out = [2, 1]
-test = reverse_list(test2)
-print(test)
-t_one_linked(test, test2_out)
-del test
+test = create_linked([1, 2])
+test_out = [2, 1]
+t_one_linked(reverse_list(test), test_out)
