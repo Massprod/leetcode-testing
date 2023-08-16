@@ -3,12 +3,11 @@
 # Now the Senate wants to decide on a change in the Dota2 game.
 # The voting for this change is a round-based procedure.
 # In each round, each senator can exercise one of the two rights:
-#       Ban one senator's right:
-#           A senator can make another senator lose all his rights in this and all the following rounds.
-#       Announce the victory:
-#           If this senator found the senators who still have rights to vote are all from the same party,
-#           he can announce the victory and decide on the change in the game.
-#
+#   Ban one senator's right:
+#     A senator can make another senator lose all his rights in this and all the following rounds.
+#   Announce the victory:
+#     If this senator found the senators who still have rights to vote are all from the same party,
+#       he can announce the victory and decide on the change in the game.
 # Given a string senate representing each senator's party belonging.
 # The character 'R' and 'D' represent the Radiant party and the Dire party.
 # Then, if there are n senators, the size of the given string will be n.
@@ -27,38 +26,57 @@ from collections import deque
 
 
 def predict_party_victory(senate: str) -> str:
-    # working_sol (80.16%, 51.4%) -> (67ms, 16.6mb)  time: O(n) | space: O(n + (log n))
+    # working_sol (89.71%, 51.4%) -> (53ms, 16.6mb)  time: O(n) | space: O(n + (log n))
     if not senate:
         return senate
     radiant_que: deque = deque()
     dire_que: deque = deque()
+    # Store indexes and faction of every senator.
     for index, value in enumerate(senate):
         if value == "R":
             radiant_que.append(index)
         if value == "D":
             dire_que.append(index)
+    # Repeat while there's still senators capable to vote.
     while radiant_que and dire_que:
         radiant_active: deque = deque()
         dire_active: deque = deque()
+        # Every senator always blocks first opposite_faction voter.
         while radiant_que and dire_que:
+            # Dire|Radian que -> indexes|number when they can vote.
+            # If dire is higher_index, he will be blocked by radiant.
             if dire_que[0] > radiant_que[0]:
                 radiant_active.append(radiant_que[0])
+            # Same for radiant, always blocked if it's index higher.
             elif dire_que[0] < radiant_que[0]:
                 dire_active.append(dire_que[0])
+            # Both of them voted, and can't do anything,
+            # so delete from a vote que.
             radiant_que.popleft()
             dire_que.popleft()
+        # If one side is exhausted.
+        # Other side will block everyone who could vote in the next round.
+        # Because all of their indexes are higher, and we vote in circular manner.
+        # So last voters, can block anyone who could vote in the next round.
         while radiant_que:
+            # They can't be blocked until next round,
+            # so instantly active == still present in the next round.
             radiant_active.append(radiant_que[0])
             radiant_que.popleft()
+            # If someone on opposite side is still not blocked from
+            # next round vote, it will be blocked by this last_voters.
             if len(dire_active) != 0:
                 dire_active.popleft()
+        # Same approach.
         while dire_que:
             dire_active.append(dire_que[0])
             dire_que.popleft()
             if len(radiant_active) != 0:
                 radiant_active.popleft()
+        # Reset active senators.
         radiant_que = radiant_active
         dire_que = dire_active
+    # One side will be always fully blocked.
     if radiant_que:
         return "Radiant"
     elif dire_que:
@@ -109,31 +127,26 @@ def predict_party_victory(senate: str) -> str:
 # for both parties and every round left_to_right walk with checking their ability to ban opposite.
 
 
-test1 = "RD"
-test1_out = "Radiant"
-print(predict_party_victory(test1))
-assert test1_out == predict_party_victory(test1)
+test: str = "RD"
+test_out: str = "Radiant"
+assert test_out == predict_party_victory(test)
 
-test2 = "RDD"
-test2_out = "Dire"
-print(predict_party_victory(test2))
-assert test2_out == predict_party_victory(test2)
+test = "RDD"
+test_out = "Dire"
+assert test_out == predict_party_victory(test)
 
-test3 = "RRRDDDDDDR"
-test3_out = "Dire"
-print(predict_party_victory(test3))
-assert test3_out == predict_party_victory(test3)
+test = "RRRDDDDDDR"
+test_out = "Dire"
+assert test_out == predict_party_victory(test)
 
 # test4 - failed -> Ok. I was deleting senators in most basic way, just first one from start.
 #                   But we need to delete them before they can vote, so it's extra check from point to end.
-test4 = "DRRDRDRDRDDRDRDR"
-test4_out = "Radiant"
-print(predict_party_victory(test4))
-assert test4_out == predict_party_victory(test4)
+test = "DRRDRDRDRDDRDRDR"
+test_out = "Radiant"
+assert test_out == predict_party_victory(test)
 
 # test5 - failed -> forgot to check if senator we want to block is already blocked or not...
 #                   And extra typo with checking Radiant, guess I need to be doublecheck, on +38c days.
-test5 = "DDRRR"
-test5_out = "Dire"
-print(predict_party_victory(test5))
-assert test5_out == predict_party_victory(test5)
+test = "DDRRR"
+test_out = "Dire"
+assert test_out == predict_party_victory(test)
