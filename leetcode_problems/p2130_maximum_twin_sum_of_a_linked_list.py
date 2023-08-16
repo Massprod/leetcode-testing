@@ -39,11 +39,15 @@ def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
 
 
 def pair_sum(head: ListNode) -> int:
-    # working_sol (29.71%, 30.11%) -> (968ms, 57mb)  time: O(n) | space: O(n)
+    # working_sol (80.81%, 49.15%) -> (672ms, 56.8mb)  time: O(n) | space: O(n)
+    # Store everything.
     all_values: list[int] = []
     while head:
         all_values.append(head.val)
         head = head.next
+    # Calculate every possible sum,
+    # all input will be EVEN ->
+    # ! number of nodes in the list is an even integer in the range !
     left: int = 0
     right: int = len(all_values) - 1
     max_sum: int = 0
@@ -56,18 +60,18 @@ def pair_sum(head: ListNode) -> int:
 
 
 # Time complexity: O(n) -> traversing input_list once to get and store all values => O(n) ->
-# n - num of nodes in input_list^^| -> checking every index of created list for a sum => O(n) -> O(2n) -> O(n).
+# n - num of nodes in input_list^^| -> checking every index of created list for a sum => O(n) -> O(2n) => O(n).
 # Auxiliary space: O(n) -> extra constants and list with all values from input list => O(n)
 
 
-test1 = create_linked([5, 4, 2, 1])
-test1_out = 6
-assert test1_out == pair_sum(test1)
+test: ListNode = create_linked([5, 4, 2, 1])
+test_out: int = 6
+assert test_out == pair_sum(test)
 
-test2 = create_linked([4, 2, 2, 3])
-test2_out = 7
-assert test2_out == pair_sum(test2)
+test = create_linked([4, 2, 2, 3])
+test_out = 7
+assert test_out == pair_sum(test)
 
-test3 = create_linked([1, 100000])
-test3_out = 100001
-assert test3_out == pair_sum(test3)
+test = create_linked([1, 100000])
+test_out = 100001
+assert test_out == pair_sum(test)
