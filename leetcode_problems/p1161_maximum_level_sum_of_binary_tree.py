@@ -14,14 +14,18 @@ class TreeNode:
 
 
 def max_level_sum(root: TreeNode) -> int:
-    # working_sol (64.49%, 45.56%) -> (305ms, 21mb)  time: O(n) | space: O(n)
+    # working_sol (84.74%, 96.16%) -> (239ms, 20.9mb)  time: O(n) | space: O(m)
+    # Sums for every level.
     all_levels: dict[int, int] = {}
 
     def search_tree(node: TreeNode, level: int = 1) -> None:
+        # Increase already stored sum, or create
+        # not yet visited level as a new key.
         if level in all_levels:
             all_levels[level] += node.val
         else:
             all_levels[level] = node.val
+        # If we can go deeper and increase level.
         if node.left:
             search_tree(node.left, level + 1)
         if node.right:
@@ -32,6 +36,7 @@ def max_level_sum(root: TreeNode) -> int:
     for key in all_levels:
         if max_lvl == 0:
             max_lvl = key
+        # Reset only for higher, to save first occurrence.
         elif all_levels[max_lvl] < all_levels[key]:
             max_lvl = key
     return max_lvl
@@ -40,7 +45,7 @@ def max_level_sum(root: TreeNode) -> int:
 # Time complexity: O(n) -> traversing whole binary tree to store every node values by it level => O(n) ->
 # n - node of input_BT^^|  -> checking every key in created dictionary to find maximum sum => O(n) ->
 #                          -> O(2n) -> O(n).
-# Auxiliary space: O(m) -> for every depth level in BT we're creating new key in dictionary to store sum => O(n).
+# Auxiliary space: O(m) -> for every depth level in BT we're creating new key in dictionary to store sum => O(m).
 # m - number of levels^^|
 # ---------------------
 # Same as p530, but record every level not just all nodes.
