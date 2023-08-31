@@ -36,7 +36,7 @@ def min_taps(n: int, ranges: list[int]) -> int:
     cur_tap_end: int = taps_coverage[0]
     # Maximum distance we can cover if we start from any Tap we met so far.
     max_coverage: int = taps_coverage[0]
-    for tap_point in range(len(taps_coverage)):
+    for tap_point in range(1, len(taps_coverage)):
         # Tap is unreachable.
         # We're trying to start from a Tap which position(index) is higher,
         #  than maximum distance we could cover.
