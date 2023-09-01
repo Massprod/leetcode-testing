@@ -8,34 +8,17 @@
 
 
 def count_bits(n: int) -> list[int]:
-    # working_sol (78.16%, 66.78%) -> (79ms, 23.1mb)  time: O(n) | space: O(n)
-    # No reasons to store in dictionary,
-    # cuz every number is in range(0, n + 1).
-    counted: dict[int: int] = [0 for _ in range(n + 1)]
-
-    def shifts_count(num: int) -> int:
-        if counted[num]:
-            return counted[num]
-        # Last bit is either 0 or 1.
-        if num == 0:
-            return 0
-        if num == 1:
-            return 1
-        # Every LSB(most_right) for EVEN number is always 0.
-        if num % 2 == 0:
-            counted[num] = shifts_count(num >> 1)
-        # For ODD number is always 1.
-        # So if we delete it, we need to extra +1 for replacement.
-        elif num % 2 == 1:
-            counted[num] = 1 + shifts_count(num >> 1)
-        return counted[num]
-
-    for _ in range(n + 1):
-        counted[_] = shifts_count(_)
+    # working_sol (87.05%, 94.90%) -> (69ms, 22.99mb)  time: O(n) | space: O(n)
+    # Reuse of previously calculated options.
+    counted: list[int] = [0]
+    for num in range(1, n + 1):
+        # num >> 1 == num // 2, so we can reuse previous number,
+        #  and simply add new LSB of the current number.
+        counted.append(counted[num >> 1] + (num & 1))
     return counted
 
 
-# Time complexity: O(n) -> with storing and reuse of previous results, we will calc every num only once => O(n).
+# Time complexity: O(n) -> for loop from 1, to n + 1 (n inclusive) with reusing of previously counted(stored) => O(n).
 # n - input number^^|
 # Auxiliary space: O(n) -> for every number in range(0, n + 1) we're using index to store in the list of size n => O(n).
 # ---------------------------
@@ -43,7 +26,7 @@ def count_bits(n: int) -> list[int]:
 # in range(0, n + 1). Do this not iteratively, but with recursion?
 # Then we could save every call and reuse later.
 # Most important ->  Every LSB(most_right) for EVEN number is always 0 and ODD is always 1.
-# Ok. Instead of using dictionary we can store everything in list with indexes in this range.
+# Or just reuse everything from a single list.
 
 
 test: int = 2
