@@ -1,11 +1,12 @@
 # Given head, the head of a linked list, determine if the linked list has a cycle in it.
-#
 # There is a cycle in a linked list if there is some node in the list that can be reached again
-#   by continuously following the next pointer. Internally, pos is used to denote the index of the node
-#   that tail's next pointer is connected to. Note that pos is not passed as a parameter.
-# Return true if there is a cycle in the linked list. Otherwise, return false.
+#  by continuously following the next pointer.
+# Internally, pos is used to denote the index of the node that tail's next pointer is connected to.
+# Note that pos is not passed as a parameter.
+# Return true if there is a cycle in the linked list.
+# Otherwise, return false.
 # ------------------------
-# The number of the nodes in the list is in the range [0, 104].
+# The number of the nodes in the list is in the range [0, 10 ** 4].
 # -10 ** 5 <= Node.val <= 10 ** 5
 # pos is -1 or a valid index in the linked-list.
 # ------------------------
@@ -22,6 +23,7 @@ class ListNode:
 
 
 def create_linked_with_cycle(to_link: list[int], pos: int) -> ListNode:
+    # We're given linked_list with TAIL connected to some Node.
     tempo = link = ListNode()
     step: int = 0
     pos_node: ListNode | None = None
@@ -34,25 +36,37 @@ def create_linked_with_cycle(to_link: list[int], pos: int) -> ListNode:
             step += 1
             tempo = tempo.next
             continue
+        # So we assign only TAIL to this saved node.
         tempo.next = pos_node
     return link
 
 
 def has_cycle(head: ListNode) -> bool:
-    # working_sol (69.69%, 50.15%) -> (62ms, 20.2mb)  time: O(n) | space: O(1)
-    placeholder: str = "p"
-    temp: ListNode = head
-    while temp:
-        if temp.val == placeholder:
-            return True
-        temp.val = placeholder
-        temp = temp.next
-    return False
+    # working_sol (91.52%, 87.61%) -> (62ms, 20.2mb)  time: O(n) | space: O(1)
+    if not head:
+        return False
+    # Standard Floyd.
+    slow: ListNode = head
+    # Even if one Node present, we're still entering While.
+    fast: ListNode = head.next
+    while slow != fast:
+        slow = slow.next
+        # If fast or fast.next IS None.
+        # Then there's no Loop.
+        if not fast or not fast.next:
+            return False
+        fast = fast.next.next
+    # Otherwise, they collide and it's a cycle.
+    return True
 
 
-# Time complexity: O(n) -> traversing linked list only once => O(n)
+# Time complexity: O(n) -> worst case with cycle placed on 0 Node slow will traverse list twice, still linear => O(n).
 # n - len of input_list^^|
-# Space complexity: o(1) -> extra STR doesn't depend on input, and only changing input itself => O(1)
+# Auxiliary space: O(1) -> extra STR doesn't depend on input, and only changing stored input Nodes => O(1).
+# ------------------------
+# Guess it should actually be done with Floyd turtle-hare algorithm, but if we're not blocked from changing values.
+# It should be faster to just change them and check for last node pointing to changed value. Fewer nodes to visit.
+# And both constant space anyway. But it's better to rebuild for correct way.
 # ------------------------
 # Getting recursion Error, means creating of cycled_linked is correct.
 # Task is easy we're not obligated to save original state of linked_list, and there's no rule for that.
@@ -61,20 +75,22 @@ def has_cycle(head: ListNode) -> bool:
 # Or just save whole linked_list nodes links into a dict() and check if we meet them twice, this one is O(n) space.
 
 
-test1_pos = 1
-test1 = create_linked_with_cycle([3, 2, 0, -4], test1_pos)
-test1_out = True
-print(has_cycle(test1))
-assert test1_out == has_cycle(test1)
+test_pos: int = 1
+test: ListNode = create_linked_with_cycle([3, 2, 0, -4], test_pos)
+test_out: bool = True
+assert test_out == has_cycle(test)
 
-test2_pos = 0
-test2 = create_linked_with_cycle([1, 2], test2_pos)
-test2_out = True
-print(has_cycle(test2))
-assert test2_out == has_cycle(test2)
+test_pos = 0
+test = create_linked_with_cycle([1, 2], test_pos)
+test_out = True
+assert test_out == has_cycle(test)
 
-test3_pos = -1
-test3 = create_linked_with_cycle([1], test3_pos)
-test3_out = False
-print(has_cycle(test3))
-assert test3_out == has_cycle(test3)
+test_pos = -1
+test = create_linked_with_cycle([1], test_pos)
+test_out = False
+assert test_out == has_cycle(test)
+
+test_pos = -1
+test = create_linked_with_cycle([1, 2, 3, 4, 5, 6, 7], test_pos)
+test_out = False
+assert test_out == has_cycle(test)
