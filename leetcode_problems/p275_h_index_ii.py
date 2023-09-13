@@ -14,7 +14,7 @@ from random import randint
 
 
 def h_index(citations: list[int]) -> int:
-    # working_sol (56.38%, 83.30%) -> (133ms, 23.2mb)  time: O(log n) | space: O(1)
+    # working_sol (90.74%, 97.34%) -> (124ms, 23mb)  time: O(log n) | space: O(1)
     # Standard BinarySearch.
     all_papers: int = len(citations)
     l_limit: int = 0
@@ -24,14 +24,15 @@ def h_index(citations: list[int]) -> int:
         middle: int = (l_limit + r_limit) // 2 + 1
         # We given sorted array -> we can be 100% sure that there's
         # (all_papers - middle) papers with HIGHER|EQUAL cites than one we check.
-        if (all_papers - middle) >= citations[middle]:
+        # Only need HIGHER ones.
+        if (all_papers - middle) > citations[middle]:
             l_limit = middle
         else:
             r_limit = middle - 1
-    # We find maximum # of papers with HIGHER|EQUAL cites
+    # We find maximum # of papers with HIGHER cites
     #  than our paper == citations[l_limit].
     h_ind: int = all_papers - l_limit
-    # But they can have only HIGHER cites ->
+    # But our paper can have fewer cites than # of these papers ->
     if citations[l_limit] >= h_ind:
         return h_ind
     # -> then we need to exclude it.
@@ -48,7 +49,7 @@ def h_index(citations: list[int]) -> int:
 # So we can just take index, check (len(citations) - index >= citations[index]) if there's more or equal # of
 # papers with correct cites, than we can try to make it higher, otherwise lower.
 # Should be correct.
-# Extra we need to check if paper we found, have same cites as # of papers.
+# Extra we need to check if paper we found, have same or higher cites then # of papers.
 
 
 test: list[int] = [0, 1, 3, 5, 6]
