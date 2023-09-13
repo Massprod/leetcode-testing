@@ -24,7 +24,7 @@ def h_index(citations: list[int]) -> int:
         middle: int = (l_limit + r_limit) // 2 + 1
         # We given sorted array -> we can be 100% sure that there's
         # (all_papers - middle) papers with HIGHER|EQUAL cites than one we check.
-        if (all_papers - middle) > citations[middle]:
+        if (all_papers - middle) >= citations[middle]:
             l_limit = middle
         else:
             r_limit = middle - 1
