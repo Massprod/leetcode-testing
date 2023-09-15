@@ -21,16 +21,16 @@ class TreeNode:
 
 def insert_into_bst(root: TreeNode, val: int) -> TreeNode:
     # working_sol (82.28%, 91.22%) -> (108ms, 19mb)  time: O(n) | space: O(n)
+    # We need to insert new Node, in what BST we're inserting
+    #  if there's NO ROOT(BST) present?
+    # There's no mentioning creating a new BST in description.
+    # Strange idea to make it like this.
     if not root:
         return TreeNode(val)
 
     # ! It's guaranteed that val does not exist
     #   in the original BST. !
-    # We're given correct BST.
-    # And we need to return correct BST.
-    # So, there's 100% will be a placement option.
-    # And we can either shift some child_node and insert
-    #  between him and his parent, or just place as some leaf.
+    # There's 100% will be a Leaf placement option.
     def check(node: TreeNode) -> None:
         if node.val > val:
             if node.left:
