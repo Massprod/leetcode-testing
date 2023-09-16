@@ -22,13 +22,14 @@ def minimum_effort_path(heights: list[list[int]]) -> int:
         return 0
     que: list[tuple[int, int, int]] = []
     heapq.heapify(que)
+    # (effort, row_number, col_number)
     heapq.heappush(que, (0, 0, 0))
     max_effort: int = 0
     # ! 1 <= heights[i][j] <= 10 ** 6 !
     # Use anything as a mark, but if it's INT stay out of constraint range.
     mark: int = 0
     while que:
-        # Cell with minimum step distance.
+        # Cell with minimum step effort.
         cur_cell: tuple[int, int, int] = heapq.heappop(que)
         cur_dist: int = cur_cell[0]
         y: int = cur_cell[1]  # row
@@ -56,14 +57,13 @@ def minimum_effort_path(heights: list[list[int]]) -> int:
             heapq.heappush(que, (effort, y, x + 1))
         # Mark as visited.
         heights[y][x] = mark
-
     return max_effort
 
 
-# Time complexity: O(m * n * log(m * n)) -> standard BigO for Dijkstra: O(E * log E), E - number of edges.
-# m - col length of input_matrix^^|  In our case we can count edges as # of matrix cells.
-# Auxiliary space: O(log(m * n)) -> only extra element which changes depending on input is heap, and it's always
-#                                   holding only a part of original matrix => O(log(m * n), or O(log E)
+# Time complexity: O(m * n * log(m * n)) -> for each cell we traverse all it's adjacent neighbours => O(m * n)
+# n - row length of input_matrix^^| and insert them into a heapq => O(log(m * n)) => O(m * n * log (m * n)).
+# m - col length of input_matrix^^| In the worst case there's every cell in a heap.
+# Auxiliary space: O(m * n) -> worst case == one cell -> one heap entry per cell => O(m * n).
 # -----------------------
 # Can we ignore BinarySearch?
 # Like first idea was just use BFS to choose minimum resistance path and walk it, with remembering of maximum
