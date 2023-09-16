@@ -10,95 +10,67 @@
 # columns == heights[i].length
 # 1 <= rows, columns <= 100
 # 1 <= heights[i][j] <= 10 ** 6
-from collections import deque
+import heapq
 from random import randint
 
 
 def minimum_effort_path(heights: list[list[int]]) -> int:
-    # working_sol (26.48%, 6.80%) -> (1624ms, 24.2mb)  time: O(log k * (m * n)) | space: O(m * n)
-    # {vertex: {vertex: edge_weight}}
-    row: int = len(heights[0])
-    col: int = len(heights)
-    if row == 1 and col == 1:
+    # working_sol (99.74%, 95.34%) -> (471ms, 17.57mb)  time: O(m * n * log(m * n)) | space: O(log(m * n))
+    row_len: int = len(heights[0])
+    col_len: int = len(heights)
+    if row_len == 1 and col_len == 1:
         return 0
-    graph: dict[tuple[int, int], dict[tuple[int, int], int]] = {}
-    # min, max efforts we can meet between ALL the cells.
-    min_effort: int = 10 ** 6
+    que: list[tuple[int, int, int]] = []
+    heapq.heapify(que)
+    heapq.heappush(que, (0, 0, 0))
     max_effort: int = 0
-    for y in range(col):
-        for x in range(row):
-            # {vertex: edge_weight}
-            neighbours: dict[tuple[int, int], int] = {}
-            if 0 <= y - 1 < col:  # Same style for easier read, we actually only need (<= 0)
-                effort: int = abs(heights[y][x] - heights[y - 1][x])
-                min_effort = min(min_effort, effort)
-                max_effort = max(max_effort, effort)
-                neighbours[(y - 1, x)] = effort
-            if 0 <= y + 1 < col:
-                effort = abs(heights[y][x] - heights[y + 1][x])
-                min_effort = min(min_effort, effort)
-                max_effort = max(max_effort, effort)
-                neighbours[(y + 1, x)] = effort
-            if 0 <= x - 1 < row:
-                effort = abs(heights[y][x] - heights[y][x - 1])
-                min_effort = min(min_effort, effort)
-                max_effort = max(max_effort, effort)
-                neighbours[(y, x - 1)] = effort
-            if 0 <= x + 1 < row:
-                effort = abs(heights[y][x] - heights[y][x + 1])
-                min_effort = min(min_effort, effort)
-                max_effort = max(max_effort, effort)
-                neighbours[(y, x + 1)] = effort
-            graph[(y, x)] = neighbours
-
-    def bfs(check_effort: int, node: tuple[int, int] = (0, 0)) -> bool:
-        # Standard BFS.
-        if node == (col - 1, row - 1):
-            return True
-        que: deque[tuple[int, int]] = deque([node])
-        visited: set[tuple[int, int]] = {node}
-        while que:
-            cur_vert: tuple[int, int] = que.popleft()
-            for edge in graph[cur_vert]:
-                if edge not in visited and graph[cur_vert][edge] <= check_effort:
-                    # All we need is to reach last cell, we can return whenever it happens.
-                    if edge == (col - 1, row - 1):
-                        return True
-                    que.append(edge)
-                    visited.add(edge)
-        # Didn't reach last cell.
-        return False
-    # Standard BS.
-    while min_effort <= max_effort:
-        middle: int = (min_effort + max_effort) // 2
-        # Correct path, we can try lower value.
-        if bfs(middle):
-            max_effort = middle - 1
+    # ! 1 <= heights[i][j] <= 10 ** 6 !
+    # Use anything as a mark, but if it's INT stay out of constraint range.
+    mark: int = 0
+    while que:
+        # Cell with minimum step distance.
+        cur_cell: tuple[int, int, int] = heapq.heappop(que)
+        cur_dist: int = cur_cell[0]
+        y: int = cur_cell[1]  # row
+        x: int = cur_cell[2]  # col
+        # Because we're using same input_list to save space,
+        #  we can add same cells into a que twice.
+        # And it will be marked only after processing this cell ->
+        # -> in case if distance to it will be a minimum at some time.
+        if not heights[y][x]:
             continue
-        # Incorrect, we need higher limit.
-        min_effort = middle + 1
-    return min_effort
+        max_effort = max(max_effort, cur_dist)
+        if (y, x) == (col_len - 1, row_len - 1):
+            break
+        if 0 <= y - 1 < col_len and heights[y - 1][x] != mark:
+            effort: int = abs(heights[y - 1][x] - heights[y][x])
+            heapq.heappush(que, (effort, y - 1, x))
+        if 0 <= y + 1 < col_len and heights[y + 1][x] != mark:
+            effort = abs(heights[y + 1][x] - heights[y][x])
+            heapq.heappush(que, (effort, y + 1, x))
+        if 0 <= x - 1 < row_len and heights[y][x - 1] != mark:
+            effort = abs(heights[y][x - 1] - heights[y][x])
+            heapq.heappush(que, (effort, y, x - 1))
+        if 0 <= x + 1 < row_len and heights[y][x + 1] != mark:
+            effort = abs(heights[y][x + 1] - heights[y][x])
+            heapq.heappush(que, (effort, y, x + 1))
+        # Mark as visited.
+        heights[y][x] = mark
+
+    return max_effort
 
 
-# Time complexity: O(log k * (m * n)) -> creating graph by traversing whole input_matrix => O(m * n) ->
-# k - max_effort - min_effort, between cells^^| -> binary search with found limits, and BFS for every check =>
-# m - len of matrix row^^| => O(log k * (m * n)) <- worst case == BFS will lead to last cell for every check, but
-# n - len of matrix col^^| with some path which includes every cell except 1 neighbour of the last_cell.
-# Auxiliary space: O(m * n) -> dictionary with every cell as key, and dictionary as value which holds at max
-#                           4 edges => O(4 * (m * n))? well they scale Linearly with input, but don't know how to calc
-#                           this extra dictionaries with edges correctly. There will never be more than 4 keys inside.
-#                           Extra set() with visited nodes inside of BFS which can in the worst case hold all nodes,
-#                           except last one, cuz we're breaking on him => O(m * n).
-#                           Should be correct to say, linear: O(m * n).
+# Time complexity: O(m * n * log(m * n)) -> standard BigO for Dijkstra: O(E * log E), E - number of edges.
+# m - col length of input_matrix^^|  In our case we can count edges as # of matrix cells.
+# Auxiliary space: O(log(m * n)) -> only extra element which changes depending on input is heap, and it's always
+#                                   holding only a part of original matrix => O(log(m * n), or O(log E)
 # -----------------------
-# All correct, but this BS limits is still mystery for me.
-# Random cases correct, some cases given as well, but others failing.
-# And logic is correct, if we can make a path we're Lowering max_limit, and Increase min_limit when we can't.
-# Always failing with, that. And always it's different limits for the tasks...
-# Ok. Working with standard BS limits:
-# (middle - 1) to lower
-# (middle + 1) to increase
-# and check until min <= max
+# Can we ignore BinarySearch?
+# Like first idea was just use BFS to choose minimum resistance path and walk it, with remembering of maximum
+#  effort we used. But we can't do this with just 4 neighbours, cuz then we need to traverse ALL paths possible.
+# And my solution from Hints is very slow and Higher once's actually just using same ides with only BFS.
+# But with choosing Minimum option not just from 4 neighbours but ALL the cells we added into a que so far.
+# Which can be done with heapq(). Rebuild time.
 # -----------------------
 # First idea is use BFS, but we need only one size of step. And how we can find this step?
 # Hint:
@@ -141,6 +113,10 @@ test = [
     [4, 3, 4, 10, 5, 5, 9, 2], [10, 8, 2, 10, 9, 7, 5, 6], [5, 8, 10, 10, 10, 7, 4, 2],
     [5, 1, 3, 1, 1, 3, 1, 9], [6, 4, 10, 6, 10, 9, 4, 6]
 ]
+test_out = 5
+assert test_out == minimum_effort_path(test)
+
+test = [[1, 2, 7], [3, 1, 7]]
 test_out = 5
 assert test_out == minimum_effort_path(test)
 
