@@ -15,7 +15,7 @@ from random import randint
 
 
 def minimum_effort_path(heights: list[list[int]]) -> int:
-    # working_sol (99.74%, 95.34%) -> (471ms, 17.57mb)  time: O(m * n * log(m * n)) | space: O(log(m * n))
+    # working_sol (99.74%, 95.34%) -> (471ms, 17.57mb)  time: O(m * n * log(m * n)) | space: O(m * n)
     row_len: int = len(heights[0])
     col_len: int = len(heights)
     if row_len == 1 and col_len == 1:
