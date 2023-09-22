@@ -31,16 +31,16 @@ def is_subsequence(s: str, t: str) -> bool:
         # If symbol is present, we can point to next.
         if s[s_index] == _:
             s_index += 1
-        # If all symbols used -> correct
-        if s_index == len(s):
-            return True
+            # If all symbols used -> correct
+            if s_index == len(s):
+                return True
     # Not all used -> incorrect.
     return False
 
 
 # Time complexity: O(n) -> traversing whole input_T, once => O(n).
 # n - len of input_T_array^^| Ω(log n) -> on media we will break at some point, cuz on average S is smaller than T.
-# Auxiliary space: O(1) -> nothing extra, except one INT which doesnt depend on input => O(1).
+# Auxiliary space: O(1) -> nothing extra, except one INT which doesn't depend on input => O(1).
 # --------------
 # Focused on follow_up too much, and missed that we have empty strings in constraints and failed commit...
 # --------------
@@ -49,7 +49,7 @@ def is_subsequence(s: str, t: str) -> bool:
 # But for others, what can be done? Like we can't record semi_options, one I see for more is that
 # count symbols in T and insta return if something isn't present from S. But it's still 1 traverse of S,
 # and we could do the T traverse with it, not really faster.
-# What if we store original S give, and save PREFIX + SUFFIX for it.
+# What if we store original S given, and save PREFIX + SUFFIX for it.
 # Like dict[S] = [PREFIX(everything we met before first symbol) + S(itself) + SUFFIX(everything after last symbol)]
 # Then we could check "gabc" after "abc" recorded, and we can drop everything from "gabc" which present in S.
 # And just check "g" in prefix. But it's still traverse of whole input_S and after some part of input_T.
@@ -64,18 +64,18 @@ def is_subsequence(s: str, t: str) -> bool:
 # it's some HARD problem and no reasons to, but it should work.
 
 
-test1_s = "abc"
-test1_t = "ahbgdc"
-test1_out = True
-assert test1_out == is_subsequence(test1_s, test1_t)
+test_s: str = "abc"
+test_t: str = "ahbgdc"
+test_out: bool = True
+assert test_out == is_subsequence(test_s, test_t)
 
-test2_s = "axc"
-test2_t = "ahbgdc"
-test2_out = False
-assert test2_out == is_subsequence(test2_s, test2_t)
+test_s = "axc"
+test_t = "ahbgdc"
+test_out = False
+assert test_out == is_subsequence(test_s, test_t)
 
-test_s: str = ""
-test_t: str = ""
+test_s = ""
+test_t = ""
 for _ in range(100):
     test_s += choice(ascii_lowercase)
 for _ in range(10 ** 4):
