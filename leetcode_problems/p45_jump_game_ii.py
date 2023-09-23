@@ -1,118 +1,110 @@
-# You are given a 0-indexed array of integers nums of length n. You are initially positioned at nums[0].
-#
+# You are given a 0-indexed array of integers nums of length n.
+# You are initially positioned at nums[0].
 # Each element nums[i] represents the maximum length of a forward jump from index i.
 # In other words, if you are at nums[i], you can jump to any nums[i + j] where:
-#
-# 0 <= j <= nums[i] and
-# i + j < n
+#   0 <= j <= nums[i] and
+#   i + j < n
 # Return the minimum number of jumps to reach nums[n - 1].
 # The test cases are generated such that you can reach nums[n - 1].
+# -------------------
+# 1 <= nums.length <= 10 ** 4
+# 0 <= nums[i] <= 1000
+# It's guaranteed that you can reach nums[n - 1].
 
-# Brute forcing again?
 
 def jump(nums: list[int]) -> int:
-    # working_sol (93.75%, 7.77%) -> (121ms, 20.5mb)  time: O(n * log n) | space: O(n)
+    # working_sol (85.66%, 7.57%) -> (113ms, 22.9mb)  time: O(n * log n) | space: O(n)
     end = len(nums) - 1
-    if len(nums) == 1:
+    if end == 0:
         return 0
     if nums[0] >= end:
         return 1
 
-    def best_jump(pool: list[int], start_ind: int = 0, jumps: int = 1):
-        best_land_index = -1
-        best_start = -1
+    def best_jump(pool: list[int], start_ind: int = 0, jumps: int = 1) -> int:
+        best_land_index: int = -1
+        best_start: int = -1
+        # Check every landing point.
         for x in range(start_ind + 1, start_ind + pool[start_ind] + 1):
-            land_index = pool[x] + x
+            land_index: int = pool[x] + x
+            # We can reach end.
             if land_index >= end:
                 return jumps + 1
-            if land_index >= best_land_index:
+            # Choose point from what we can jump furthest.
+            elif land_index >= best_land_index:
                 best_land_index = land_index
                 best_start = x
-                continue
         return best_jump(pool, best_start, jumps + 1)
+
     return best_jump(nums)
 
-# Time complexity: O(n * log n) -> we're looping through whole input array and checking available
-#                                  jump indexes for every index, worst case checking 3/4 extra.
-#                                  (not sure about log n, maybe it's actually n * n)
-# Space complexity: O(n) -> only constants and input array for recursion stack.
 
+# Time complexity: O(n * log n) -> because we're choosing best point to jump from, we will recheck some indexes
+# n - len of input array^^|  not all of them, but some might be used twice => O(n * log n).
+# Space complexity: O(n) -> worst case == [1, 1, 1, ... 1] -> recursion stack with call for every index => O(n).
+# -------------------
 # Pff. Literally solved most hard part within a 40m and failed to count jumps, cuz tried to jump twice.
 # Right now we're using best_start, which I add to count step by step not double jumps.
 # Mistake:
 #   pos1 -> pos2 == adding jumps + 1 and after calculating best way to jump from pos2 -> pos3
-#   adding jumps + 1 and calling recursion from pos3 not pos2 ^like it's doing now^. !jumps + 2 in One sequence!
+#   adding jumps + 1 and calling recursion from pos3 not pos2 ^like it's doing now^. ! jumps + 2 in One sequence!
 #   I was expecting to count like this is not going to be a problem.
 #   But in reality it is. Because there's a chance that we can get such pos2 that equal to our end.
 #   In this case we can't jump from this position, and I was already expecting this position as jump_pad. Extra +1.
 #   Either I need more experience, or better just do tasks like that with 1 step in a future.
 
 
-test1 = [2, 3, 1, 1, 4]
-test1_out = 2
-print(jump(test1))
-assert test1_out == jump(test1)
+test: list[int] = [2, 3, 1, 1, 4]
+test_out: int = 2
+assert test_out == jump(test)
 
-test2 = [2, 3, 0, 1, 4]
-test2_out = 2
-print(jump(test2))
-assert test2_out == jump(test2)
+test = [2, 3, 0, 1, 4]
+test_out = 2
+assert test_out == jump(test)
 
-test3 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-test3_out = 11
-print(jump(test3))
-assert test3_out == jump(test3)
+test = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+test_out = 11
+assert test_out == jump(test)
 
-test4 = [1, 3, 2, 2, 2, 9]
-test4_out = 3
-print(jump(test4))
-assert test4_out == jump(test4)
+test = [1, 3, 2, 2, 2, 9]
+test_out = 3
+assert test_out == jump(test)
 
-test5 = [8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-test5_out = 3
-print(jump(test5))
-assert test5_out == jump(test5)
+test = [8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+test_out = 3
+assert test_out == jump(test)
 
-test6 = [5, 1, 1, 1, 1, 1, 1]
-test6_out = 2
-print(jump(test6))
-assert test6_out == jump(test6)
+test = [5, 1, 1, 1, 1, 1, 1]
+test_out = 2
+assert test_out == jump(test)
 
-# test7 - failed - I was thinking about this 0 situation at the start, and forgot to add....
+# test -> Failed - I was thinking about this 0 situation at the start, and forgot to add....
 #                  There's always a correct solution, and we can jump on PLACE.
-test7 = [0]
-test7_out = 0
-print(jump(test7))
-assert test7_out == jump(test7)
+test = [0]
+test_out = 0
+assert test_out == jump(test)
 
-# test8 - failed - Ok. Dumb enough to not consider jump on place with any value :)
+# test -> Failed - Ok. Dumb enough to not consider jump on place with any value :)
 #                  len(nums) == 1 -> allways 0 jumps
 test8 = [1]
 test8_out = 0
-print(jump(test8))
-assert test8_out == jump(test8)
+assert test_out == jump(test)
 
-test9 = [1, 1, 1, 1, 1]
-test9_out = 4
-print(jump(test9))
-assert test9_out == jump(test9)
+test = [1, 1, 1, 1, 1]
+test_out = 4
+assert test_out == jump(test)
 
-test10 = [1, 6, 1, 1]
-test10_out = 2
-print(jump(test10))
-assert test10_out == jump(test10)
+test = [1, 6, 1, 1]
+test_out = 2
+assert test_out == jump(test)
 
-test11 = [1, 1, 1, 1]
-test11_out = 3
-print(jump(test11))
-assert test11_out == jump(test11)
+test = [1, 1, 1, 1]
+test_out = 3
+assert test_out == jump(test)
 
-test12 = [1, 1, 2, 1, 1]
-test12_out = 3
-print(jump(test12))
-assert test12_out == jump(test12)
+test = [1, 1, 2, 1, 1]
+test_out = 3
+assert test_out == jump(test)
 
-test13 = [1, 2, 4, 2, 2, 2, 2, 1]
-test13_out = 4
-print(jump(test13))
-assert test13_out == jump(test13)
+test = [1, 2, 4, 2, 2, 2, 2, 1]
+test_out = 4
+assert test_out == jump(test)
