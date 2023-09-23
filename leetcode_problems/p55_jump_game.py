@@ -1,37 +1,43 @@
 # You are given an integer array nums. You are initially positioned at the array's first index,
-# and each element in the array represents your maximum jump length at that position.
-#
+#  and each element in the array represents your maximum jump length at that position.
 # Return true if you can reach the last index, or false otherwise.
+# ----------------
+# 1 <= nums.length <= 10 ** 4
+# 0 <= nums[i] <= 10 ** 5
+
 
 def can_jump(nums: list[int]) -> bool:
-    # working_sol (37.98%, 5.2%) -> (507ms, 28.3mb)  time: O(n * log n) | space: O(n)
-    end = len(nums) - 1
-    if len(nums) == 1:
+    # working_sol (38.80%, 5.61%) -> (429ms, 27.7mb)  time: O(n * log n) | space: O(n)
+    end: int = len(nums) - 1
+    if end == 0:
         return True
     if nums[0] >= end:
         return True
 
-    def best_jump(pool: list[int], start_ind: int = 0):
+    def best_jump(pool: list[int], start_ind: int = 0) -> bool:
+        # Only case we stop is 0 options to jump: pool[index] == 0.
         if start_ind != end and pool[start_ind] == 0:
             return False
-        best_land_index = -1
-        best_start = -1
+        best_land_index: int = -1
+        best_start: int = -1
+        # Check every landing point.
         for x in range(start_ind + 1, start_ind + pool[start_ind] + 1):
-            land_index = pool[x] + x
+            land_index: int = x + pool[x]
+            # We can reach end.
             if land_index >= end:
                 return True
-            if land_index >= best_land_index:
+            # Choose point from what we can jump furthest.
+            elif land_index >= best_land_index:
                 best_land_index = land_index
                 best_start = x
-                continue
         return best_jump(pool, best_start)
 
     return best_jump(nums)
 
-# Time complexity: O(n * log n) -> we're looping through whole input array and checking available
-#                                  jump indexes for every index, worst case checking 3/4 extra.
-# Space complexity: O(n) -> only constants and input array for recursion stack.
 
+# Time complexity: O(n * log n) -> because we're choosing best point to jump from, we will recheck some indexes
+# n - len of input array^^|  not all of them, but some might be used twice => O(n * log n).
+# Space complexity: O(n) -> worst case == [1, 1, 1, 1, 1, 1, 1] -> recursion stack with call for every index => O(n).
 # ---------------------------
 # Failed by trying to STRIP my p45 version and make it work faster, without checking every jump, which isn't correct.
 # Could have avoided fails and just use it from the start, or just rebuild.
@@ -46,38 +52,30 @@ def can_jump(nums: list[int]) -> bool:
 #                                      not considering any other jump_positions :) failed test5 cuz of this...
 
 
-test1 = [2, 3, 1, 1, 4]
-test1_out = True
-assert can_jump(test1) == test1_out
-print(can_jump(test1))
+test: list[int] = [2, 3, 1, 1, 4]
+test_out: bool = True
+assert test_out == can_jump(test)
 
-test2 = [3, 2, 1, 0, 4]
-test2_out = False
-assert can_jump(test2) == test2_out
-print(can_jump(test2))
+test = [3, 2, 1, 0, 4]
+test_out = False
+assert test_out == can_jump(test)
 
-test3 = [1, 1, 1, 1, 1, 1, 2, 11]
-test3_out = True
-assert can_jump(test3) == test3_out
-print(can_jump(test3))
+test = [1, 1, 1, 1, 1, 1, 2, 11]
+test_out = True
+assert test_out == can_jump(test)
 
-test4 = [1, 0, 1]
-test4_out = False
-assert can_jump(test4) == test4_out
-print(can_jump(test4))
+test = [1, 0, 1]
+test_out = False
+assert test_out == can_jump(test)
 
-# test5 - failed <- I wanted to strip p45 and make it one_way, which is mistaken.
-#                   Because we need to check every possible way to jump from, like I already did...
-test5 = [3, 0, 8, 2, 0, 0, 1]
-test5_out = True
-assert can_jump(test5) == test5_out
-print(can_jump(test5))
+test = [3, 0, 8, 2, 0, 0, 1]
+test_out = True
+assert test_out == can_jump(test)
 
-test6 = [3, 0, 2, 2, 0, 1, 0, 1]
-test6_out = False
-assert can_jump(test6) == test6_out
-print(can_jump(test6))
+test = [3, 0, 2, 2, 0, 1, 0, 1]
+test_out = False
+assert test_out == can_jump(test)
 
-test7 = [5, 9, 3, 2, 1, 0, 2, 3, 3, 1, 0, 0]
-test7_out = True
-print(can_jump(test7))
+test = [5, 9, 3, 2, 1, 0, 2, 3, 3, 1, 0, 0]
+test_out = True
+assert test_out == can_jump(test)
