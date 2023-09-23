@@ -12,23 +12,23 @@
 
 
 def max_profit(k: int, prices: list[int]) -> int:
-    # working_sol (5.8%, 5%) -> (592ms, 86mb)  time: O(2 ** n) | space: O(2 ** n)
+    # working_sol (5.8%, 5%) -> (443ms, 85.9mb)  time: O(2 ** n) | space: O(2 ** n)
     # Recursion results by (day, operations_left).
-    mem_cache: dict[tuple[int, int], int] = {}
+    recur_cache: dict[tuple[int, int], int] = {}
 
     def trade_day(day: int, op_left: int, buy: bool) -> int:
         # If similar day is already exist.
-        if (day, op_left) in mem_cache:
-            return mem_cache[(day, op_left)]
+        if (day, op_left) in recur_cache:
+            return recur_cache[(day, op_left)]
         # There's 3 options to break ->
         # 1) No operations available, so we can't sell/buy more.
         # 2) Last day and we're holding stock -> forced to sell.
         # 3) Last day and we're not holding stock -> not getting profit.
         if op_left == 0 or day >= len(prices):
             if buy:
-                mem_cache[day, op_left] = 0
+                recur_cache[day, op_left] = 0
                 return 0
-            mem_cache[day, op_left] = prices[-1]
+            recur_cache[day, op_left] = prices[-1]
             return prices[-1]
         # Set as -inf for correct comparing.
         buy_profit: int | float = float("-inf")
@@ -53,11 +53,11 @@ def max_profit(k: int, prices: list[int]) -> int:
             sell_profit = max(sell_profit, hold_bought)
         # Same
         max_day_prof: int = max(buy_profit, sell_profit)
-        mem_cache[(day, op_left)] = max_day_prof
+        recur_cache[(day, op_left)] = max_day_prof
         return max_day_prof
 
     # Always returning only maximum_profit of the calling day,
-    # with set operations limit.
+    #  with set operations limit.
     return trade_day(0, k * 2, True)
 
 
@@ -72,3 +72,14 @@ def max_profit(k: int, prices: list[int]) -> int:
 # Obviously it's either TLE or just extra slow. But w.e.
 # Don't want to just copy DP, cuz it's an only way to make it faster and I didn't learn it properly.
 # Like it's not even default DP it's STATE_MACHINE which I never encounter before.
+
+
+test: list[int] = [2, 4, 1]
+test_k: int = 2
+test_out: int = 2
+assert test_out == max_profit(test_k, test)
+
+test = [3, 2, 6, 5, 0, 3]
+test_k = 2
+test_out = 7
+assert test_out == max_profit(test_k, test)
