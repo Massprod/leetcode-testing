@@ -4,39 +4,41 @@
 # Return the maximum profit you can achieve from this transaction.
 # If you cannot achieve any profit, return 0.
 # -----------------------
-# 1 <= prices.length <= 10 ** 5  ,  0 <= prices[i] <= 10 ** 4
+# 1 <= prices.length <= 10 ** 5
+# 0 <= prices[i] <= 10 ** 4
 
 
 def max_profit(prices: list[int]) -> int:
-    # working_sol (73.79%, 42.37%) -> (979ms, 27.3mb)  time: O(n) | space: O(1)
+    # working_sol (80.40%, 52.61%) -> (821ms, 27.38mb)  time: O(n) | space: O(1)
     max_prof: int = 0
     lowest_value: int = prices[0]
+    # We need only 1 transaction.
     for price in prices:
+        # Buy lowest.
         if price < lowest_value:
             lowest_value = price
             continue
+        # Sell for any profit, but take only highest.
         max_prof = max(price - lowest_value, max_prof)
     return max_prof
 
 
-# Time complexity: O(n) -> traversing whole input_list only once => O(n)
+# Time complexity: O(n) -> traversing whole input array, once => O(n)
 # n - len of input_list^^|
-# Auxiliary space: O(1) -> storing two extra INTs, doesn't depends on input => O(1)
+# Auxiliary space: O(1) -> 2 extra constant INTs, none of them depends on input => O(1)
 # -----------------------
 # We only allowed to move from left to right, so there's no reason to use stack or anything except the lowest value.
 # Holding lowest and extracting it from any other (x + 1) we meet, changing this lowest if we find something lower,
 # always taking max() out of this extraction and stored max_value.
 # !
 # choosing a single day to buy one stock and choosing a different day in the future to sell that stock. !
-# ^^Guess we're not allowed to sell on the same day as well.
+# ^^We're not allowed to sell on the same day as buying.
 
 
-test1 = [7, 1, 5, 3, 6, 4]
-test1_out = 5
-print(max_profit(test1))
-assert test1_out == max_profit(test1)
+test: list[int] = [7, 1, 5, 3, 6, 4]
+test_out: int = 5
+assert test_out == max_profit(test)
 
-test2 = [7, 6, 4, 3, 1]
-test2_out = 0
-print(max_profit(test2))
-assert test2_out == max_profit(test2)
+test = [7, 6, 4, 3, 1]
+test_out = 0
+assert test_out == max_profit(test)
