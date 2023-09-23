@@ -9,17 +9,19 @@
 
 
 def max_profit(prices: list[int]) -> int:
-    # working_sol (77.29%, 33.47%) -> (73ms, 17.6mb)  time: O(n) | space: O(1)
+    # working_sol (73.01%, 98.39%) -> (62ms, 17.6mb)  time: O(n) | space: O(1)
     profit: int = 0
+    # We can (sell and buy) OR (buy and sell) at the same day.
     for x in range(1, len(prices)):
+        # So, we can just buy and sell on every diff point.
         if prices[x] > prices[x - 1]:
             profit += prices[x] - prices[x - 1]
     return profit
 
 
-# Time complexity: O(n) -> traverse of whole input array, once => O(n).
-# n - len of input_array^^|
-# Auxiliary space: O(1) -> only 1 extra constant to store profit as INT, doesn't depends on input => O(n).
+# Time complexity: O(n) -> traversing whole input array, once => O(n).
+# n - len of input array^^|
+# Auxiliary space: O(1) -> only one extra constant INT, doesn't depend on input => O(n).
 # ----------------------
 # Buy low, sell high. Daily => MaxProfit.
 # Only if we can sell on the days with profit, otherwise ignore.
@@ -35,17 +37,14 @@ def max_profit(prices: list[int]) -> int:
 # than it's correct. Otherwise, I need extra search, let's test.
 
 
-test1 = [7, 1, 5, 3, 6, 4]
-test1_out = 7
-print(max_profit(test1))
-assert test1_out == max_profit(test1)
+test: list[int] = [7, 1, 5, 3, 6, 4]
+test_out: int = 7
+assert test_out == max_profit(test)
 
-test2 = [1, 2, 3, 4, 5]
-test2_out = 4
-print(max_profit(test2))
-assert test2_out == max_profit(test2)
+test = [1, 2, 3, 4, 5]
+test_out = 4
+assert test_out == max_profit(test)
 
-test3 = [7, 6, 4, 3, 1]
-test3_out = 0
-print(max_profit(test3))
-assert test3_out == max_profit(test3)
+test = [7, 6, 4, 3, 1]
+test_out = 0
+assert test_out == max_profit(test)
