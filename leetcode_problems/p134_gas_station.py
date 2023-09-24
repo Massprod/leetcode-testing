@@ -1,33 +1,38 @@
 # There are *n* gas stations along a circular route, where the amount of gas at the *ith* station is *gas[i]*.
 # You have a car with an unlimited gas tank, and it costs *cost[i]* of gas to travel from the ith station
-# to its next (i + 1)th station. You begin the journey with an empty tank at one of the gas stations.
+#  to its next (i + 1)th station. You begin the journey with an empty tank at one of the gas stations.
 # Given two integer arrays *gas* and *cost*, return the starting gas station's index
-# if you can travel around the circuit once in the clockwise direction, otherwise return -1.
+#  if you can travel around the circuit once in the clockwise direction, otherwise return -1.
 # If there exists a solution, it is guaranteed to be unique.
 # -----------------------
-# n == gas.length == cost.length  ,  1 <= n <= 105  ,  0 <= gas[i], cost[i] <= 104
+# n == gas.length == cost.length
+# 1 <= n <= 10 ** 5
+# 0 <= gas[i], cost[i] <= 10 ** 4
 
 
 def can_complete_circuit(gas: list[int], cost: list[int]) -> int:
-    # working_sol (9.46%, 17.88%) -> (1175ms, 22.3mb)  time: O(n) | space: O(1)
+    # working_sol (92.72%, 47.79%) -> (1037ms, 22.2mb)  time: O(n) | space: O(1)
+    # No fuel for a full circle.
     if sum(gas) < sum(cost):
         return -1
+    # We can make a full circle.
+    # Start from [0].
     start: int = 0
     tank: int = 0
     for station in range(len(gas)):
         tank += gas[station] - cost[station]
+        # Because we know we can make a circle, but not from current start station.
+        # We will not have enough fuel to move from start -> station.
+        # Restart from (station + 1).
         if tank < 0:
             start = station + 1
             tank = 0
-    if start == len(gas):
-        start = start - len(gas)
-        return start
     return start
 
 
 # Time complexity: O(n) -> traversing once whole input_lists to calculate sums => O(n) + O(n) => O(2n) ->
-# n - len of input_list^^  -> and traversing indexes of both input_lists once to calc tank => O(n) -> O(3n)
-#                          -> for a correct input_lists it's always linear O(n).
+# n - len of any input array^^| -> and traversing indexes of both input_lists once to calc tank => O(n) -> O(3n)
+#                               -> for a correct input_lists it's always linear O(n).
 # Space complexity: O(1) -> only 2 extra constants used (2 INTs: start, tank) ->
 #                          -> for a correct input_lists it's always constant O(1).
 # -----------------------
@@ -79,20 +84,17 @@ def can_complete_circuit(gas: list[int], cost: list[int]) -> int:
 #   guess it's medium task only because of overlapping with len(gas) to change index.
 
 
-test1_gas = [1, 2, 3, 4, 5]
-test1_cost = [3, 4, 5, 1, 2]
-test1_out = 3
-print(can_complete_circuit(test1_gas, test1_cost))
-assert test1_out == can_complete_circuit(test1_gas, test1_cost)
+test_gas: list[int] = [1, 2, 3, 4, 5]
+test_cost: list[int] = [3, 4, 5, 1, 2]
+test_out: int = 3
+assert test_out == can_complete_circuit(test_gas, test_cost)
 
-test2_gas = [2, 3, 4]
-test2_cost = [3, 4, 3]
-test2_out = -1
-print(can_complete_circuit(test2_gas, test2_cost))
-assert test2_out == can_complete_circuit(test2_gas, test2_cost)
+test_gas = [2, 3, 4]
+test_cost = [3, 4, 3]
+test_out = -1
+assert test_out == can_complete_circuit(test_gas, test_cost)
 
-test3_gas = [6, 5, 4, 3, 2, 0, 8, 9, 10, 5]
-test3_cost = [4, 6, 5, 3, 2, 0, 0, 7, 8, 6]
-test3_out = 0
-print(can_complete_circuit(test3_gas, test3_cost))
-assert test3_out == can_complete_circuit(test3_gas, test3_cost)
+test_gas = [6, 5, 4, 3, 2, 0, 8, 9, 10, 5]
+test_cost = [4, 6, 5, 3, 2, 0, 0, 7, 8, 6]
+test_out = 0
+assert test_out == can_complete_circuit(test_gas, test_cost)
