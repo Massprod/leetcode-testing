@@ -1,139 +1,90 @@
 # Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]]
-# such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
-#
+#  such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 # Notice that the solution set must not contain duplicate triplets.
+# ---------------
+# 3 <= nums.length <= 3000
+# -10 ** 5 <= nums[i] <= 10 ** 5
 
 
-def three_sum(nums: list[int]) -> list[list[int]] | set:
-    # time_limit
-    # checked_x = []
-    # sums = []
-    # nums.sort(reverse=True)
-    # for x in range(len(nums)):
-    #     first_slice = nums[:x] + nums[x + 1:]
-    #     if nums[x] in checked_x:
-    #         continue
-    #     elif nums[x] < 0:
-    #         continue
-    #     checked_x.append(nums[x])
-    #     for y in range(len(first_slice)):
-    #         if first_slice[y] > 0:
-    #             continue
-    #         second_slice = first_slice[:y] + first_slice[y + 1:]
-    #         to_find = (nums[x] + first_slice[y]) * -1
-    #         for z in range(len(second_slice)):
-    #             if second_slice[z] != to_find:
-    #                 continue
-    #             elif nums[x] + first_slice[y] + second_slice[z] == 0:
-    #                 tempo = [nums[x], first_slice[y], second_slice[z]]
-    #                 tempo.sort()
-    #                 if tempo not in sums:
-    #                     sums.append(tempo)
-    # return sums
-    # rebuild
-    # working sol 19.44%, 93.98%
-    nums.sort(reverse=True)
-    sums = set()
-    checked = set()
-    max_x = len(nums) - 1
-    for x in range(len(nums)):
-        y = 0
-        z = len(nums) - 1
-        if nums[x] in checked:
-            continue
-        elif x == max_x:
-            y = 0
-            z = x - 1
-        elif x == 0:
-            y = x + 1
-            z = len(nums) - 1
-        checked.add(nums[x])
-        while y < z:
-            if x == y:
-                y += 1
+def three_sum(nums: list[int]) -> list[list[int]] | set[tuple[int, int, int]]:
+    # working_sol (86.43%, 22.16%) -> (842ms, 20.9mb)  time: O(n) | space: O(n)
+    # ! solution set must not contain duplicate triplets !
+    # ! order of the triplets does not matter !
+    # No matter the placement, we don't need same sums.
+    sums: set[tuple[int, int, int]] = set()
+    negative: dict[int, int] = {}
+    positive: dict[int, int] = {}
+    zeroes: int = 0
+    # Count every option we can use for sums.
+    for num in nums:
+        if num > 0:
+            if num in positive:
+                positive[num] += 1
+            else:
+                positive[num] = 1
+        elif num < 0:
+            if num in negative:
+                negative[num] += 1
+            else:
+                negative[num] = 1
+        else:
+            zeroes += 1
+    # (neg, 0, pos)
+    if zeroes:
+        if zeroes > 2:
+            sums.add((0, 0, 0))
+        for pos in positive:
+            if (pos * -1) in negative:
+                sums.add(((pos * -1), 0, pos))
+    # (neg, pos, pos)
+    for value1 in positive:
+        for value2 in positive:
+            # Same value can be used, but only with different index.
+            if value1 == value2 and positive[value1] < 2:
                 continue
-            elif x == z:
-                z -= 1
+            value_sum: int = (value1 + value2) * -1
+            if value_sum in negative:
+                if value1 >= value2:
+                    sums.add((value_sum, value2, value1))
+                elif value1 < value2:
+                    sums.add((value_sum, value1, value2))
+    # (neg, neg, pos)
+    for value1 in negative:
+        for value2 in negative:
+            if value1 == value2 and negative[value1] < 2:
                 continue
-            summ = nums[x] + nums[y] + nums[z]
-            if summ == 0:
-                to_add = tuple(sorted((nums[x], nums[y], nums[z])))
-                sums.add(to_add)
-                y += 1
-                z -= 1
-            elif summ > 0:
-                y += 1
-            elif summ < 0:
-                z -= 1
+            value_sum = (value1 + value2) * - 1
+            if value_sum in positive:
+                if value1 >= value2:
+                    sums.add((value2, value1, value_sum))
+                elif value1 < value2:
+                    sums.add((value1, value2, value_sum))
     return sums
 
-# I should have been used most_water_column from a start.
-# Cuz after sorting nums we can already go from biggest to lowest values and skip all X which is already Used
-# List[List[int]] - return for LeetCode as a Task, and I was trying to return list without using sets and filtered
-# to_add values with IF. Ofc it's always TimeLimit with list's. After googling found return can be SET......
+
+# Time complexity: O(n) -> traverse of whole input array to get all unique number and their occurrences => O(n) ->
+# n - len of input array^^| -> traversing both dictionaries with negative and positive values, no matter the case ->
+#                           -> assume worst case == everything is unique, then we will traverse dictionary for positive
+#                           values twice, and negative once -> but no matter the case it's still same values from
+#                           input array, and because all of them unique => O(n).
+# Auxiliary space: O(n) -> worst case == every value is unique -> dictionaries will dominate sums,
+#                          because they store every unique value => O(n).
+# ---------------
+# There's 3 options to get unique sum combinations:
+# (neg, 0, pos)
+# (neg, pos, pos)
+# (neg, neg, pos)
+# Just find everything we can use to build them.
 
 
-# --------------------------------------
-# test = [-1, 0, 1, 2, -1, -4]
-# print(three_sum(test))
-# for g in range(len(test)):
-#     print(test[g + 1:], test[:g])
-#     print(test[g + 1:] + test[:g])
-#     print("--------")
-#     tes_slice = test[g + 1:] + test[:g]
-#     for j in range(len(tes_slice)):
-#         print(tes_slice[j +1:] + tes_slice[:j])
-#         tes_slice2 = tes_slice[j + 1:] + tes_slice[:j]
-# for k in range(len(tes_slice2)):
-# test1 = [-7, -4, -6, 6, 4, -6, -9, -10, -7, 5, 3, -1, -5, 8, -1, -2, -8, -1, 5, -3, -5, 4, 2, -5, -4, 4, 7]
-# test1_out = [[-10, 2, 8], [-10, 3, 7], [-10, 4, 6], [-10, 5, 5], [-9, 2, 7], [-9, 3, 6], [-9, 4, 5], [-8, 2, 6],
-#              [-8, 3, 5], [-8, 4, 4], [-7, -1, 8], [-7, 2, 5], [-7, 3, 4], [-6, -2, 8], [-6, -1, 7], [-6, 2, 4],
-#              [-5, -3, 8], [-5, -2, 7], [-5, -1, 6], [-5, 2, 3], [-4, -4, 8], [-4, -3, 7], [-4, -2, 6], [-4, -1, 5],
-#              [-3, -2, 5], [-3, -1, 4], [-2, -1, 3], [-1, -1, 2]]
-#
-# order = three_sum(test1)
-# order.sort()
-# assert order == test1_out
-# for _ in three_sum(test1):
-#     assert _ in test1_out
-# my solution is working, but they don't order correctly for Leetcode test.........
-# NOPE i just missed [-1, -1, 2] HOW?>??
-# OK I was trying to use string instead of a list, dunno why .
-# cuz I was using string for 2 days and forgot about unique values, and used it for no reason.
-# Because of that, there was 10 in string and obviously while checking IN string we got 1, 0 list it's neglected
-# value of 1 for other X index...............nc
-# No issue with sorting return value.
-# --------------------------------------------
+test: list[int] = [-1, 0, 1, 2, -1, -4]
+test_out: set[tuple[int, int, int]] = {(-1, -1, 2), (-1, 0, 1)}
+assert test_out == three_sum(test)
 
-def stolen_three_sums(nums: list[int]) -> set:
-    # 97.68%, 14.89%
-    sums = set()
-    neg, pos, zero = [], [], []
-    for _ in nums:
-        if _ > 0:
-            pos.append(_)
-        elif _ < 0:
-            neg.append(_)
-        elif _ == 0:
-            zero.append(_)
-    NEG, POS = set(neg), set(pos)
-    if zero:
-        for num in POS:
-            value = num * -1
-            if value in NEG:
-                sums.add((num * -1, 0, num))
-    if len(zero) >= 3:
-        sums.add((0, 0, 0))
-    for x in range(len(pos)):
-        for y in range(x + 1, len(pos)):
-            check = (pos[x] + pos[y]) * -1
-            if check in NEG:
-                sums.add(tuple(sorted((pos[x], pos[y], check))))
-    for x in range(len(neg)):
-        for y in range(x + 1, len(neg)):
-            check = (neg[x] + neg[y]) * -1
-            if check in POS:
-                sums.add(tuple(sorted((neg[x], neg[y], check))))
-    return sums
+test = [0, 1, 1]
+test_out = set()
+assert test_out == three_sum(test)
 
-# Good solution and I need to learn more to stop using simple looping and hit TimeLimits.
+test = [0, 0, 0]
+test_out = {(0, 0, 0)}
+assert test_out == three_sum(test)
