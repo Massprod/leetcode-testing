@@ -34,7 +34,9 @@ def decode_at_index(s: str, k: int) -> str:
     # Multiplied or just increased our string.
     index = len(stack) - 1
     # ! kth letter (1-indexed) !
-    # So, when k == stack[-1], then it's last length we can delete.
+    # So, when k == stack[-1].
+    # On this action we built correct string with k == length.
+    # And we need (0-indexed) => (index -= 1)
     while k:
         k %= stack.pop()
         index -= 1
