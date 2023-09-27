@@ -11,25 +11,25 @@
 
 
 def min_subarray_len(target: int, nums: list[int]) -> int:
-    # working_sol (86.32%, 41.5%) -> (254ms, 29.1mb)  time: O(n) | space: O(1)
-    length: int = len(nums)
-    # unique case with len == 1
-    if length == 1:
+    # working_sol (72.34%, 78.89%) -> (218ms, 29.5mb)  time: O(n) | space: O(1)
+    # Unique case with len == 1.
+    if len(nums) == 1:
         if target <= nums[0]:
             return 1
         return 0
-    # set as 0, to easier return of len(sub) == 0
+    # ! If there is no such subarray, return 0 instead. !
     min_sub: int = 0
     left: int = 0
     right: int = 0
     min_sum: int = 0
-    while right != length:
-        # expand
+    # Standard sliding window.
+    while right != len(nums):
+        # Expand.
         min_sum += nums[right]
-        # shrink
+        # Shrink.
         while min_sum >= target:
-            # because I set as 0, it's necessary check
-            if min_sub == 0:
+            # Because default == 0, it's necessary for 1 option.
+            if not min_sub:
                 min_sub = (right - left) + 1
             else:
                 min_sub = min(min_sub, (right - left) + 1)
@@ -52,32 +52,27 @@ def min_subarray_len(target: int, nums: list[int]) -> int:
 # W.e doing O(n) and extra search for follow_up.
 
 
-test1 = [2, 3, 1, 2, 4, 3]
-test1_target = 7
-test1_out = 2
-print(min_subarray_len(test1_target, test1))
-assert test1_out == min_subarray_len(test1_target, test1)
+test: list[int] = [2, 3, 1, 2, 4, 3]
+test_target: int = 7
+test_out: int = 2
+assert test_out == min_subarray_len(test_target, test)
 
-test2 = [1, 4, 4]
-test2_target = 4
-test2_out = 1
-print(min_subarray_len(test2_target, test2))
-assert test2_out == min_subarray_len(test2_target, test2)
+test = [1, 4, 4]
+test_target = 4
+test_out = 1
+assert test_out == min_subarray_len(test_target, test)
 
-test3 = [1, 1, 1, 1, 1, 1, 1, 1]
-test3_target = 11
-test3_out = 0
-print(min_subarray_len(test3_target, test3))
-assert test3_out == min_subarray_len(test3_target, test3)
+test = [1, 1, 1, 1, 1, 1, 1, 1]
+test_target = 11
+test_out = 0
+assert test_out == min_subarray_len(test_target, test)
 
-test4 = [1]
-test4_target = 1
-test4_out = 1
-print(min_subarray_len(test4_target, test4))
-assert test4_out == min_subarray_len(test4_target, test4)
+test = [1]
+test_target = 1
+test_out = 1
+assert test_out == min_subarray_len(test_target, test)
 
-test5 = [0]
-test5_target = 1
-test5_out = 0
-print(min_subarray_len(test5_target, test5))
-assert test5_out == min_subarray_len(test5_target, test5)
+test = [0]
+test_target = 1
+test_out = 0
+assert test_out == min_subarray_len(test_target, test)
