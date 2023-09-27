@@ -31,7 +31,7 @@ def decode_at_index(s: str, k: int) -> str:
         index += 1
     # len(stack) == number of changes.
     # I.e. every index of stack is index of 's' on which we made some changes.
-    # Multiplied or just increased our string.
+    # Multiplied or just increased our string by 1 symbol.
     index = len(stack) - 1
     # ! kth letter (1-indexed) !
     # So, when k == stack[-1].
@@ -42,6 +42,9 @@ def decode_at_index(s: str, k: int) -> str:
         index -= 1
     # And if we multiplied on this index == action.
     # Then we can just take last symbol added before it.
+    # Because this is the last symbol we added, before just repeating a string.
+    # It will be the same no matter how many times we multiply,
+    #  and placed on last index == k - 1.
     while s[index].isdigit():
         index -= 1
     return s[index]
@@ -53,8 +56,12 @@ def decode_at_index(s: str, k: int) -> str:
 # -------------------
 # Ok we can't just use a string => Memory Limit.
 # Then what do we need to store? Tags: string, stack.
-# We can maintain length of string we're building in a stack, and then find index of character by k.
-# Take modulus of 'k' until we find k == cur_length in stack, then we can take this length index to get correct char.
+# We can maintain length of string we're building in a stack, in which every index is # of action == index of input.
+# After that we can just search for a length == k, which is going to be correct length we need to build.
+# And we're given ! kth letter (1-indexed) ! -> so we need -1 action to get correct index.
+# Extra, if index of action is digit, then we need to take lastly added symbol before it.
+# Because it will be the same 'k - 1' index but repeated (digit)# of times, which doesn't matter.
+# Simply return s[action] as result.
 
 
 test: str = "leet2code3"
