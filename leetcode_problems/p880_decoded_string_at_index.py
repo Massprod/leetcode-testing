@@ -73,4 +73,3 @@ assert test_out == decode_at_index(test, test_k)
 test = ''
 for _ in range(100):
     test += choice([choice(ascii_lowercase), str(randint(2, 9))])
-print(test)
