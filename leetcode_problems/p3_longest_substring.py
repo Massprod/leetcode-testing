@@ -1,48 +1,60 @@
-# Given a string s, find the length of the longest
-# substring without repeating characters
+# Given a string s, find the length of the longest substring without repeating characters
+# --------------------
+# 0 <= s.length <= 5 * 10 ** 4
+# s consists of English letters, digits, symbols and spaces.
+from random import choice
+from string import ascii_letters, digits
 
 
-# A string U is a substring of a string T if there exist two strings P and S such that
-# T = PUS. The empty string is a substring of every string
-# P and S can be empty strings
-#
-
-# from 6700 ms to 640 ms good upgrade I guess. But I don't want to steal, so pathetic 10,7% beats :(
-def lengthOfLongestSubstring(s: str) -> int:
-    speed_test = {}
-    for key, value in enumerate(s):
-        speed_test[key] = value
-    list_len = len(speed_test)
-    if list_len == 0:
-        return 0
-    length = 0
-    for x in range(list_len):
-        symbol = (speed_test[x])
-        if list_len - x == length:
-            break
-        for y in range(x + 1, list_len):
-            if speed_test[y] not in symbol:
-                symbol = symbol + (speed_test[y])
-                if y == list_len - 1 and length <= len(symbol):
-                    length = len(symbol)
-                    break
-            elif speed_test[y] in symbol:
-                if length <= len(symbol):
-                    length = len(symbol)
-                    break
-                break
-    if length == 0:
-        return 1
-    return length
+def longest_sub(s: str) -> int:
+    # working_sol (95.89%, 94.41%) -> (48ms, 16.3mb)  time: O(n) | space: O(n)
+    used: set[str] = set()
+    # Standard sliding window.
+    start: int = 0
+    longest: int = 0
+    cur_sub: int = 0
+    for x in range(len(s)):
+        # Expand.
+        if s[x] not in used:
+            used.add(s[x])
+            cur_sub += 1
+        # Shrink.
+        else:
+            longest = max(longest, cur_sub)
+            # Delete everything until duplicate.
+            while s[start] != s[x]:
+                used.remove(s[start])
+                start += 1
+                cur_sub -= 1
+            # Duplicate is still in cur_sub, but sub starts after it.
+            start += 1
+    # Extra check for last index.
+    longest = max(longest, cur_sub)
+    return longest
 
 
-print(lengthOfLongestSubstring("abcabcbb"))
-print(lengthOfLongestSubstring("bbbbb"))
-print(lengthOfLongestSubstring("pwwkew"))
-print(lengthOfLongestSubstring(" "))
-print(lengthOfLongestSubstring(""))
-print(lengthOfLongestSubstring("aa"))
-print(lengthOfLongestSubstring("aabb"))
-print(lengthOfLongestSubstring("au"))
-print(lengthOfLongestSubstring("aab"))
-print(lengthOfLongestSubstring("dvdf"))
+# Time complexity: O(n) -> traverse of whole input string => O(n) -> standard sliding window, so in worst case
+# n - len of input string^^| we will use every index twice to add and delete it from window => O(2n).
+# Auxiliary space: O(n) -> no duplicates, every symbol of input string will be stored in set(used) => O(n).
+
+
+test: str = "abcabcbb"
+test_out: int = 3
+assert test_out == longest_sub(test)
+
+test = "bbbbb"
+test_out = 1
+assert test_out == longest_sub(test)
+
+test = "pwwkew"
+test_out = 3
+assert test_out == longest_sub(test)
+
+test = ' '
+test_out = 1
+assert test_out == longest_sub(test)
+
+test = ''
+for _ in range(10 ** 4):
+    test += choice([choice(ascii_letters), choice(digits)])
+print(test)
