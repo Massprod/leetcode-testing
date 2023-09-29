@@ -1,74 +1,100 @@
 # Given a string s, return the longest palindromic substring in s.
+# ----------------------
+# 1 <= s.length <= 1000
+# s consist of only digits and English letters
+from random import choice
+from string import ascii_letters, digits
 
-# A string U is a substring of a string T if there exist two strings P and S such that
-# T = PUS. The empty string is a substring of every string
-# P and S can be empty strings
-#
 
 def longest_subpal(s: str) -> str:
-    s_values = {}
-    for key, value in enumerate(s):
-        s_values[key] = str(value)
-    max_len = len(s_values)
-    if max_len == 1:
+    # working_sol (99.18%, 24.61%) -> (80ms, 16.7mb)  time: O(n) | space: O(n)
+    if not s:
+        return ''
+    if len(s) == 1:
         return s
-    elif max_len == 0:
-        return ""
-    back = max_len - 1
-    pal = ""
-    pal_list = {}
-    pal_len = 1
-    for x in range(max_len):
-        symbol = (s_values[x])
-        pal_list[len(symbol)] = symbol
-        if max_len - x <= pal_len:  # skipping all if len exceeds or equal half of max
-            break
-        if symbol not in s[:back]:  # skipping if not in left symbols slice
-            back -= 1
+    # Any 1 symbol can be a palindrome.
+    longest: str = s[0]
+    pal_start_points: list[list[int]] = []
+    # Starting points include ODD|EVEN options.
+    # [0] and [1] can't include ODD, so it's unique check.
+    if s[0] == s[1]:
+        longest = s[0] + s[1]
+    for x in range(2, len(s)):
+        # Even starts from 2 points.
+        if s[x] == s[x - 1]:
+            # Starts are 0-indexed, +1 for correct length.
+            # We can't build more than left|right side.
+            # So, maximum size of palindrome is (left|right side * 2).
+            max_len: int = min(
+                (x - 1 + 1) * 2,  # if left side is lower
+                (len(s) - x + 1) * 2,  # if right side is lower
+            )
+            pal_start_points.append([max_len, x])
+        # Odd start, needs to include middle from the beginning.
+        if s[x] == s[x - 2]:
+            # Same left|right sides, but with +1 for middle element.
+            max_len = min((x - 2 + 1) * 2, (len(s) - x + 1) * 2) + 1
+            pal_start_points.append([max_len, x - 2, x])
+    # Because we're skipping palindrome checks if already visited longer palindrome.
+    # It's good to just sort them in descending and try to use Longest options first.
+    # They might be not palindromes, but at least we can assume it.
+    # And skip lower size checks after.
+    pal_start_points.sort(key=lambda y: y[0], reverse=True)
+    for start in pal_start_points:
+        cur_pal: str = ''
+        # Even.
+        if len(start) == 2:
+            left_l: int = start[1] - 1
+            right_l: int = start[1]
+        # Odd.
+        else:
+            left_l = start[1]
+            right_l = start[2]
+            # Middle element.
+            cur_pal += s[left_l + 1]
+        # Already visited same size or higher.
+        max_len = start[0]
+        if max_len <= len(longest):
             continue
-        for y in range(x + 1, max_len):
-            symbol = symbol + s_values[y]
-            if len(symbol) <= pal_len:  # skipping palindrome check for lesser lengths
-                continue
-            for z in range(len(symbol)):
-                if symbol[z] == symbol[(z * -1) - 1]:
-                    pal = True
-                    continue
-                else:
-                    pal = False
-                    break
-            if pal:
-                pal_list[len(symbol)] = symbol
-                pal_len = max(pal_list)
-    return pal_list[pal_len]
+        # Trying to expand on both sides, while we can.
+        while 0 <= left_l and right_l < len(s) and s[left_l] == s[right_l]:
+            cur_pal = s[left_l] + cur_pal + s[right_l]
+            left_l -= 1
+            right_l += 1
+        # Update longest.
+        if len(cur_pal) > len(longest):
+            longest = cur_pal
+    return longest
 
 
-
-test1 = "babad"
-test2 = "cbbd"
-test3 = "d"
-test4 = "aa"
-test5 = "d d"
-test6 = "12344321"
-test7 = "ac"
-test8 = "boqylncwfahjzvawrojyhqiymirlkfzkhtvmbjnbfjxzewqqqcfnximdnrxtrbafkimcqvuprgrjetrecqkltforcudmbpofcxqdcirnaciggflvsialdjtjnbrayeguklcbdbkouodxbmhgtaonzqftkebopghypjzfyqutytbcfejhddcrinopynrprohpbllxvhitazsjeyymkqkwuzfenhphqfzlnhenldbigzmriikqkgzvszztmvylzhbfjoksyvfdkvshjzdleeylqwsapapduxrfbwskpnhvmagkolzlhakvfbvcewvdihqceecqhidvwecvbfvkahlzlokgamvhnpkswbfrxudpapaswqlyeeldzjhsvkdfvyskojfbhzlyvmtzzsvzgkqkiirmzgibdlnehnlzfqhphnefzuwkqkmyyejszatihvxllbphorprnyponircddhjefcbtytuqyfzjpyhgpobektfqznoatghmbxdouokbdbclkugeyarbnjtjdlaisvlfggicanricdqxcfopbmducroftlkqcertejrgrpuvqcmikfabrtxrndmixnfcqqqwezxjfbnjbmvthkzfklrimyiqhyjorwavzjhafwcnlyqob"
-test9 = "lphntrsqudccteewsdmpjmgmfnxegawjclzobpnxdrvxeygafiwyqsvsecictqkmiqvrdjajfngvlhdezdpqpzjjzbhoyggrbkuzeocrpzqishvfairdvvabopyubfisxbrgnlughbrzunitwowvnsqhdtnkotitgxwzjhbgltksorygpdberdgzgvogrvwluhixfbrfhliedjylxuspjpitwlhdkneonreqrueqphirmgxtqumllqropaefddplspkrtkbmuvwkyryworojlvwzdlacuoqzokrmcgmwkopsbqjjkaoqjqbrderwzmhbhfgwvrjakyfeqcbtvlcgbsxkngymxyievihiskdmmppmmdksihiveiyxmygnkxsbgclvtbcqefykajrvwgfhbhmzwredrbqjqoakjjqbspokwmgcmrkozqoucaldzwvljorowyrykwvumbktrkpslpddfeaporqllmuqtxgmrihpqeurqernoenkdhlwtipjpsuxlyjdeilhfrbfxihulwvrgovgzgdrebdpgyrosktlgbhjzwxgtitokntdhqsnvwowtinuzrbhgulngrbxsifbuypobavvdriafvhsiqzprcoezukbrggyohbzjjzpqpdzedhlvgnfjajdrvqimkqtcicesvsqywifagyexvrdxnpbozlcjwagexnfmgmjpmdsweetccduqsrtnhpl"
-test10 = "jcwwnkwiajicysmdueefqjnrokunucidhgkswbgjkkrujkxkxeanrpjvpliomxztalhmvcldnqmkslkprhgtwlnsnygbzdvtdbsdzsdjggzgmhogknpfhtgjmclrkgfqdbiagwrqqcnagosnqrnpapxfrtrhzlyhszdtgkqggmewqmwugrbufiwfvtjhczqgcwpcyjioeacggiwyinpkyxrpxhglrtojgjmmswxnvirfsrbhmpqgjyyagjqfwkqkjkumywvgfutmiwihwnnhbfxcijaoiyxbdnrckexqfhsmmxflaneccyaoqoxfbaylcvvpfafsikebzcdufvhluldguwsmrtjaljpcjestranfrvgvytozxpcvnwquhnsxlmzkehwopgxvifajmrlwqiqylgxibnypxwpkggxevyfoxywfsfpjbzfxxysgxgwxrzkwdqlkrpajlltzqfqshdokibakkhydizsgwbygqulljqmtxkwepitsukwjlrrmsjptwabtlqytprkkuxtqdmptctkfabxsohrfrqvrbjfbppfkpthosveoppiywkkuoasefviegormlqkqlbhnhblkmglxcbszblfipsyumcrjrkrnzplkveznbtdbtlcptgswhiqsjugqrvujkzuwvoxbjremyxqqzxkgerhgtidsefyemtmstsznvgohexdgetqbhrxaomzsamapxhjibfvtbquhowyrwyxthpwvmfyyqsyibemnfbwkddtyoijzwfxhossylygxmnznpegtgvlrsreepkrcdgbujkghrgtsxwlvxrgrqxnvgqkppbkrxjupjfjcsfzepdemaulfetn"
-# print(longest_subpal(test1))
-# print(longest_subpal(test2))
-# print(longest_subpal(test3))
-# print(longest_subpal(""))
-# print(longest_subpal(test4))
-# print(longest_subpal(test5))
-# print(longest_subpal(test6))
-# print(longest_subpal(test7))
-# print(longest_subpal(test8))
-# print(longest_subpal(test9))
-print(longest_subpal(test10))
+# Time complexity: O(n) -> traverse of whole input string to get starting points, once => O(n) ->
+# n - len of input string^^| -> worst case? == 'a' * 1000 -> we can start palindrome from any index ->
+#                            -> we will start from  middle [499] and start building from it ->
+#                            -> visit every index, and then we will check every other start point and skip it ->
+#                            -> so it should be close to linear, because it's not really the worst case,
+#                            after I changed sorting and now using the longest size option, we will skip other checks.
+#                            Dunno, but it's improved from 300ms to 80ms. Sticking to a linear O(n).
+#                            We start from longest and then skip any lower options we find.
+#                            In case with 'a' * 1000, it's just 2 traverses:
+#                             1 find start_points,
+#                             2 find longest from middle.
+# Auxiliary space: O(n) -> worst case == 'a' * 1000 -> we will add every index as starting point and
+#                          most of them will be added twice for ODD option, extra max_len for everyone => O(2n).
 
 
-# fails:
-#  - didn't count that palindrome is SYMBOL_ITSELF if len more than 1
-#  - test8 failed but on SECOND try it works fine. Timelimit but no always. Hmmmm??
-#  - test9 Timelimit
-#  - test10 again works fine but TimeLimit overall
+test: str = "babad"
+test_out: str = 'aba'
+assert test_out == longest_subpal(test)
+
+test = "cbbd"
+test_out = 'bb'
+assert test_out == longest_subpal(test)
+
+test = "bb"
+test_out = 'bb'
+assert test_out == longest_subpal(test)
+
+test = ''
+for _ in range(1000):
+    test += choice([choice(ascii_letters), choice(digits)])
+print(test)
