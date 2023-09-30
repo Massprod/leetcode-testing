@@ -11,57 +11,40 @@
 
 
 def word_pattern(pattern: str, s: str) -> bool:
-    # working_sol (79.34%, 69.6%) -> (39ms, 16.3mb)  time: O(n + m) | space: O(n + m)
-    assigned_words: dict[str, str] = {}
-    index: int = 0
-    for _ in pattern:
-        word: str = ""
-        # s doesn't have all counterparts in pattern
-        if index == len(s):
-            return False
-        elif _ not in assigned_words:
-            for x in range(index, len(s)):
-                if s[x] == " " or x == len(s) - 1:
-                    if x == len(s) - 1:
-                        word += s[x]
-                    index += 1
-                    # if reassign happens -> insta False
-                    if word in assigned_words.values() and _ not in assigned_words:
-                        return False
-                    assigned_words[_] = word
-                    break
-                word += s[x]
-                index += 1
-        elif _ in assigned_words:
-            for x in range(index, len(s)):
-                if s[x] == " " or x == len(s) - 1:
-                    if x == len(s) - 1:
-                        word += s[x]
-                    index += 1
-                    # if reassign happens -> insta False
-                    if word in assigned_words.values() and _ not in assigned_words:
-                        return False
-                    if not assigned_words[_] == word:
-                        return False
-                    break
-                word += s[x]
-                index += 1
-    # pattern doesn't have all words from s
-    if index < len(s):
+    # working_sol (89.5%, 88.96%) -> (32ms, 16.2mb)  time: O(min(n, m)) | space: O(n + m)
+    # ! s does not contain any leading or trailing spaces.
+    #   All the words in s are separated by a single space. !
+    all_words: list[str] = s.split(' ')
+    # Every symbol in pattern should correspond to 1 word.
+    if len(pattern) != len(all_words):
         return False
+    # (symbol: word) <- assign every symbol in pattern to some word.
+    used_syms: dict[str, str] = {}
+    # (word) <- every assigned word, we can't reassign them.
+    used_words: set[str] = set()
+    for x in range(len(all_words)):
+        # Assigned.
+        if pattern[x] in used_syms:
+            # But not to this word.
+            if used_syms[pattern[x]] != all_words[x]:
+                return False
+        # Not assigned.
+        else:
+            # But word is already assigned.
+            if all_words[x] in used_words:
+                return False
+            used_syms[pattern[x]] = all_words[x]
+            used_words.add(all_words[x])
     return True
 
-# Time complexity: O(n + m) -> traversing whole pattern once => O(n) ->
-# n - len of input_pattern^^| -> but for every symbol in a pattern we're starting word_search in s,
-# m - len of input_s^^|       in the worst case, it can be a pattern with 1 symbol and s with only 1 word ->
-#                             -> so we're traversing pattern as O(n) and extra checking all indexes in s => O(m) ->
-#                             -> overall we're checking whole pattern and whole s => O(n + m).
-#                  Θ((log n) + (log m)) -> on the median we're breaking at some part of pattern ->
-#                                       -> or we're checking whole pattern and only part of s. => O((log n) + (log m)).
+
+# Time complexity: O(min(n, m)) -> split() input string 's' => O(m) -> traverse of created array with size == 'pattern'.
+# n - len of input string 'pattern'^^| Because we break if len(s) != len(pattern), we can say: O(min(n, m)).
+# m - len of input string 's'^^|       We either break after split() or we will check n indexes.
 # Auxiliary space: O(n + m) -> in the worst case, we're storing every symbol in pattern and
-#                              their counterpart(word) from s, as key=value pairs => O(n + m).
-#                           ! there's extra spaces between words, so it's (m - spaces_num)^^,
-#                             but they're constant -> because every word is separated by other with 1 space. !
+#                              their counterpart(word) from s, as key=value pairs => O(n + m) ->
+#                              -> extra list with all words from 's' => O(m) ->
+#                              -> extra set with all words from 's' => O(m) => O(n + 3m).
 # --------------------
 # Failed first commit, because missed part with reassigning same word for a multiple times.
 # --------------------
@@ -75,47 +58,41 @@ def word_pattern(pattern: str, s: str) -> bool:
 #   2 -> no element of X may be paired with more than one element of Y,
 #   3 -> each element of Y must be paired with at least one element of X, and
 #   4 -> no element of Y may be paired with more than one element of X.
-# Guess ordering isn't problem and I need just to check evey symbol in pattern
-# corresponds with exactly one string in s.
+# Guess ordering isn't problem and I need just to check every symbol in pattern
+#  corresponds with exactly one string in s.
 # !
 # Here follow means a full match. !
 # Or order should be the same?
 # W.e let's read with correct order for now.
 
 
-test1 = "abba"
-test1_s = "dog cat cat dog"
-test1_out = True
-print(word_pattern(test1, test1_s))
-assert test1_out == word_pattern(test1, test1_s)
+test: str = "abba"
+test_s: str = "dog cat cat dog"
+test_out: bool = True
+assert test_out == word_pattern(test, test_s)
 
-test2 = "abba"
-test2_s = "dog cat cat fish"
-test2_out = False
-print(word_pattern(test2, test2_s))
-assert test2_out == word_pattern(test2, test2_s)
+test = "abba"
+test_s = "dog cat cat fish"
+test_out = False
+assert test_out == word_pattern(test, test_s)
 
-test3 = "aaaa"
-test3_s = "dog cat cat dog"
-test3_out = False
-print(word_pattern(test3, test3_s))
-assert test3_out == word_pattern(test3, test3_s)
+test = "aaaa"
+test_s = "dog cat cat dog"
+test_out = False
+assert test_out == word_pattern(test, test_s)
 
-test4 = "abb"
-test4_s = "dog cat cat dog"
-test4_out = False
-print(word_pattern(test4, test4_s))
-assert test4_out == word_pattern(test4, test4_s)
+test = "abb"
+test_s = "dog cat cat dog"
+test_out = False
+assert test_out == word_pattern(test, test_s)
 
-test5 = "baba"
-test5_s = "dog cat cat dog"
-test5_out = False
-print(word_pattern(test5, test5_s))
-assert test5_out == word_pattern(test5, test5_s)
+test = "baba"
+test_s = "dog cat cat dog"
+test_out = False
+assert test_out == word_pattern(test, test_s)
 
-# test6 - failed -> missed part with reassigning same word for a multiple times.
-test6 = "abba"
-test6_s = "dog dog dog dog"
-test6_out = False
-print(word_pattern(test6, test6_s))
-assert test6_out == word_pattern(test6, test6_s)
+# test - Failed -> missed part with reassigning same word for a multiple times.
+test = "abba"
+test_s = "dog dog dog dog"
+test_out = False
+assert test_out == word_pattern(test, test_s)
