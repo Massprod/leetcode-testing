@@ -1,56 +1,58 @@
-# Given an array of strings strs, group the anagrams together. You can return the answer in any order.
-#
+# Given an array of strings strs, group the anagrams together.
+# You can return the answer in any order.
 # An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase,
-# typically using all the original letters exactly once.
+#  typically using all the original letters exactly once.
+# ---------------------
+# 1 <= strs.length <= 10 ** 4
+# 0 <= strs[i].length <= 100
+# strs[i] consists of lowercase English letters.
+from collections import Counter
+
 
 def group_anagrams(strs: list[str]) -> list[list[str]]:
-    # working_sol (21.46%, 81.97%) -> (118ms, 17.2mb)  time:
-    ords = {}
-    anagrams = []
+    # working_sol (83.26%, 91.58%) -> (93ms, 19.4mb)  time: O(n * (m * log m)) | space: O(m + n)
+    # (sorted: list(orig * occurs))
+    uniques: dict[str, list[str]] = {}
     for word in strs:
-        summ = ""
-        check = "".join(sorted(word))
-        for letter in check:
-            summ += str(ord(letter))
-        if summ in ords.keys():
-            ords[summ].append(word)
+        s_word: str = ''.join(sorted(word))
+        if s_word in uniques:
+            uniques[s_word].append(word)
         else:
-            ords[summ] = []
-            ords[summ].append(word)
-    for key, value in ords.items():
-        anagrams.append(value)
-    return anagrams
-
-# Time complexity:  O(n*(m*(log m))) -> for every element with length - m, we're sorting this element <- log m
-#                                        and looping whole m to create summ_str <- m | m*(log m) <- in the end.
-# Space complexity: O(n) -> dictionary with lists of the same size as input array, and anagrams array with lists
-#                           sum of these lists is equal to input. 1n + 1n = 2n -> O(n).
-
-# Main reason why I wanted to use ascii is to skip looping extra time to check current str exists in dict.
-# Sums can be equal, so it doesn't work, and now we're extra looping word to sort it.
-# Either I drop ascii idea or leaving it like this, cuz we cant check ascii in INT,
-# and we need to sort it for a str filter. Because extra sorting is slow.
-
-# Let's just try to count ascii of whole word and filter with dict.
-# What I can be missing? What about upper cases?
-# Ohh -> ! strs[i] consists of lowercase English letters. !
-# If there were uppercase's it could be a fail, cuz 'A' and 'a' different ascii but same letter for the anagram.
+            uniques[s_word] = [word]
+    return list(uniques.values())
 
 
-test1 = ["eat", "tea", "tan", "ate", "nat", "bat"]
-test1_out = [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]]
-print(group_anagrams(test1))
+# Time complexity: O(n * (m * log m)) -> traverse of whole array with sorting of every word inside of it ->
+# n - len of input array^^|           -> worst case == every word is max sized => O(n * (m * log m))
+# m - max len of words^^|
+# Auxiliary space: O(m + n) -> worst case == every word is unique and max sized -> always sort and use of string
+#                              with size == 'm' -> for every word unique key with list(key) => O(m + n).
 
-test2 = [""]
-test2_out = [[""]]
-print(group_anagrams(test2))
 
-test3 = ["a"]
-test3_out = [["a"]]
-print(group_anagrams(test3))
+test: list[str] = ["eat", "tea", "tan", "ate", "nat", "bat"]
+test_out: list[list[str]] = [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]]
+test_t: list[list[str]] = group_anagrams(test)
+for y in range(len(test_t)):
+    test_t[y] = sorted(test_t[y])
+assert sorted(test_out) == sorted(test_t)
 
-# test4 - failed -> different ascii can summ up to same value. I wanted to do it without extra checks,
-#                   but now we need to extra check keys in dict.
-test4 = ["cab", "tin", "pew", "duh", "may", "ill", "buy", "bar", "max", "doc"]
-test4_out = [["max"], ["buy"], ["doc"], ["may"], ["ill"], ["duh"], ["tin"], ["bar"], ["pew"], ["cab"]]
-print(group_anagrams(test4))
+test = [""]
+test_out = [[""]]
+test_t = group_anagrams(test)
+for y in range(len(test_t)):
+    test_t[y] = sorted(test_t[y])
+assert sorted(test_out) == sorted(test_t)
+
+test = ["a"]
+test_out = [["a"]]
+test_t = group_anagrams(test)
+for y in range(len(test_t)):
+    test_t[y] = sorted(test_t[y])
+assert sorted(test_out) == sorted(test_t)
+
+test = ["cab", "tin", "pew", "duh", "may", "ill", "buy", "bar", "max", "doc"]
+test_out = [["max"], ["buy"], ["doc"], ["may"], ["ill"], ["duh"], ["tin"], ["bar"], ["pew"], ["cab"]]
+test_t = group_anagrams(test)
+for y in range(len(test_t)):
+    test_t[y] = sorted(test_t[y])
+assert sorted(test_out) == sorted(test_t)
