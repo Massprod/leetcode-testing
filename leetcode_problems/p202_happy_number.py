@@ -10,42 +10,28 @@
 
 
 def is_happy(n: int) -> bool:
-    # working_sol (80.75%, 49.81%) -> (39ms, 16.3mb)  time: O(n) | space: O(m)
-    to_power: list[int] = []
+    # working_sol (70.84%, 85.31%) -> (40ms, 16.1mb)  time: O(n) | space: O(n)
     while True:
-        while True:
-            part: int = n % 10
-            n = n // 10
-            to_power.append(part)
-            if n < 10:
-                to_power.append(n)
-                break
-            if n == 10:
-                to_power.append(1)
-                break
+        check: str = str(n)
         n = 0
-        while to_power:
-            n += to_power.pop() ** 2
-        if 1 < n < 10 and n != 7:
-            return False
+        # Replace 'n' with summ of the squares.
+        for value in check:
+            n += int(value) ** 2
+        # There's 2 unique cases when it's not a loop.
         if n == 1 or n == 7:
             return True
+        # Always ends in a loop.
+        elif 1 < n < 10:
+            return False
 
 
 # Time complexity: O(n) -> no idea how to calculate all combinations we will get until hit limits,
-#                          but obviously if our n is getting higher than we're checking more and more options ->
+# n - input value 'n'^^|   but obviously if our n is getting higher than we're checking more and more options ->
 #                          -> like, for n == 1 it's insta return, but for n == 8 it's 5+ checks etc. ->
 #                          -> leaving this as O(n), because it's not growing exponentially for sure ->
 #                          -> we can tell that based on runtime with maximum_constraint(2 ** 31 - 1) and 1
 #                          almost the same runtime.
-# Auxiliary space: O(m) -> creating extra list to store newly_created sequence of INTs from n ->
-#                          -> same problem, it's always different size, but I guess it's limited to 10 ->
-#                          -> so our list will be a size of all digits in (2 ** 31 - 1) == 10,
-#                          at least it's True for testing this with (2 ** 31 - 1) as input_n ->
-#                          -> extra to this, list is always cleared after we used every value in it,
-#                          we can't call it constant space, because we're still using this list but his size is
-#                          what I can't calculate correctly for all cases ->
-#                          -> leaving this as O(m), where m is a length of currently deconstructed n.
+# Auxiliary space: O(n) -> extra string with all digits, depends on input 'n' => O(n).
 # -----------------------
 # Lmao, this task is actually about checking if there's cycle or not with Floyd method.
 # No wonder I didn't understand why there's extra 7 to check :) But my intuitively made solution still works.
@@ -65,22 +51,18 @@ def is_happy(n: int) -> bool:
 # or fail TimeLimit first. Prefer to fail first, maybe im wrong. But don't see any bit_methods I know.
 
 
-test1 = 19
-test1_out = True
-print(is_happy(test1))
-assert test1_out == is_happy(test1)
+test: int = 19
+test_out: bool = True
+assert test_out == is_happy(test)
 
-test2 = 2
-test2_out = False
-print(is_happy(test2))
-assert test2_out == is_happy(test2)
+test = 2
+test_out = False
+assert test_out == is_happy(test)
 
-test3 = 2 ** 31 - 1
-test3_out = False
-print(is_happy(test3))
-assert test3_out == is_happy(test3)
+test = 2 ** 31 - 1
+test_out = False
+assert test_out == is_happy(test)
 
-test4 = 1111111
-test4_out = True
-print(is_happy(test4))
-assert test4_out == is_happy(test4)
+test = 1111111
+test_out = True
+assert test_out == is_happy(test)
