@@ -1,53 +1,56 @@
 # Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals,
-# and return an array of the non-overlapping intervals that cover all the intervals in the input.
+#  and return an array of the non-overlapping intervals that cover all the intervals in the input.
+# --------------------
+# 1 <= intervals.length <= 10 ** 4
+# intervals[i].length == 2
+# 0 <= starti <= endi <= 10 ** 4
+
 
 def merge(intervals: list[list[int]]) -> list[list[int]]:
-    # working_sol (7.90%, 17.18%) -> (174ms, 20.4mb)  time: O(n * log n) | space: O(1)
+    # working_sol (13.81%, 97.95%) -> (148ms, 20.7mb)  time: O(n * log n) | space: O(1)
     intervals.sort()
-
-    def can_merge(to_merge: list[list[int]], start_index: int) -> None:
-        start: int = to_merge[start_index][0]
-        end: int = to_merge[start_index][1]
-        y: int = start_index + 1
-        while True:
-            check_start: int = to_merge[y][0]
-            check_end: int = to_merge[y][1]
-            if start <= check_start <= end <= check_end:
-                start = min(start, check_start)
-                end = max(end, check_end)
-                to_merge.pop(y)
-                to_merge[start_index] = [start, end]
-                continue
-            elif check_start <= start <= check_end <= end:
-                start = min(start, check_start)
-                end = max(end, check_end)
-                to_merge.pop(y)
-                to_merge[start_index] = [start, end]
-                continue
-            elif start <= check_start <= check_end <= end:
-                start = min(start, check_start)
-                end = max(end, check_end)
-                to_merge.pop(y)
-                to_merge[start_index] = [start, end]
-                continue
-            elif check_start <= start <= end <= check_end:
-                start = min(start, check_start)
-                end = max(end, check_end)
-                to_merge.pop(y)
-                to_merge[start_index] = [start, end]
-                continue
-            return
+    # Inplace.
     for x in range(len(intervals)):
         try:
-            can_merge(intervals, x)
+            # Starting values of interval.
+            start: int = intervals[x][0]
+            end: int = intervals[x][1]
+            y: int = x + 1
+            # Combine it with all intervals we can.
+            while True:
+                check_start: int = intervals[y][0]
+                check_end: int = intervals[y][1]
+                # New starts inside old.
+                if start <= check_start <= end <= check_end:
+                    end = check_end
+                    intervals.pop(y)
+                    intervals[x] = [start, end]
+                # Old start inside new.
+                elif check_start <= start <= check_end <= end:
+                    start = check_start
+                    intervals.pop(y)
+                    intervals[x] = [start, end]
+                # New fully inside old.
+                elif start <= check_start <= check_end <= end:
+                    intervals.pop(y)
+                    intervals[x] = [start, end]
+                # Old fully inside new.
+                elif check_start <= start <= end <= check_end:
+                    start = check_start
+                    end = check_end
+                    intervals.pop(y)
+                    intervals[x] = [start, end]
+                else:
+                    break
         except IndexError:
             break
     return intervals
 
-# Time complexity O(n * log n) -> sorting -> (n * log n) -> and only looping ONCE through whole input O(n),
-#                                 don't repeat any checks and single left_to_right path.
-# Space complexity O(1) -> only constant's and changing input array inplace.
 
+# Time complexity O(n * log n) -> sorting -> (n * log n) -> and only looping ONCE through whole input O(n),
+# n - len of input array^^|       don't repeat any checks and single left_to_right path.
+# Space complexity O(1) -> only constant's and changing input array inplace => O(1).
+# --------------------
 # Committed solution without additional function, cuz we can put everything inside for_loop.
 # But there's no speed or memory win here, so leaving it like this is fine.
 # ----------------------------
@@ -62,58 +65,51 @@ def merge(intervals: list[list[int]]) -> list[list[int]]:
 #            and change our start, end on this value.
 
 
-test1 = [[1, 3], [2, 6], [8, 10], [15, 18]]
-test1_out = [[1, 6], [8, 10], [15, 18]]
-test = merge(test1)
-assert len(test) == len(test1_out)
-for _ in test:
-    assert _ in test1_out
-print(merge(test1))
+test: list[list[int]] = [[1, 3], [2, 6], [8, 10], [15, 18]]
+test_out: list[list[int]] = [[1, 6], [8, 10], [15, 18]]
+test_t: list[list[int]] = merge(test)
+assert len(test_t) == len(test_out)
+for _ in test_out:
+    assert _ in test_t
 
-test2 = [[1, 4], [4, 5]]
-test2_out = [[1, 5]]
-test = merge(test2)
-assert len(test) == len(test2_out)
-for _ in test:
-    assert _ in test2_out
-print(merge(test2))
+test = [[1, 4], [4, 5]]
+test_out = [[1, 5]]
+test_t = merge(test)
+assert len(test_t) == len(test_out)
+for _ in test_out:
+    assert _ in test_t
 
-test3 = [[1, 5], [4, 9], [9, 18], [5, 6], [2, 3], [4, 4], [0, 0]]
-test3_out = [[1, 18], [0, 0]]
-test = merge(test3)
-assert len(test) == len(test3_out)
-for _ in test:
-    assert _ in test3_out
-print(merge(test3))
+test = [[1, 5], [4, 9], [9, 18], [5, 6], [2, 3], [4, 4], [0, 0]]
+test_out = [[1, 18], [0, 0]]
+test_t = merge(test)
+assert len(test_t) == len(test_out)
+for _ in test_out:
+    assert _ in test_t
 
-test4 = [[0, 0], [0, 5], [4, 9], [4, 4], [100, 100], [5, 100]]
-test4_out = [[0, 100]]
-test = merge(test4)
-assert len(test) == len(test4_out)
-for _ in test:
-    assert _ in test4_out
-print(merge(test4))
+test = [[0, 0], [0, 5], [4, 9], [4, 4], [100, 100], [5, 100]]
+test_out = [[0, 100]]
+test_t = merge(test)
+assert len(test_t) == len(test_out)
+for _ in test_out:
+    assert _ in test_t
 
-test5 = [[1, 4], [0, 5]]
-test5_out = [[0, 5]]
-test = merge(test5)
-assert len(test) == len(test5_out)
-for _ in test:
-    assert _ in test5_out
-print(merge(test5))
+test = [[1, 4], [0, 5]]
+test_out = [[0, 5]]
+test_t = merge(test)
+assert len(test_t) == len(test_out)
+for _ in test_out:
+    assert _ in test_t
 
-test6 = [[0, 0], [1, 2], [5, 5], [2, 4], [3, 3], [5, 6], [5, 6], [4, 6], [0, 0], [1, 2], [0, 2], [4, 5]]
-test6_out = [[0, 6]]
-test = merge(test6)
-assert len(test) == len(test6_out)
-for _ in test:
-    assert _ in test6_out
-print(merge(test6))
+test = [[0, 0], [1, 2], [5, 5], [2, 4], [3, 3], [5, 6], [5, 6], [4, 6], [0, 0], [1, 2], [0, 2], [4, 5]]
+test_out = [[0, 6]]
+test_t = merge(test)
+assert len(test_t) == len(test_out)
+for _ in test_out:
+    assert _ in test_t
 
-test7 = [[2, 3], [4, 5], [6, 7], [8, 9], [1, 10]]
-test7_out = [[1, 10]]
-test = merge(test7)
-assert len(test) == len(test7_out)
-for _ in test:
-    assert _ in test7_out
-print(merge(test7))
+test = [[2, 3], [4, 5], [6, 7], [8, 9], [1, 10]]
+test_out = [[1, 10]]
+test_t = merge(test)
+assert len(test_t) == len(test_out)
+for _ in test_out:
+    assert _ in test_t
