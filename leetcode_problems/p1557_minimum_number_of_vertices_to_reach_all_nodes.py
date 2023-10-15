@@ -23,6 +23,7 @@ def find_smallest_set_of_vert(n: int, edges: list[list[int]]) -> list[int]:
             nodes.append(node)
     return nodes
 
+
 # Time complexity: O(n + m) -> traversing whole input array 'edges' to get all Nodes which gets pointed => O(m) ->
 # m - len of input array 'edges'^^| -> standard loop from 0 -> n, to get Nodes without a pointer => O(n).
 # n - input value 'n'^^|
