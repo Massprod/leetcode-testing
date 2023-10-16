@@ -6,7 +6,7 @@
 
 
 def get_row(rowIndex: int) -> list[int]:
-    # working_sol (68.36%, 82.18%) -> (37ms, 16.2mb)  time: O(n * k) | space: O(n + 1)
+    # working_sol (99.32%, 82.18%) -> (26ms, 16.2mb)  time: O(n) | space: O(n)
     if rowIndex == 0:
         return [1]
     if rowIndex == 1:
@@ -23,11 +23,13 @@ def get_row(rowIndex: int) -> list[int]:
     return row
 
 
-# Time complexity: O(n * k) -> always creating a 'row' with (k + 1) elements with loop, where k == cur_row ->
-# n - input value 'rowIndex'^^| -> every row elements in pascal_triangle == (row_index + 1) => O(n * k).
-# k - currently existing row we increment^^|
-# Auxiliary space: O(n + 1) -> using only 1 array to calculate all rows for follow up and maximum elements on the row
-#                              is always equal to (row_index + 1) => O(n + 1).
+# Time complexity: O(n) -> always creating a 'row' with (k + 1) elements with loop, where k == cur_row ->
+# n - input value 'rowIndex'^^| -> every row elements in pascal_triangle == (row_index + 1) => O(n).
+#                               Assume we can call looping for getting next row as constant_time.
+#                               Because we're always creating the same rows, no matter what input value is.
+#                               Only number of these rows will change, elements are always the same == constant.
+# Auxiliary space: O(n) -> using only 1 array to calculate all rows for follow up and maximum elements on the row
+#                          is always equal to (row_index + 1) => O(n + 1).
 
 
 test: int = 3
