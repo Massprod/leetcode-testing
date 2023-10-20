@@ -1,110 +1,93 @@
 # Given the head of a linked list, rotate the list to the right by k places.
-#   -100 <= Node.val <= 100
-#   0 <= k <= 2 * 109
-#   The number of nodes in the list is in the range [0, 500].
+# -----------------
+# -100 <= Node.val <= 100
+# 0 <= k <= 2 * 10 ** 9
+# The number of nodes in the list is in the range [0, 500].
+
+
 class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
+    """
+    Create single Node for a linked list.
+    """
+
+    def __init__(self, x: int = 0, next: 'ListNode' = None):
+        """
+        :param x: value of the Node.
+        :param next: Node to which it points.
+        """
+        self.val = x
         self.next = next
 
     def __str__(self):
         return f"{self.val} -> {self.next}"
 
 
-def create_linked(to_link: list[int]) -> ListNode:
-    temp = linked = ListNode(val=to_link[0])
-    for _ in to_link[1:]:
-        new_node = ListNode(val=_)
-        temp.next = new_node
-        temp = new_node
-    return linked
+def create_linked(to_link: list[int]) -> ListNode | None:
+    """
+    Create linked list.
+
+    :param to_link: values to put into linked list Nodes.
+    """
+    if not to_link:
+        return None
+    tempo = link = ListNode()
+    for index in range(len(to_link)):
+        tempo.val = to_link[index]
+        if index != (len(to_link) - 1):
+            tempo.next = ListNode()
+            tempo = tempo.next
+    return link
+
+
+def t_linked(list1: ListNode | None, list2: ListNode | None) -> None:
+    """
+    Test two linked lists to have same values.
+    :param list1: first linked list to test.
+    :param list2: second linked list to test.
+    :return:
+    """
+    if not list1 or not list2:
+        assert list1 == list2
+    while list1 and list2:
+        assert list1.val == list2.val
+        list1 = list1.next
+        list2 = list2.next
+    assert list1 == list2
 
 
 def rotate_right(head: ListNode, k: int) -> ListNode:
-    # working_sol (22.40%, 6.87%) -> (48ms, 16.4mb)  time: O(n) | space: O(n)
+    # working_sol (76.62%, 88.80%) -> (40ms, 16.2mb)  time: O(n) | space: O(n)
+    if not head:
+        return head
     if k == 0:
         return head
-    values: list[int] = []
-    tempo = head
-    while tempo:
-        values.append(tempo.val)
-        tempo = tempo.next
-    if len(values) == 0:
-        return head
-    for _ in range(k % len(values)):
-        to_rotate = values[-1]
-        values.pop()
-        values.insert(0, to_rotate)
-    tempo = rotated = ListNode(val=values[0])
-    for _ in values[1:]:
-        new_node = ListNode(val=_)
-        tempo.next = new_node
-        tempo = new_node
-    return rotated
+    nodes: list[ListNode] = []
+    while head:
+        nodes.append(head)
+        head = head.next
+    # We only care about remainder, full rotations is irrelevant.
+    # (k % len(nodes)) == what's left.
+    for _ in range(k % len(nodes)):
+        nodes = [nodes.pop()] + nodes
+    # Reassign in the new order.
+    for x in range(len(nodes) - 1):
+        nodes[x].next = nodes[x + 1]
+    nodes[-1].next = None
+    return nodes[0]
 
 
-# Time complexity: O(n) -> creating list, while looping once through input_linked O(n) ->
-#                          -> making rotated version of given input values, depends on input O(n) ->
-#                          -> creating single_linked list of rotated values O(n).
-# Space complexity: O(n) -> extra list of input_size O(n) -> extra linked_list of input_size O(n).
+# Time complexity: O(n) -> traversing whole input linked list once to get all nodes => O(n) ->
+# n - nodes of input linked list^^|-> worst case == rotate by (n - 1) -> rebuild array for (n - 1) times => O(n - 1) ->
+#                                  -> reassigning them in the new order => O(n).
+# Auxiliary space: O(n) -> all Node links stored in 'nodes' => O(n).
 
 
-# Well I considered empty linked_list and k == 0 cases, don't see any others for now.
-# --------------------------
-# Ok. First of all there's no mentioning of changing it in place, and we're returning -> ListNode.
-# So, basically we can just take all values and switch [-1] to [0], k - times.
-# Don't know if it is even possible to do this inplace, try this ^^ first.
+test: ListNode = create_linked([1, 2, 3, 4, 5])
+test_k: int = 2
+test_out: ListNode = create_linked([4, 5, 1, 2, 3])
+t_linked(test_out, rotate_right(test, test_k))
 
-
-test1 = [1, 2, 3, 4, 5]
-test1_k = 2
-test1_out = [4, 5, 1, 2, 3]
-test1_linked = create_linked(test1)
-test = rotate_right(test1_linked, test1_k)
-for value in test1_out:
-    assert value == test.val
-    test = test.next
-del test  # deleting declared temporarily value of node, cuz there's warning for unused declaration.
-
-test2 = [0, 1, 2]
-test2_k = 4
-test2_out = [2, 0, 1]
-test2_linked = create_linked(test2)
-test = rotate_right(test2_linked, test2_k)
-for value in test2_out:
-    assert value == test.val
-    test = test.next
-del test
-
-test3 = [1, 2, 3]
-test3_k = 0
-test3_out = [1, 2, 3]
-test3_linked = create_linked(test3)
-test = rotate_right(test3_linked, test3_k)
-for value in test3_out:
-    assert value == test.val
-    test = test.next
-del test
-
-test4 = []
-test4_k = 3
-test4_out = []
-test = rotate_right(test4, test4_k)
-for value in test4_out:
-    assert value == test.val
-    test = test.next
-del test
-
-# test5 - failed -> time_limit -> every time we rotate full_circle there's number of times for it.
-#                                 Guess I need to find some remainder after this full_rotations.
-#                                 ! test5_k % len(test5)
-#                                   ^^ Yep worked for this one, let's fail again :) !
-test5 = [1, 2, 3]
-test5_k = 2000000000
-test5_out = [2, 3, 1]
-test5_linked = create_linked(test5)
-test = rotate_right(test5_linked, test5_k)
-for value in test5_out:
-    assert value == test.val
-    test = test.next
-del test
+test = create_linked([0, 1, 2])
+test_k = 4
+test_out = create_linked([2, 0, 1])
+t_linked(test_out, rotate_right(test, test_k))
