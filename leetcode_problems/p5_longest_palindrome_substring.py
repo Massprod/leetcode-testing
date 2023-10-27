@@ -41,6 +41,11 @@ def longest_subpal(s: str) -> str:
     # And skip lower size checks after.
     pal_start_points.sort(key=lambda y: y[0], reverse=True)
     for start in pal_start_points:
+        # Already visited same size or higher.
+        # Everything else is going to be lower or equal.
+        max_len = start[0]
+        if max_len <= len(longest):
+            break
         cur_pal: str = ''
         # Even.
         if len(start) == 2:
@@ -52,10 +57,6 @@ def longest_subpal(s: str) -> str:
             right_l = start[2]
             # Middle element.
             cur_pal += s[left_l + 1]
-        # Already visited same size or higher.
-        max_len = start[0]
-        if max_len <= len(longest):
-            continue
         # Trying to expand on both sides, while we can.
         while 0 <= left_l and right_l < len(s) and s[left_l] == s[right_l]:
             cur_pal = s[left_l] + cur_pal + s[right_l]
