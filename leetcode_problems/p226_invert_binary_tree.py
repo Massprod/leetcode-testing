@@ -13,38 +13,35 @@ class TreeNode:
 
 
 def invert_tree(root: TreeNode) -> TreeNode:
-    # working_sol (97.15%, 95.82%) -> (36ms, 16.2mb)  time: O(n) | space: O(log n)
+    # working_sol (99.76%, 99.64%) -> (23ms, 15.90mb)  time: O(n) | space: O(n)
     if not root:
         return root
-    # standard que level-order
+    # Standard level-order traverse.
+    # A.k.a BFS with delimiter.
     que: deque[TreeNode | None] = deque()
     que.append(root)
     que.append(None)
-    while any(que):
-        while que[0]:
-            current: TreeNode = que.popleft()
-            # switching every node on a level, before we add their childs in a que
-            current.left, current.right = current.right, current.left
-            # adding childs with correct ordering
-            if current.left:
-                que.append(current.left)
-            if current.right:
-                que.append(current.right)
-        # add/delete lvl delimiter
-        que.append(None)
-        que.popleft()
+    while que:
+        current: TreeNode = que.popleft()
+        # New level.
+        if not current:
+            # Still have Nodes to use.
+            if que:
+                que.append(None)
+            continue
+        # Switching every Node children, before we're adding them into the que.
+        current.left, current.right = current.right, current.left
+        # Adding childs with correct ordering.
+        if current.left:
+            que.append(current.left)
+        if current.right:
+            que.append(current.right)
     return root
 
 
-# Time complexity: O(n) -> traversing all nodes of input_BT, once => O(n).
-# n - nodes in input_BT^^|
-# Auxiliary_space: O(log n) -> there's case with 1 level only as root, and we're storing O(n) ->
-#                           -> normally we're just storing only part of the input_BT ->
-#                           -> nodes at current_level and part of the next level => O(log n).
-#                           ^^If we can ignore stack/que than it's can be called even constant space,
-#                             because we're just switching nodes of input_BT without anything extra.
-# ----------------
-# Well works correctly, but need more test_cases.
+# Time complexity: O(n) -> traversing all nodes of input BT once => O(n).
+# n - Nodes of input BT^^|
+# Auxiliary_space: O(n) -> extra space to store all Nodes of input BT => O(n).
 # ----------------
 # Well, doing this with recording whole inorder or any other path is simple.
 # But can we do this with constant space?
