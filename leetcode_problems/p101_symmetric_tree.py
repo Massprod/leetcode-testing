@@ -13,59 +13,30 @@ class TreeNode:
 
 
 def isSymmetric(root: TreeNode) -> bool:
-    # working_sol (46.74%, 81.91%) -> (52ms, 16.4mb)  time: O(n) | space: O(n)
-    if root.left is None and root.right is None:
+    # working_sol (97%, 84.3%) -> (31ms, 16.3mb)  time: O(n) | space: O(k)
+
+    def check(sub1: TreeNode, sub2: TreeNode) -> bool:
+        if sub1 and not sub2:
+            return False
+        if not sub1 and sub2:
+            return False
+        if sub1 and sub2:
+            if sub1.val != sub2.val:
+                return False
+            # Mirrored:
+            # sub1_left_child == sub2_right_child
+            if not check(sub1.left, sub2.right):
+                return False
+            # sub_1_right_child == sub2_left.child
+            if not check(sub1.right, sub2.left):
+                return False
         return True
-    if root.left is None and root.right:
-        return False
-    if root.right is None and root.left:
-        return False
-    # left_part of BT
-    left_part: list[int | None] = []
-    # mirrored right_part of BT
-    right_part: list[int | None] = []
 
-    def inorder(node: TreeNode, left_p: bool, right_p: bool) -> None:
-        # reading left_subtree
-        if left_p:
-            if node.left:
-                inorder(node.left, left_p, False)
-            else:
-                left_part.append(None)
-            if node.right:
-                inorder(node.right, left_p, False)
-            else:
-                left_part.append(None)
-            left_part.append(node.val)
-        # mirror reading right_subtree
-        if right_p:
-            if node.right:
-                inorder(node.right, False, right_p)
-            else:
-                right_part.append(None)
-            if node.left:
-                inorder(node.left, False, right_p)
-            else:
-                right_part.append(None)
-            right_part.append(node.val)
-
-    inorder(root.left, True, False)
-    inorder(root.right, False, True)
-    if left_part == right_part:
-        return True
-    return False
+    return check(root.left, root.right)
 
 
-# Time complexity: O(n) -> inorder traversal of whole input_BT, to store values of both sides => O(n-1) ->
-# n - nodes in input_BT^^| -> comparing both lists with summarized length of (n - 1) => O(n - 1) ->
-#                          -> O(n - 1) + O(n - 1) => O(2 * (n - 1)) => O(n - 1) => O(n).
-# Auxiliary space: O(n) -> creating 2 extra lists with summarized length of (n - 1) to store values
-#                          from both subtrees of a root_node => O(n - 1) ->
-#                          -> and because we're using recursion, it's taking extra space of O(n - 1) ->
-#                          -> O(n - 1) + O(n - 1) => O(2 * (n - 1)) => O(n - 1) => O(n).
-# ---------------
-# Using extra memory, because didn't come up with solution how we can traverse both subtrees
-#   at the same time and break when values aren't equal.
-# If it's even possible, maybe extra search later.
-# Works fine at speed of 52ms 45+%, but with extra memory usage to store lists.
-# Failed commit because forgot to add -> case with one of the subtrees being empty.
+# Time complexity: O(n) -> worst case == correct symmetric tree -> traversing whole input BT => O(n).
+# n - Nodes of input BT^^|
+# Auxiliary space: O(k) -> worst_case == BT like: /\  -> recursion call for every level == stack of 'k' => O(k).
+# k - levels of input BT^^|                      /  \
+#                        ^^Might be even constant, if we ignore recursion stack as before.
