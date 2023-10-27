@@ -3,19 +3,35 @@
 # You should preserve the original relative order of the nodes in each of the two partitions.
 # ------------------------
 # The number of nodes in the list is in the range [0, 200].
-# -100 <= Node.val <= 100  ,  -200 <= x <= 200
+# -100 <= Node.val <= 100
+# -200 <= x <= 200
 
 
 class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
+    """
+    Create single Node for a linked list.
+    """
+
+    def __init__(self, x: int = 0, next: 'ListNode' = None):
+        """
+        :param x: value of the Node.
+        :param next: Node to which it points.
+        """
+        self.val = x
         self.next = next
 
     def __str__(self):
         return f"{self.val} -> {self.next}"
 
 
-def create_linked(to_link: list[int]) -> ListNode:
+def create_linked(to_link: list[int]) -> ListNode | None:
+    """
+    Create linked list.
+
+    :param to_link: values to put into linked list Nodes.
+    """
+    if not to_link:
+        return None
     tempo = link = ListNode()
     for index in range(len(to_link)):
         tempo.val = to_link[index]
@@ -25,21 +41,27 @@ def create_linked(to_link: list[int]) -> ListNode:
     return link
 
 
-def t_one_linked(to_test: ListNode, testout: list[int]) -> None:
-    tempo: ListNode = to_test
-    count: int = 0
-    while tempo:
-        assert testout[count] == tempo.val
-        tempo = tempo.next
-        count += 1
-    assert count == len(testout)
+def t_linked(list1: ListNode | None, list2: ListNode | None) -> None:
+    """
+    Test two linked lists to have same values.
+    :param list1: first linked list to test.
+    :param list2: second linked list to test.
+    :return:
+    """
+    if not list1 or not list2:
+        assert list1 == list2
+    while list1 and list2:
+        assert list1.val == list2.val
+        list1 = list1.next
+        list2 = list2.next
+    assert list1 == list2
 
 
 def partition(head: ListNode, x: int) -> ListNode:
-    # working_sol(97.27%, 55.72%) -> (34ms, 16.38mb)  time: O(n) | space: O(n)
+    # working_sol(97.27%, 88.85%) -> (34ms, 16.19mb)  time: O(n) | space: O(n)
     # Store everything lower and higher than x.
-    lower: list[int] = []
-    higher: list[int] = []
+    lower: list[ListNode] = []
+    higher: list[ListNode] = []
     # Empty list -> insta return.
     if not head:
         return head
@@ -47,62 +69,43 @@ def partition(head: ListNode, x: int) -> ListNode:
     while tempo:
         # Higher|Equal than x => right_side.
         if tempo.val >= x:
-            higher.append(tempo.val)
+            higher.append(tempo)
         # Lower than x => left_side.
         if tempo.val < x:
-            lower.append(tempo.val)
+            lower.append(tempo)
         tempo = tempo.next
-    # Combine and recreate with correct order.
-    whole: list[int] = lower + higher
-    tempo = new_link = ListNode()
-    for index in range(len(whole)):
-        tempo.val = whole[index]
-        # Last index should always point to None.
-        if index != (len(whole) - 1):
-            tempo.next = ListNode()
-            tempo = tempo.next
-    return new_link
+    # Recombine with correct order.
+    for x in range(len(lower) - 1):
+        lower[x].next = lower[x + 1]
+    for x in range(len(higher) - 1):
+        higher[x].next = higher[x + 1]
+    if higher:
+        higher[-1].next = None
+    if lower:
+        if higher:
+            lower[-1].next = higher[0]
+        else:
+            lower[-1].next = None
+        return lower[0]
+    return higher[0]
 
 
-# Time complexity: O(n) -> traversing once through whole input linked_list of n size O(n) ->
-#                          -> creating new_linked_list of same size => O(n) --> O(n)
-# Space complexity: O(n) -> creating lists with summary size of input linked_list ->
-#                           -> merging them together and getting list of input_n size => O(n)
-# n - number of values inside linked_list ^^
-# ---------------------------
-# Ok. I should have been considered incorrect input of None and make it return None.
-# I was correct with thinking this is through but, I didn't think about incorrect input of None.
-# ---------------------------
-# ! The number of nodes in the list is in the range [0, 200] !
-# How we return ListNode if there's NO input? Cuz any ListNode by default having val == 0, always should be [1, 200]?
-# WTF? We given input -> HEAD type of ListNode -> ListNode() object by default having val=0 ->
-# we just can't even start function without correct input how it can be 0?
-# Even if ListNode_input will be 1 length, still going to have at least 1 value of 0 by default,
-# and if ListNode_input length is 0 => means it doesn't exist, and we can't call a function?
-# Ok.w.e. Let's try to fail.
-# ---------------------------
-# Most basic way and slowest (guess), is just recreate linked list from scratch.
-# Loop once to take all values inside nodes ->
-# -> create 2 lists of values: first => all values lower than x
-#                              second => all values higher or equal than x
-# first + second -> correct list of values -> creating a new linked_list with values from this list.
-# There's no word about doing this in_place, so I will try this one first.
+# Time complexity: O(n) -> traversing whole input LinkedList to get all Nodes, once => O(n) ->
+# n - Node of linked_list ^^| -> recombining original Nodes in correct order => O(2n).
+# Space complexity: O(n) -> two extra lists with all Node links stored, summarized == 'n' => O(n).
 
 
 test: ListNode = create_linked([1, 4, 3, 2, 5, 2])
 test_x: int = 3
-test_out: list[int] = [1, 2, 2, 4, 3, 5]
-test_tempo: ListNode = partition(test, test_x)
-t_one_linked(test_tempo, test_out)
+test_out: ListNode = create_linked([1, 2, 2, 4, 3, 5])
+t_linked(partition(test, test_x), test_out)
 
 test = create_linked([2, 1])
 test_x = 2
-test_out = [1, 2]
-test_tempo = partition(test, test_x)
-t_one_linked(test_tempo, test_out)
+test_out = create_linked([1, 2])
+t_linked(partition(test, test_x), test_out)
 
 test = create_linked([0])
 test_x = 1
-test_out = [0]
-test_tempo = partition(test, test_x)
-t_one_linked(test_tempo, test_out)
+test_out = create_linked([0])
+t_linked(partition(test, test_x), test_out)
