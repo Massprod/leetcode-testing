@@ -16,38 +16,34 @@ class Node:
 
 
 def connect(root: Node) -> Node:
-    # working_sol (78.37%, 62.91%) -> (61ms, 17.7mb)  time: O(n) | space: O(1)
+    # working_sol (82.90%, 68.50%) -> (47ms, 17.7mb)  time: O(n) | space: O(n)
     if not root:
         return root
-    que: deque[Node | None] = deque()
-    que.append(root)
-    # delimiter to break node.next assignments
-    que.append(None)
+    # Standard BFS with delimiter.
+    que: deque[Node | None] = deque([root, None])
 
-    while any(que):
-        # if we have anything on [0] except delimiter
-        while que[0]:
-            current = que.popleft()
-            if current.left:
-                que.append(current.left)
-            if current.right:
-                que.append(current.right)
+    while que:
+        current = que.popleft()
+        if not current:
+            if que:
+                que.append(None)
+            continue
+        if current.left:
+            que.append(current.left)
+        if current.right:
+            que.append(current.right)
+        if que[0]:
             current.next = que[0]
-        # add delimiter for traversed level
-        que.append(None)
-        # remove delimiter for previous level
-        que.popleft()
 
     return root
 
 
-# Time complexity: O(n) -> standard order-level traverse, with simple delimiter to break node.next() assignments ->
-# n - nodes in input_BT^^| -> every node will be used only once => O(n).
-# Auxiliary space: O(1) -> nothing extra, except deque() but we should be allowed to ignore that ->
-#                          -> first of all, almost all tasks is actually ignoring recursion_stack() and deque() in this
-#                          case is equal to that, and we're using only links without creating anything extra => O(1).
+# Time complexity: O(n) -> traversing all Nodes of input BT once => O(n).
+# n - Nodes of input BT^^|
+# Auxiliary space: O(n) -> extra space for every Node => O(n).
+#                       Leetcode ignores recursion stack and deque in some cases, but it's not really correct.
 # ----------------------
 # Actual repetition of p117, but now we don't have PERFECT tree, which is doesn't matter in my solution.
 # Because we're just adding nodes in que if they exist, if they don't ignore.
 # But level structure in que in the same, node -> node -> delimiter.
-# And if there's missing nodes, we will just hit delimiter as always and move to the next level.
+# And if there's some missing Nodes, we will just hit delimiter as always and move to the next level.
