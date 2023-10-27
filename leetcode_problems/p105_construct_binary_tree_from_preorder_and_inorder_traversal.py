@@ -21,51 +21,48 @@ class TreeNode:
 
 
 def show_tree_level_order(root: TreeNode) -> list[int | None]:
+    # Leetcode result list == level_order.
     if not root:
         return []
     show_tree: list[int | None] = []
-    que: deque = deque()
-    que.appendleft(root)
-    # if there's only None left, then it's last level, and we have nothing to check
-    # any() <- checks everything in iterable and if there's no elements we break.
-    # any() used to eliminate extra level with nulls, when que is empty,
-    #       and still store Nulls for other levels.
-    while any(que):
+    que: deque[TreeNode | None] = deque([root])
+    while que:
         current_node: TreeNode = que.popleft()
-        if current_node is None:
+        if not current_node:
             show_tree.append(None)
             continue
         show_tree.append(current_node.val)
         que.append(current_node.left)
         que.append(current_node.right)
-
+    while not show_tree[-1]:
+        show_tree.pop()
     return show_tree
 
 
 def build_tree(preorder: list[int], inorder: list[int]) -> TreeNode | None:
-    # working_sol (33.71%, 6.94%) -> (211ms, 91.4mb)  time: O(n ** 2) | space: O(n)
+    # working_sol (25.95%, 7.02%) -> (178ms, 91.22mb)  time: O(n ** 2) | space: O(n)
     if not preorder and not inorder:
         return None
     root: TreeNode = TreeNode(val=preorder[0])
-    # find root position
+    # Find current root position.
     in_order_index: int = inorder.index(root.val)
-    # divide left/right subtree by ROOT in inorder
-    left_subtree: list[int] = inorder[:in_order_index]
-    right_subtree: list[int] = inorder[in_order_index + 1:]
-    # divide left/right subtrees by ROOT in preorder
-    preorder_left_subtree: list[int] = preorder[1: len(left_subtree) + 1]
-    preorder_right_subtree: list[int] = preorder[len(left_subtree) + 1:]
-    # go deeper, and build with backtrack path
-    root.left = build_tree(preorder_left_subtree, left_subtree)
-    root.right = build_tree(preorder_right_subtree, right_subtree)
+    # Divide left and right subtrees by ROOT in inorder.
+    inorder_left_subtree: list[int] = inorder[:in_order_index]
+    inorder_right_subtree: list[int] = inorder[in_order_index + 1:]
+    # Divide left and right subtrees by ROOT in preorder.
+    preorder_left_subtree: list[int] = preorder[1: len(inorder_left_subtree) + 1]
+    preorder_right_subtree: list[int] = preorder[len(inorder_left_subtree) + 1:]
+    # Go deeper, and build with backtrack path.
+    root.left = build_tree(preorder_left_subtree, inorder_left_subtree)
+    root.right = build_tree(preorder_right_subtree, inorder_right_subtree)
     return root
 
 
 # Time complexity: O(n ** 2) -> standard build method for this is O(n ** 2) for unbalanced trees,
-# n - len of preorder^^| and O(n * log n) for balanced trees.
-# k - len of inorder^^ |
+# n - len of input list 'preorder'^^|  and O(n * log n) for balanced trees.
+# k - len of input list 'inorder'^^ |
 # Auxiliary space: O(n) -> in the worst case we're going to have unbalanced tree with
-#                          all it's nodes stored in the one side, left/right w.e ->
+#                          all it's nodes stored on one side, left/right w.e ->
 #                          -> because of that we're calling recursion for every node and
 #                          number of calls will be equal to n, which gives us stack with size of n => O(n).
 # -----------------------
@@ -74,16 +71,12 @@ def build_tree(preorder: list[int], inorder: list[int]) -> TreeNode | None:
 # left/right subtrees, slice it until we hit leaf. Basic idea.
 
 
-test1_pre = [3, 9, 20, 15, 7]
-test1_in = [9, 3, 15, 20, 7]
-test1_out = [3, 9, 20, None, None, 15, 7]
-test = build_tree(test1_pre, test1_in)
-assert test1_out == show_tree_level_order(test)
-del test
+test_preorder: list[int] = [3, 9, 20, 15, 7]
+test_inorder: list[int] = [9, 3, 15, 20, 7]
+test_out: list[int | None] = [3, 9, 20, None, None, 15, 7]
+assert test_out == show_tree_level_order(build_tree(test_preorder, test_inorder))
 
-test2_pre = [-1]
-test2_in = [-1]
-test2_out = [-1]
-test = build_tree(test2_pre, test2_in)
-assert test2_out == show_tree_level_order(test)
-del test
+test_preorder = [-1]
+test_inorder = [-1]
+test_out = [-1]
+assert test_out == show_tree_level_order(build_tree(test_preorder, test_inorder))
