@@ -15,38 +15,33 @@ class TreeNode:
 
 
 def average_of_levels(root: TreeNode) -> list[float]:
-    # working_sol (94.16%, 73.1%) -> (56ms, 18.9mb)  time: O(n) | space: O(n)
+    # working_sol (61.98%, 94.15%) -> (52ms, 18.62mb)  time: O(n) | space: O(n)
     avg_values: list[float] = []
-    que: deque[TreeNode | None] = deque()
-    que.append(root)
-    que.append(None)
-    while any(que):
-        level: int = 0
-        nodes: int = 0
-        while que[0]:
-            current: TreeNode = que.popleft()
-            level += current.val
-            nodes += 1
-            if current.left:
-                que.append(current.left)
-            if current.right:
-                que.append(current.right)
-        que.append(None)
-        level_avg: float = level / nodes
-        avg_values.append(level_avg)
-        que.popleft()
+    # Standard BFS with delimiter.
+    que: deque[TreeNode | None] = deque([root, None])
+    # # of Nodes on level.
+    nodes: int = 0
+    # Summarized values of these Nodes.
+    level: int = 0
+    while que:
+        cur_node: TreeNode = que.popleft()
+        if not cur_node:
+            if que:
+                que.append(None)
+            avg_values.append(level / nodes)
+            nodes = 0
+            level = 0
+            continue
+        nodes += 1
+        level += cur_node.val
+        if cur_node.left:
+            que.append(cur_node.left)
+        if cur_node.right:
+            que.append(cur_node.right)
     return avg_values
 
 
-# Time complexity: O(n) -> traversing whole BT once and calculate average level on each level break(hit None) => O(n).
-# n - nodes in input_BT^^|
-# Auxiliary space: O(n) -> actually in the worst case it should be O(n), because we're storing all_levels in
-#                          avg_values <- like 2 levels with just 2 nodes ROOT + ROOT.LEFT, so we're storing
-#                          level == nodes => O(n).
-#                          On median standard O(log n) only levels will be stored and levels from 2 have len > 1.
-# ---------------
-# Actually it's bad practice, let's rebuild it normally. Having <50% performance bad as well.
-# Now we're talking, 94+% and O(n) extra space, instead of a stack with all nodes + them stored in levels_dict => O(2n).
-# ---------------
-# Not using, deque cuz it's harder to read. But recursion taking more space and slower avg_calc.
-# W.e Easy task and don't want to bother.
+# Time complexity: O(n) -> traversing whole BT once and calc avg on every delimiter == end of the level => O(n).
+# n - Nodes in input BT^^|
+# Auxiliary space: O(n + k) -> standard O(n) for que in BFS + extra array of average with size == 'k' => O(n + k).
+# k - number of levels in input BT^^|
