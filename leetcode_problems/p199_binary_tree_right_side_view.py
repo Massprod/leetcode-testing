@@ -14,46 +14,25 @@ class TreeNode:
 
 
 def right_side_view(root: TreeNode) -> list[int] | None:
-    # working_sol (71.99%, 97.23%) -> (46ms, 16.2mb)  time: O(n) | space: O(n)
+    # working_sol (64.85%, 97.1%) -> (39ms, 16.1mb)  time: O(n) | space: O(n)
     if not root:
         return None
-    # didn't succeed in forcing root into a while_loops
-    # cuz we're breaking on delimiter == None
-    # and if root is placed in it, we will ignore it -> while que[1]
-    # so it's either place it from the start
-    # or do this inside of a first loop.
-    # But then I need to force extra check, cuz it's 1 time action.
-    right_side: list[int] = [root.val]
-    que: deque = deque()
-    # better to just add first level before looping
-    if root.left:
-        que.append(root.left)
-    if root.right:
-        que.append(root.right)
-    # add delimiter
-    que.append(None)
-
-    while any(que):
-
-        while que[1]:
-            # add nodes of a next_level into a que
-            cur_node: TreeNode = que.popleft()
-            if cur_node.left:
-                que.append(cur_node.left)
-            if cur_node.right:
-                que.append(cur_node.right)
-        # breaking with 1 node left in a que,
-        # which is one we can see from right_side,
-        # because we can see only last node on a level
-        last_on_level: TreeNode = que.popleft()
-        # extra proceed it as normal
-        if last_on_level.left:
-            que.append(last_on_level.left)
-        if last_on_level.right:
-            que.append(last_on_level.right)
-        right_side.append(last_on_level.val)
-        que.popleft()
-        que.append(None)
+    right_side: list[int] = []
+    # Standard BFS.
+    que: deque[TreeNode | None] = deque([root, None])
+    while que:
+        cur_node: TreeNode = que.popleft()
+        if not cur_node:
+            if que:
+                que.append(None)
+            continue
+        # Last Node on level == pre-delimiter Node.
+        if not que[0]:
+            right_side.append(cur_node.val)
+        if cur_node.left:
+            que.append(cur_node.left)
+        if cur_node.right:
+            que.append(cur_node.right)
 
     return right_side
 
