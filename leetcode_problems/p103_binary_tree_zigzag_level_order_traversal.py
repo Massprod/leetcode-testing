@@ -3,6 +3,7 @@
 # --------------------
 # The number of nodes in the tree is in the range [0, 2000].
 # -100 <= Node.val <= 100
+from collections import deque
 
 
 class TreeNode:
@@ -14,41 +15,34 @@ class TreeNode:
 
 
 def zigzagLevelOrder(root: TreeNode) -> list[list[int]]:
-    # working_sol (92.43%, 31.2%) -> (41ms, 16.6mb)  time: O(n + k) | space: O(n)
+    # working_sol (72.88%, 99.39%) -> (38ms, 16.3mb)  time: O(n + log n) | space: O(n)
     if not root:
         return []
-    levels: dict[int] = {}
-
-    def levels_inorder(node: TreeNode, level: int = 0) -> None:
-        """"
-        in order traversal of BT, to store every BT node values sorted by its level
-        """
-        level += 1
-        if level not in levels:
-            levels[level] = []
-        if node.left:
-            levels_inorder(node.left, level)
-        if node.right:
-            levels_inorder(node.right, level)
-        levels[level].append(node.val)
-
-    levels_inorder(root)
-    max_level: int = max(levels.keys())
-    level_order: list[list[int]] = []
-    for _ in range(1, max_level + 1):
-        if _ % 2 == 0:
-            level_order.append(levels[_][::-1])
-        else:
-            level_order.append(levels[_])
-    return level_order
+    levels: list[list[int]] = []
+    level: list[int] = []
+    # Standard BFS with delimiter.
+    que: deque[TreeNode | None] = deque([root, None])
+    while que:
+        cur_node: TreeNode = que.popleft()
+        # End of level.
+        if not cur_node:
+            if que:
+                que.append(None)
+            levels.append(level)
+            level = []
+            continue
+        level.append(cur_node.val)
+        if cur_node.left:
+            que.append(cur_node.left)
+        if cur_node.right:
+            que.append(cur_node.right)
+    # Every ODD level => Reverse.
+    for x in range(1, len(levels), 2):
+        levels[x] = levels[x][::-1]
+    return levels
 
 
-# Time complexity: O(n + k) -> in_order traverse of whole input_BT to get node_values and levels => O(n) ->
-# n - num of nodes in input_BT^^ | -> after that getting value of the most deep level(max_level) => O(k) ->
-# k - num of levels in input_BT^^| -> for every level visited appending this level_values into level_order,
-#                                     number of lists will be equal to number of levels => O(k) ->
-#                                  -> O(n) + O(k) + O(k) => O(n + k).
-# Auxiliary space: O(n) -> using dictionary to store all values from input_BT nodes => O(n) ->
-#                          -> extra creating of a list with this values => O(n) -> O(n) + O(n) => O(n).
-# ------------------
-# Copy of the p102 and p107, with zigzag order.
+# Time complexity: O(n + log n) -> standard BFS to get all Nodes by levels => O(n) ->
+# n - Nodes of input BT^^|        -> reversing every ODD level, only part of original Nodes => O(n + log n).
+# Auxiliary space: O(n) -> que with allocated space for every Node of input BT => O(n) ->
+#                         -> extra list 'levels' with all Nodes of input BT => O(2n).
