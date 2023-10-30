@@ -5,7 +5,6 @@
 # The number of nodes in the tree is n.
 # 1 <= k <= n <= 10 ** 4
 # 0 <= Node.val <= 10 ** 4
-from collections import deque
 import heapq
 
 
@@ -17,64 +16,59 @@ class TreeNode:
 
 
 def kth_smallest(root: TreeNode, k: int) -> int:
-    # working_sol (98.93%, 82.14%) -> (51ms, 20.34mb)  time: O(log n) | space: O(n)
-    que: deque[TreeNode] = deque()
-    que.append(root)
-    # using heap with inverted values
+    # working_sol (88.1%, 82.14%) -> (47ms, 20.34mb)  time: O(n * log k) | space: O(n)
+    # Using MAX heapq.
     heap: heapq = []
     heapq.heapify(heap)
 
-    def preorder(node: TreeNode) -> None:
-        # Because I'm trying to ignore turns, it's better to do this with pre-order than order-level.
-        # Still going to take 1 step in most of the right_subtrees but at least not all of them.
+    def search(node: TreeNode) -> None:
         # We have given CORRECT BT, so it's always => node.left.val < node.val < node.right.val
         # If we're not populated heap, we can ADD w.e nodes we met.
         if len(heap) != k:
             heapq.heappush(heap, node.val * -1)
-            # Easier to check last added value like this than try to extra_check it below(after).
+            # Easier to check last added value like this than try to extra check it after.
             if len(heap) == k:
-                # Ignore left turn if it's values going to be higher than already met MAX_VALUE(heap[0]).
-                # Mostly need to ignore nodes in right subtree of a root.
+                # Ignore left turn if it's values going to be higher than MAX_VALUE(heap[0]).
                 if node.left and node.left.val * -1 > heap[0]:
-                    preorder(node.left)
+                    search(node.left)
                 # Ignore right turn with same approach.
                 if node.right and node.right.val * -1 > heap[0]:
-                    preorder(node.right)
+                    search(node.right)
                 return
             # If heap isn't populated, we check everything.
             if node.left:
-                preorder(node.left)
+                search(node.left)
             if node.right:
-                preorder(node.right)
+                search(node.right)
             return
         if len(heap) == k:
             # Only add values lower than MAX_VALUE,
-            # all values inverted, so it's HIGHER than LOWEST in a heap
+            #  all values are inverted, so it's HIGHER than LOWEST in a heap
             if (node.val * -1) > heap[0]:
                 heapq.heappop(heap)
                 heapq.heappush(heap, node.val * -1)
+            # If we come from right_turn => everything in this subtree,
+            #  will be higher than pre_turn Node values == insta break.
             else:
                 return
-            # Same approach to make a turn left or right.
-            if node.left and node.left.val * -1 > heap[0]:
-                preorder(node.left)
-            if node.right and node.right.val * -1 > heap[0]:
-                preorder(node.right)
+            # Otherwise, we can check both subtrees.
+            if node.left and (node.left.val * -1) > heap[0]:
+                search(node.left)
+            if node.right and (node.right.val * -1) > heap[0]:
+                search(node.right)
 
-    preorder(root)
-    # there's K elements in a heap, and they sorted from MAX to MIN if inverted back,
-    # so we can just take [0](MAX) -> which is smallest in a heap,
-    # but we need K element of smallest counted from left to right.
-    # So [0] it's actually HIGHEST of SMALLEST, and we have it already sorted.
+    search(root)
+    # There's K elements in a heap, and they're sorted from MAX to MIN if inverted back.
+    # We need K element of smallest counted from left to right.
+    # So [0] it's actually HIGHEST of 'k' SMALLEST.
     return heapq.heappop(heap) * -1
 
 
-# Time complexity: O(log n) -> in the worst case, k == n, for every node of input_BT we will add its value,
-# n - nodes in input_BT^^| now with extra turn checks part of the nodes with left/right subtree values higher
-#                          than MAX_VALUE we already met will be ignored, so it's should be correct =>
-#                          => O(log n) + heap operations == O(log n) => O(log n)
-# Auxiliary space: O(n) -> in the same worst case, heap will be a size of n, storing every node.val() in it =>
-#                          => O(n) -> extra to this, recursion with median size of O(log n).
+# Time complexity: O(n * log k) -> worst case == BT with only descending Nodes -> we're traversing whole input BT
+# n - Nodes of input BT^^|  and pushing every new Node value into a heapq => O(n * log k).
+# Auxiliary space: O(n) -> worst case == (n == k) -> heapq will store 'n' values of every Node => O(n) ->
+#                          -> extra to this, BT with only descending Nodes in linked list style ->
+#                          -> recursion stack will be a size of 'n' as well => O(2n).
 # -------------------
 # Standard reversed heapq with len of K, store everything higher than min_value
 # and ignore everything lower than min_value, after we append K elements into a heap.
