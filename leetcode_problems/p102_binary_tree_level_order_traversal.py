@@ -3,6 +3,7 @@
 # ----------------
 # The number of nodes in the tree is in the range [0, 2000].
 # -1000 <= Node.val <= 1000
+from collections import deque
 
 
 class TreeNode:
@@ -14,41 +15,31 @@ class TreeNode:
 
 
 def levelOrder(root: TreeNode) -> list[list[int]]:
-    # working_sol (66.89%, 5.38%) -> (54ms, 19mb)  time: O(n + k) | space: O(n)
+    # working_sol (79.66%, 92.86%) -> (41ms, 16.90mb)  time: O(n) | space: O(n)
     if not root:
         return []
-    levels: dict[int] = {}
-
-    def levels_inorder(node: TreeNode, level: int = 0) -> None:
-        """"
-        in order traversal of BT, to store every BT node values sorted by its level
-        """
-        level += 1
-        if level not in levels:
-            levels[level] = []
-        if node.left:
-            levels_inorder(node.left, level)
-        if node.right:
-            levels_inorder(node.right, level)
-        levels[level].append(node.val)
-
-    levels_inorder(root)
-    max_level: int = max(levels.keys())
-    level_order: list[list[int]] = []
-    for _ in range(1, max_level + 1):
-        level_order.append(levels[_])
-    return level_order
+    levels: list[list[int]] = []
+    level: list[int] = []
+    # Standard BFS with delimiter.
+    que: deque[TreeNode | None] = deque([root, None])
+    while que:
+        cur_node: TreeNode = que.popleft()
+        # End of level.
+        if not cur_node:
+            if que:
+                que.append(None)
+            levels.append(level)
+            level = []
+            continue
+        level.append(cur_node.val)
+        if cur_node.left:
+            que.append(cur_node.left)
+        if cur_node.right:
+            que.append(cur_node.right)
+    return levels
 
 
-# Time complexity: O(n + k) -> in_order traverse of whole input_BT to get node_values and levels => O(n) ->
-# n - num of nodes in input_BT^^ | -> after that getting value of the most deep level(max_level) => O(k) ->
-# k - num of levels in input_BT^^| -> for every level visited appending this level_values into level_order,
-#                                     number of lists will be equal to number of levels => O(k) ->
-#                                  -> O(n) + O(k) + O(k) => O(n + k).
-# Auxiliary space: O(n) -> using dictionary to store all values from input_BT nodes => O(n) ->
-#                          -> extra creating of a list with this values => O(n) -> O(n) + O(n) => O(n).
-# ----------------
-# I'm sure its not perfect solution, but literally made only 3 tasks with BTs and never really learned them.
-# So I'm just building intuitive solution without any optimisation and extra info on that.
-# Works fine 50-60ms, but takes extra memory. Which is not a problem, python is always memory eater anyway.
-# Maybe rebuild it later, after learning more about BT.
+# Time complexity: O(n) -> standard BFS traverse of whole input BT => O(n).
+# n - Node of input BT^^|
+# Auxiliary space: O(n) -> que with allocated space for every Node of input BT => O(n) ->
+#                       -> extra list with all Nodes of input BT => O(2n).
