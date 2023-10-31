@@ -16,34 +16,31 @@ class Node:
 
 
 def clone_graph(node: Node) -> Node:
-    # working_sol (99.26%, 67.30%) -> (39ms, 16.8mb)  time: O(n) | space: O(n * k)
+    # working_sol (88.47%, 70.64%) -> (39ms, 16.69mb)  time: O(n) | space: O(n * k)
     if not node:
         return node
     nodes: dict[int, list[int]] = {}
 
     def search_nodes(node_: Node) -> None:
-        # find base to rebuild from
-        # if node already recorded then his neighbor values too, ignore
+        # If Node already visited == ignore.
         if node_.val in nodes:
             return
         nodes[node_.val] = []
-        # For every neighbor recall to add it as well,
-        # for every neighbor store it's unique value to link after,
-        # unique values in our case is always a node place in a graph.
+        # For every neighbour store it's unique value to link,
+        #  in our case every Node in the graph have unique value.
         for neighbor in node_.neighbors:
             nodes[node_.val].append(neighbor.val)
             search_nodes(neighbor)
 
     search_nodes(node)
-    # every key represents node place in a graph, and in our case all unique and sorted.
-    # We can relink them just from a list with indexes representing their place.
-    # Place nodes on their place/index
+    # Every key represents Node.
+    # ! 1 <= Node.val <= 100 ! <- Node(val=0) placeholder for correct neighbour index use.
     copied_nodes: list[Node] = [Node(val=0)] + [Node(val=key) for key in range(1, max(nodes.keys()) + 1)]
-    # Link nodes between them
+    # All we need is to assign correct neighbours to every unique Node.
     for x in range(1, len(copied_nodes)):
         cur_node: Node = copied_nodes[x]
-        for value in nodes[cur_node.val]:
-            cur_node.neighbors.append(copied_nodes[value])
+        for neighbour in nodes[cur_node.val]:
+            cur_node.neighbors.append(copied_nodes[neighbour])
     return copied_nodes[1]
 
 
