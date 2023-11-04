@@ -19,26 +19,25 @@ def can_finish(numCourses: int, prerequisites: list[list[int]]) -> bool:
     doable: list[bool] = [True for _ in range(numCourses)]
     checked: list[bool] = [False for _ in range(numCourses)]
 
-    def check_node(node_index: int) -> bool:
-        # if already checked and marked
+    def dfs(node_index: int) -> bool:
+        # Ends with a cycle.
         if not doable[node_index]:
             return False
-        # if visited, ignore
+        # Visited.
         if checked[node_index]:
             return True
-        # marks, until proven otherwise
+        # Mark as False, to get cycle.
         doable[node_index] = False
         checked[node_index] = True
-        # if edges, check them
         for edge in graph[node_index]:
-            if not check_node(edge):
+            if not dfs(edge):
                 return False
-        # if no edges, doable
+        # Mark as True, doesn't lead to a cycle.
         doable[node_index] = True
         return True
 
     for _ in range(numCourses):
-        if not check_node(_):
+        if not dfs(_):
             return False
     return True
 
@@ -61,21 +60,18 @@ def can_finish(numCourses: int, prerequisites: list[list[int]]) -> bool:
 # Only now we need to create our graph by ourselves, everything else is the same.
 
 
-test1 = 2
-test1_pre = [[1, 0]]
-test1_out = True
-print(can_finish(test1, test1_pre))
-assert test1_out == can_finish(test1, test1_pre)
+test: int = 2
+test_pre: list[list[int]] = [[1, 0]]
+test_out: bool = True
+assert test_out == can_finish(test, test_pre)
 
-test2 = 2
-test2_pre = [[1, 0], [0, 1]]
-test2_out = False
-print(can_finish(test2, test2_pre))
-assert test2_out == can_finish(test2, test2_pre)
+test = 2
+test_pre = [[1, 0], [0, 1]]
+test_out = False
+assert test_out == can_finish(test, test_pre)
 
 # test3 -> failed -> Forgot to make check_node() return True in case of a course being doable.
-test3 = 2
-test3_pre = [[0, 1]]
-test3_out = True
-print(can_finish(test3, test3_pre))
-assert test3_out == can_finish(test3, test3_pre)
+test = 2
+test_pre = [[0, 1]]
+test_out = True
+assert test_out == can_finish(test, test_pre)
