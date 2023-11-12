@@ -26,6 +26,7 @@ def num_buses_to_destination(routes: list[list[int]], source: int, target: int) 
     for x in range(len(routes)):
         for bus_stop in routes[x]:
             graph[bus_stop].add(x)
+    # Standard BFS.
     # (bus_stop, buses taken)
     que: deque[tuple[int, int]] = deque([(source, 0)])
     visited: set[int] = {source}
@@ -49,7 +50,7 @@ def num_buses_to_destination(routes: list[list[int]], source: int, target: int) 
     return -1
 
 
-# Time complexity: O(n * k) <- ! k - len of current 'route' we process , n - len of input array 'routes' !
+# Time complexity: O(n * k) <- ! k - average length of routes inside `routes` , n - len of input array 'routes' !
 #  worst case == every route has unique bus_stops -> create graph with 'n' * 'k' Nodes(stops) => O(n * k).
 #  worst case for BFS == [[1, 2], [2, 3], ... etc. [..., target] -> we will use every bus_stop we're given => O(n * k).
 #                         ^^Source == 1.
