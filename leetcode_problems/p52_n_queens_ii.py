@@ -1,70 +1,66 @@
-from copy import deepcopy
 # The n-queens puzzle is the problem of placing n queens on an n x n chessboard
-# such that no two queens attack each other.
-#
+#  such that no two queens attack each other.
 # Given an integer n, return the number of distinct solutions to the n-queens puzzle.
+# -------------------------
+# 1 <= n <= 9
 
 
-def queen_variants(n: int) -> int:
-    # working_sol (5.2%, 6.17%) -> (5338ms, 17mb)  time: (n ** (n * n)) | space: O(n * n)
-    ch_board = [["." for _ in range(n)] for _ in range(n)]
-    row_placements = {}
-    busy_box = {}
-    for free_y in range(n):
-        for free_x in range(n):
-            busy_box[(free_y, free_x)] = False
+def total_n_queens(n: int) -> int:
+    # working_sol (89.54%, 57.84%) -> (43ms, 16.28mb)  time: O(n!) | space: O(n)
 
-    def check_pos(busy_b: dict, pos_y: int, pos_x: int) -> dict | bool:
-        if not busy_b[(pos_y, pos_x)]:
-            for _ in range(n):
-                busy_b[(pos_y, _)] = True
-            for _ in range(n):
-                busy_b[(_, pos_x)] = True
-            for _ in range(1, n):
-                busy_b[(pos_y + _, pos_x + _)] = True
-            for _ in range(1, n):
-                busy_b[(pos_y + _, pos_x - _)] = True
-            return busy_b
-        else:
-            return False
+    def place(queens: int, cols_taken: set[int], asc_taken: set[int], desc_taken: set[int]) -> int:
+        """
+        Backtracking for Queens safe placements.
+        :param queens: number of rows with already placed Queens OR current row we're trying to place on.
+        :param cols_taken: all columns on which we already placed Queens.
+        :param asc_taken: all ascending diagonals on which we already placed Queens.
+        :param desc_taken: all descending diagonals on which we already placed Queens.
+        :return: Number of ways we can place Queens safely.
+        """
+        if queens == n:
+            return 1
+        out: int = 0
+        # On every row|col we can place only 1 queen, so queens == rows used.
+        for col in range(n):
+            if col not in cols_taken:
+                # Every ascending diagonal in matrix have same (row + col) values.
+                ascending: int = queens + col
+                # Every descending have same (row - col) values.
+                descending: int = queens - col
+                # Queens can move on columns + rows + diagonals.
+                if ascending not in asc_taken and descending not in desc_taken:
+                    cols_taken.add(col)
+                    asc_taken.add(ascending)
+                    desc_taken.add(descending)
+                    out += place(queens + 1, cols_taken, asc_taken, desc_taken)
+                    cols_taken.remove(col)
+                    asc_taken.remove(ascending)
+                    desc_taken.remove(descending)
+        return out
 
-    all_placements = []
-
-    def backtrack_count(busy: dict, start_y: int, start_x: int, board: list[list[str]], q_count: int = 0) -> None:
-        if q_count == n:
-            placement = []
-            for _ in row_placements:
-                placement.append("".join(row_placements[_]))
-            all_placements.append(placement)
-            return
-        old_busy = deepcopy(busy)
-        for _ in range(start_x, n):
-            if new_busy := check_pos(old_busy, start_y, _):
-                row_placements[start_y] = board[start_y]
-                row_placements[start_y][_] = "Q"
-                backtrack_count(new_busy, start_y + 1, start_x, board, q_count + 1)
-                row_placements[start_y][_] = "."
-                old_busy = deepcopy(busy)
-
-    backtrack_count(busy_box, 0, 0, ch_board)
-    return len(all_placements)
-
-# Time complexity: O(n ** (n * n)) -> for every n row (we're having rows == input(n)) calling recursion, and for every
-#                                     x value in this recursion, calling another recursion.
-#                                     Recursion tree with size of n and n * n branches.
-# Space complexity: O(n * n) -> list with n * n values, and dictionary for every recursion call.
-#                               n + n * n -> worst O(n * n)
-
-# Well obviously it's worked, same as p51 and really slow, but I don't want to google just yet.
-# Because im sure there's going to be some mirror task after which I will revisit this one.
-# --------------
-# There's no time limit in description and I want to try my variant as first. 5k ms :)
+    return place(0, set(), set(), set())
 
 
-test1 = 4
-test1_out = 2
-assert test1_out == queen_variants(test1)
+# Time complexity: O(n!) -> no idea, it's easy to do but complexity is overwhelming ->
+#                         -> maybe, O(n!)? like we're not calling for every column but still calculating
+#                         diagonals and check them for every not taken column, and because at max we can do 'n' calls
+#                         with every call we will have -1 column option ->
+#                         -> so, it's like (n-1, n-2, n-3 ... 0).
+#                         But for (n == 9) there's only 8394 recursion calls and 72378 column checks.
+#                         When 9! is actually 362880.
+# Auxiliary space: O(n) -> 'cols_taken' with all columns taken (n) -> both ascending and descending sets
+#                          will store 2 * (2 * n - 1) diagonals stored => O(n + 2 * (2 * n - 1)).
+#                          Or without recursion diving, we can just say O(n), because depth == n.
 
-test2 = 1
-test2_out = 1
-assert test2_out == queen_variants(test2)
+
+test: int = 4
+test_out: int = 2
+assert test_out == total_n_queens(test)
+
+test = 1
+test_out = 1
+assert test_out == total_n_queens(test)
+
+test = 9
+test_out = 352
+assert test_out == total_n_queens(test)
