@@ -1,56 +1,45 @@
 # Given a non-negative integer x, return the square root of x rounded down to the nearest integer.
 # The returned integer should be non-negative as well.
-# 0 <= x <= 2 ** 31 - 1
+#   0 <= x <= 2 ** 31 - 1
 # You must not use any built-in exponent function or operator.
 # For example, do not use pow(x, 0.5) in c++ or x ** 0.5 in python.
+# ---------------
+# 0 <= x <= 2 ** 31 - 1
 
 def my_sqrt(x: int) -> int:
-    # working_sol (10.14%, 12.86%) -> (2548ms, 16.3mb)  time: O(log n) | space: O(1)
-    if x == 0:
-        return 0
-    prev_num: int = 0
-    for num in range(x + 1):  # +1 for case of x == 1
-        result: int = num * num
-        if result == x:
-            return num
-        if result > x:
-            return prev_num
-        prev_num = num
-
-# Time complexity: O(log n) -> one for_loop for values from 0 to input_int(x) => O(n) ->
-#                              -> but we're breaking before we hit input_int(x) => O(log n) ->
-#                              -> always breaking before hitting input_int(x) value, leaving us with O(log n)
-# Space complexity: O(1) -> two constants: prev_num, result => O(1).
-
-# I need to rebuild it, but I don't want to google solution, cuz there's built_in sqrt() in every language.
-# So if I want to speed this up I need to search formulas to calc square_root and rebuild it.
-# No reasons and time to do this now.
-# ----------------------------------
-# Welp. It worked, but obviously very slow, cuz we're just counting from 0 - n.
-# Guess, it's one of the worst possible ways to solve it.
-# ----------------------------------
-# Most basic way to solve it, is brute force from 0 -> n, and find (value * value == x)
-# until we hit something higher than x.
-# I don't recall any formulas to count square root and don't want to google instantly,
-# so try this solution and if I hit timelimit, rebuild with actual math_solution.
+    # working_sol (94.81%, 65.86%) -> (39ms, 16.2mb)  time: O(log (x // 2)) | space: O(1)
+    if x <= 1:
+        return x
+    # Standard BinarySearch.
+    left_l: int = 1
+    # If it's perfect square then it's at max (x // 2) <- sqr(4) == 2.
+    # Otherwise, it's lower. Assume maximum square limit == (x // 2).
+    right_l: int = x // 2
+    while left_l < right_l:
+        middle: int = (left_l + right_l) // 2 + 1
+        if middle * middle <= x:
+            left_l = middle
+        else:
+            right_l = middle - 1
+    return left_l
 
 
-test1 = 4
-test1_out = 2
-print(my_sqrt(test1))
-assert test1_out == my_sqrt(test1)
+# Time complexity: O(log (x // 2)) -> standard BS from 1 -> (x // 2) inclusive => O(log (x //2 )).
+# Auxiliary space: O(1) -> only 3 constant INTs use, none of them depends on input => O(1).
 
-test2 = 8
-test2_out = 2
-print(my_sqrt(test2))
-assert test2_out == my_sqrt(test2)
 
-test3 = 2 ** 31 - 1
-test3_out = 46340  # 46340.9500011
-print(my_sqrt(test3))
-assert test3_out == my_sqrt(test3)
+test: int = 4
+test_out: int = 2
+assert test_out == my_sqrt(test)
 
-test4 = 1
-test4_out = 1
-print(my_sqrt(test4))
-assert test4_out == my_sqrt(test4)
+test = 8
+test_out = 2
+assert test_out == my_sqrt(test)
+
+test = 2 ** 31 - 1
+test_out = 46340
+assert test_out == my_sqrt(test)
+
+test = 1
+test_out = 1
+assert test_out == my_sqrt(test)
