@@ -17,65 +17,33 @@
 # n == corridor.length
 # 1 <= n <= 10 ** 5
 # corridor[i] is either 'S' or 'P'.
-from collections import Counter
 from random import choice
 
 
 def number_of_ways(corridor: str) -> int:
-    # working_sol (14.28%, 71.43%) -> (643ms, 17.4mb)  time: O(n) | space: O(1)
-    # Like: S S P S S P P S S P P
-    #          | |   | | |
-    # 1st ->   |     |
-    #          |       |
-    #          |         |
-    # 2nd ->     |   |
-    #            |     |
-    #            |       |
-    # 3 combinations == 1 * 3
-    # 2nd ->     | start from 2nd divider and repeat everything
-    # 3 combinations == 1 * 3
-    # So, we can just use 'all' divider placements we have and multiply them.
-    # 6 combinations in total == 2 * 3 == 6
-    present: Counter[str, int] = Counter(corridor)
-    # No seats at all.
-    if 'S' not in present:
-        return 0
-    # No plants present, so we can only divide them by 2 seats with 1 option.
-    if 'P' not in present or present['S'] == 2:
-        return 1
-    # ! each section has exactly two seats ! == always even number of 'seats'
-    # Otherwise, we can't have correct slices.
-    if present['S'] % 2:
-        return 0
-    # Everything below works, only if we already know that we have EVEN # of seats.
+    # working_sol (77.14%, 31.43%) -> (375ms, 21.2mb)  time: O(n) | space: O(n)
+    seats: list[int] = [x for x in range(len(corridor)) if corridor[x] == 'S']
     out: int = 1
-    index: int = 0
-    limit: int = len(corridor) - 1
-    seats: int = 0
-    # If seats slice ends not on last index, we can place 1 divider and +1 divider for every plant.
-    while index < limit:
-        while index < limit:
-            if corridor[index] == 'S':
-                seats += 1
-                if seats == 2:
-                    break
-            index += 1
-        # We can only place divider after the two 'seats' slice.
-        dividers: int = 1
-        while index < limit:
-            index += 1
-            if corridor[index] == 'S':
-                seats = 0
-                out *= dividers
-                break
-            # And +1 for every plant between previous and next slices.
-            dividers += 1
+    # No seats at all.
+    if not seats:
+        return 0
+    # There's ODD seats, we can't have correct slices.
+    if len(seats) % 2:
+        return 0
+    # We only care about 2 seat slices.
+    # So, we can just make double steps and get distance between them == plants between.
+    # And we need to start from 2nd seat and end on pre-last seat.
+    for x in range(1, len(seats) - 1, 2):
+        # S S P P S => seats[0, 1, 4], we need part between slices.
+        #    | | |  Last seat of 1st slice -> First seat of 2nd slice.
+        out *= seats[x + 1] - seats[x]
     return out % (10 ** 9 + 7)
 
 
-# Time complexity: O(n) -> double traverse of original input string 'corridor' => O(2n).
-# Auxiliary space: O(1) -> because we only have 2 symbol options, we're always allocating 2 symbols in Counter()
-#                          and 1 INT for each of them, everything else is constant => O(1)
+# Time complexity: O(n) -> traversing original string 'corridor' once to get all seats => O(n) ->
+# n - len of input string 'corridor'^^| -> extra traverse with double step, using only half of indexes => O(n + n//2).
+# Auxiliary space: O(n) -> worst case == there's only 'S' in 'corridor' -> we will recreate original string
+#                          as array with INT for every symbol => O(n).
 # --------------------
 # 100% we can insta return with odd 'seats'. <-! each section has exactly two seats !
 # But if I don't use Counter() it's better to just traverse and count plants on the way.
@@ -99,6 +67,12 @@ def number_of_ways(corridor: str) -> int:
 # So, we can just use 'all' divider placements we have and multiply them.
 # 6 combinations in total == 2 * 3 == 6
 # Should be correct.
+# --------------------
+# Ok. What we essentially doing?
+# First -> we need to know if we have EVEN seats or not.
+# Second -> we're trying to find how many plants we have between every double SEAT slices.
+# Can we just find every SEAT position and then just take distance between them as # of PLANTS?
+# Let's try.
 
 
 test: str = "SSPPSPS"
