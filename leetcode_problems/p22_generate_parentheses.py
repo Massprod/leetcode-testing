@@ -1,34 +1,39 @@
 # Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+# ----------------------
+# 1 <= n <= 8
 
 
 def gen_parentheses(n: int) -> list[str]:
-    # working_sol (34.30%, 65.51%)
-    combos = []
-    origin = "("
-    counter = ")"
-    temp = []
+    # working_sol (67.8%, 37.38%) -> (40ms, 16.7mb)  time: O(Cn * n) | space: O(Cn * n)
+    combos: list[str] = []
 
-    def back_tracking(tempo: list, opened: int = 0, closed: int = 0):
-        if len(tempo) == 2 * n:
-            combos.append("".join(tempo))
+    def backtrack(cur_seq: list[str], opened: int, closed: int) -> None:
+        # Everything correctly closed => correct sequence.
+        if closed == n:
+            combos.append(''.join(cur_seq))
             return
+        # We can place open_bracket's until != 'n'.
         if opened < n:
-            tempo.append(origin)
-            back_tracking(tempo, opened + 1, closed)
-            tempo.pop()
+            backtrack(cur_seq + ['('], opened + 1, closed)
+        # Every open_bracket should be closed.
         if closed < opened:
-            tempo.append(counter)
-            back_tracking(tempo, opened, closed + 1)
-            tempo.pop()
-    back_tracking(temp)
+            backtrack(cur_seq + [')'], opened, closed + 1)
+
+    backtrack([], 0, 0)
     return combos
 
-# Most of the solution is googled but actually not that hard.
-# Flow of recursion:
-#
+
+# Time complexity: O(Cn * n) -> ! https://en.wikipedia.org/wiki/Catalan_number ! for all combinations ->
+# n - input value 'n'^^|        -> Catalan(n) gives all combinations and every combination is size == n => O(Cn * n).
+#                             ! Asymptotically, the Catalan numbers grow as:
+#                               (4 ** n) / (n ** (3 / 2)) * (3.14 ** 0.5)   !
+# Auxiliary space: O(Cn * n) -> every combination stored and size of each == n => O(Cn * n).
 
 
-test1 = 3
-test1_out = ["((()))", "(()())", "(())()", "()(())", "()()()"]
-print(gen_parentheses(test1))
-assert test1_out == gen_parentheses(test1)
+test: int = 3
+test_out: list[str] = ["((()))", "(()())", "(())()", "()(())", "()()()"]
+assert test_out == gen_parentheses(test)
+
+test = 1
+test_out = ["()"]
+assert test_out == gen_parentheses(test)
