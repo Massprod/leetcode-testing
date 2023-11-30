@@ -1,187 +1,126 @@
 # Given an m x n grid of characters board and a string word,
-# return true if word exists in the grid.
-#
+#  return true if word exists in the grid.
 # The word can be constructed from letters of sequentially adjacent cells,
-# where adjacent cells are horizontally or vertically neighboring.
+#  where adjacent cells are horizontally or vertically neighboring.
 # The same letter cell may not be used more than once.
 # -----------------------
-# m == board.length  ,  n = board[i].length
-# 1 <= m, n <= 6  ,  1 <= word.length <= 15
+# m == board.length
+# n = board[i].length
+# 1 <= m, n <= 6
+# 1 <= word.length <= 15
 # board and word consists of only lowercase and uppercase English letters.
 # -----------------------
 # Follow up: Could you use search pruning to make your solution faster with a larger board?
 
 
 def exist(board: list[list[str]], word: str) -> bool:
-    # working_sol (80.82%, 8.37%) -> (2712ms, 16.9mb)  time: O((m * n) * (4 ** k)) | space: O(2(m * n) + k)
-    path: list[tuple[int, int]] = []
-    used_starts: dict = {}
-    correct_matrix: dict = {}
-    for n in range(len(board)):
-        for m in range(len(board[0])):
-            used_starts[(n, m)] = False
-            correct_matrix[board[n][m]] = True
-    for _ in word:
-        if _ not in correct_matrix:
+    # working_sol (90.65%, 78.87%) -> (1381ms, 16.2mb)  time: O(n * m + (m * n - 3) * 3 ** k)
+    #                                                   space: O(m * n + (k - 1))
+    max_x: int = len(board[0])
+    max_y: int = len(board)
+    # {symbol: # of occurrences}
+    all_symbols: dict[str, int] = {}
+    for row_ in range(max_y):
+        for col_ in range(max_x):
+            if board[row_][col_] in all_symbols:
+                all_symbols[board[row_][col_]] += 1
+            else:
+                all_symbols[board[row_][col_]] = 1
+    for symbol in word:
+        # Symbol doesn't exist in matrix, we can't build 'word'.
+        if symbol not in all_symbols:
             return False
+        # Symbol is present, but there's not enough occurrences of him to build 'word'.
+        if not all_symbols[symbol]:
+            return False
+        all_symbols[symbol] -= 1
+    # Last index of reverse option.
+    neg_limit: int = -len(word) - 1
+    # (dy, dx) step options: top, right, bot, left.
+    options: list[tuple[int, int]] = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
-    def search_around(y: int, x: int, index: int, reverse: bool, inside_path: list[tuple[int, int]]) -> bool:
-        if index == len(word) or index < (len(word) * -1):
+    def dfs(cell: tuple[int, int], index: int) -> bool:
+        # We start DFS from both options: start -> end | end -> start.
+        if index == len(word) or index == neg_limit:
             return True
-        to_find: str = word[index]
-        point: int = 1
-        if reverse:
-            point = -1
-        step: tuple[int, int] = (y - 1, x)
-        if y > 0 and board[step[0]][step[1]] == to_find and (step not in inside_path):
-            if board[step[0]][step[1]] == word[0] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], 1, False, [(step[0], step[1])]):
+        # Standard DFS
+        row: int = cell[0]
+        col: int = cell[1]
+        # Mark as visited.
+        restore: str = board[row][col]
+        board[row][col] = ''
+        for dy, dx in options:
+            new_row: int = row + dy
+            new_col: int = col + dx
+            if 0 <= new_row < max_y and 0 <= new_col < max_x and board[new_row][new_col] == word[index]:
+                if dfs((new_row, new_col), index + 1 if index >= 0 else index - 1):
                     return True
-            if board[step[0]][step[1]] == word[-1] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], -2, True, [(step[0], step[1])]):
-                    return True
-            inside_path.append(step)
-            if search_around(step[0], step[1], index + point, reverse, inside_path):
-                return True
-            inside_path.pop()
-        step = (y + 1, x)
-        if y < (len(board) - 1) and board[step[0]][step[1]] == to_find and (step not in inside_path):
-            if board[step[0]][step[1]] == word[0] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], 1, False, [(step[0], step[1])]):
-                    return True
-            if board[step[0]][step[1]] == word[-1] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], -2, True, [(step[0], step[1])]):
-                    return True
-            inside_path.append(step)
-            if search_around(step[0], step[1], index + point, reverse, inside_path):
-                return True
-            inside_path.pop()
-        step = (y, x - 1)
-        if x > 0 and board[step[0]][step[1]] == to_find and (step not in inside_path):
-            if board[step[0]][step[1]] == word[0] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], 1, False, [(step[0], step[1])]):
-                    return True
-            if board[step[0]][step[1]] == word[-1] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], -2, True, [(step[0], step[1])]):
-                    return True
-            inside_path.append(step)
-            if search_around(step[0], step[1], index + point, reverse, inside_path):
-                return True
-            inside_path.pop()
-        step = (y, x + 1)
-        if x < (len(board[0]) - 1) and board[step[0]][step[1]] == to_find and (step not in inside_path):
-            if board[step[0]][step[1]] == word[0] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], 1, False, [(step[0], step[1])]):
-                    return True
-            if board[step[0]][step[1]] == word[-1] and not used_starts[(step[0], step[1])]:
-                used_starts[(step[0], step[1])] = True
-                if search_around(step[0], step[1], -2, True, [(step[0], step[1])]):
-                    return True
-            inside_path.append(step)
-            if search_around(step[0], step[1], index + point, reverse, inside_path):
-                return True
-            inside_path.pop()
+        board[row][col] = restore
+        return False
 
-    for g in range(len(board)):
-        for h in range(len(board[0])):
-            if board[g][h] == word[0] and not used_starts[(g, h)]:
-                path.append((g, h))
-                if search_around(g, h, 1, False, path):
+    for row_ in range(max_y):
+        for col_ in range(max_x):
+            # If we can start from [0] symbol and reach end, then we can start from [-1] symbol
+            #  and still get correct sequence of 'word'. So, we should start from either of them, but not both.
+            if board[row_][col_] == word[0]:
+                if dfs((row_, col_), 1):
                     return True
-                path.pop()
-            if board[g][h] == word[0] and board[g][h] == word[-1] and not used_starts[(g, h)]:
-                continue
-            if board[g][h] == word[-1] and not used_starts[(g, h)]:
-                path.append((g, h))
-                if search_around(g, h, -2, True, path):
+            elif board[row_][col_] == word[-1]:
+                if dfs((row_, col_), -2):
                     return True
-                path.pop()
-            used_starts[(g, h)] = True
     return False
 
 
-# Time complexity: O((m * n) * (4 ** k)) -> worst case, for every index we encounter => O(m * g) ->
-# 4 - options to turn ^^                    -> calling recursion with 4 branches and k depths => O(4 ** k).
-# k - length of word  ^^
-# Space complexity: O((m * n) + (m * n) + k) -> creating 2 dictionaries of (m * n) sizes => O(2(m * n)) ->
-# m - length of matrix     ^^                   -> holding in memory path for recursions, max size of path == k =>
-# n - length of matrix_row ^^                   => O(k) <- ! not sure about space for recursion, need to learn more.
-# k - length of word  ^^                        maybe O((4**k) * (k-index)) ->
-#                                               -> k - index == size of word for every recursion call,
-#                                                  and 4**k calls, but everything hold's in 1 place and reused,
-#                                                  guess O(k) is more correct !
-# ------------------------
-# Totally need to be polished, really hard_to_read solution. Maybe I will revisit and rebuild later.
-# ------------------------
-# Yep. Totally not my fault with failing time_limit, I even make it better, and now we're checking
-# every starting and ending symbols in word along the standard search, maybe it's actually slower with these checks.
-# But it's still not passable without checking correct matrix. I will leave it with extra checks, just why not.
-# With checking correct matrix both hits time_limit. 2712ms with extra checks -> 2127 without.
-# But it's good to have extra experience and actually made it work, might be useful in a future.
-# ------------------------
-# Bruh. Literally took a complete solution with this trick and deleted trick_part.
-# And it 5161ms, when mine is 3979...
-# Guess it's just a test_case to check my understanding of input. If input isn't correct from the start,
-# and we can save time without running algorithm for incorrect inputs.
-# ------------------------
-# Wtf with this time_limit, even after googling and checking ready_solution, there's *correct* solutions with 2500ms.
-# My 4000 not so bad in compare. I even made check of starting positions along the way.
-# Obviously I could make a trick to just skip test_cases, if count of symbols from word isn't presented in matrix.
-# But it's stupid to make time_limit based on this.
-# ------------------------
-# Can we count as adjacent cells most right to most left? like in test1 -> ES from 1 row and 2 row?
-# ------------------------
-#  ! pruning to make your solution faster !
-#  What we can prune? Cuz I want to create a solution which going to stop at 0 and -1 indexes and check
-#  every symbol on 4 cells around and made a recursion of it, until we reach correct length and word.
-#  We can't delete anything in this case, cuz we're obliged to check every start and end.
-#  W.e let's make it work for a start.
+# Time complexity: O(n * m + (m * n - 3) * 3 ** k) <- n - height of input matrix 'board',
+#                                                     m - length of input matrix 'board',
+#                                                     k - length of input string 'word'.
+# Worst case == we have all symbols present in matrix, but we can't build whole word last symbol is unreachable,
+#  and we have first symbol on (m * n - 3 ) matrix cells, last symbol is w.e we can't reach it.
+# ['A', 'E', 'A', 'A' ... 'A']  word = 'AAAA...AA' <- with len(word) == (m * n - 2).
+# ['E', 'A', 'A', 'A' ... 'A']  So, we have all correct symbols, and will start DFS. But will never reach 'word'.
+# ['A', 'A', 'A', 'A' ... 'A']
+# [...]
+# We will traverse full matrix => O(n * m).
+# And start DFS on (m * n - 3) cells, and every DFS is going to be recursion with 3 options to turn and length of
+#  recursion tree == k.
+# O(n * m + (m * n - 3) * 3 ** k).
+# -----------------------
+# Auxiliary space: O(m * n + (k - 1))
+# Dictionary with all symbols from 'board'. Worst case every symbol is unique => O(m * n).
+# Marking visited cells without extra space, and recursion stack is at max == (k - 1).
+# Because we're always starting DFS from second symbol or pre_last symbol.
+# O(m * n + (k - 1)).
 
 
-test1 = [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
-test1_word = "ABCCED"
-test1_out = True
-print(exist(test1, test1_word))
-assert test1_out == exist(test1, test1_word)
+test: list[list[str]] = [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
+test_word: str = "ABCCED"
+test_out: bool = True
+assert test_out == exist(test, test_word)
 
-test2 = [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
-test2_word = "SEE"
-test2_out = True
-print(exist(test2, test2_word))
-assert test2_out == exist(test2, test2_word)
+test = [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
+test_word = "SEE"
+test_out = True
+assert test_out == exist(test, test_word)
 
-test3 = [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
-test3_word = "ABCB"
-test3_out = False
-print(exist(test3, test3_word))
-assert test3_out == exist(test3, test3_word)
+test = [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
+test_word = "ABCB"
+test_out = False
+assert test_out == exist(test, test_word)
 
-test4 = [["A", "B", "C", "D"], ["E", "F", "G", "H"], ["c", "c", "b", "a"]]
-test4_word = "ccbaHDCGFBAE"
-test4_out = True
-print(exist(test4, test4_word))
-assert test4_out == exist(test4, test4_word)
+test = [["A", "B", "C", "D"], ["E", "F", "G", "H"], ["c", "c", "b", "a"]]
+test_word = "ccbaHDCGFBAE"
+test_out = True
+assert test_out == exist(test, test_word)
 
-# test5 - failed -> I was using set to store used coordinates to exclude duplicate walks,
-#                   and clearing after fully made 1 walk. But it overlapped with 4 ways walk, and some ways was just
-#                   ignored, so we need to store it in ordered way and always delete step after failing this step.
-test5 = [["A", "A", "a", "a", "A", "a"], ["a", "a", "a", "A", "A", "a"], ["A", "a", "A", "a", "a", "A"]]
-test5_word = "AAaaAAaAaaAaAaA"
-test5_out = True
-print(exist(test5, test5_word))
-assert test5_out == exist(test5, test5_word)
+test = [["A", "A", "a", "a", "A", "a"], ["a", "a", "a", "A", "A", "a"], ["A", "a", "A", "a", "a", "A"]]
+test_word = "AAaaAAaAaaAaAaA"
+test_out = True
+assert test_out == exist(test, test_word)
 
-# test6 - failed -> time_limit fail not algorithm. How we can speed_this_up? 3979ms :)
-test6 = [["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"],
-         ["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"]]
-test6_word = "AAAAAAAAAAAAAAa"
-test6_out = False
-print(exist(test6, test6_word))
-assert test6_out == exist(test6, test6_word)
+test = [
+    ["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"],
+    ["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"], ["A", "A", "A", "A", "A", "A"],
+]
+test_word = "AAAAAAAAAAAAAAa"
+test_out = False
+assert test_out == exist(test, test_word)
