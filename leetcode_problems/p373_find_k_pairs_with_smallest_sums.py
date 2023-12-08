@@ -10,49 +10,53 @@ import heapq
 
 
 def k_smallest_pairs(nums1: list[int], nums2: list[int], k: int) -> list[list[int]]:
-    # working_sol (51.5%, 24.36%) -> (1135ms, 36.6mb)  time: O(m * n) | space: O(m * n)
+    # working_sol (77.30%, 33.50%) -> (935ms, 36.53mb)  time: O(m * n * log(m * n)) | space: O(m * n)
+    # (sum of index values, index of nums1, index of nums2)
     all_sums_heap: list[tuple[int, int, int]] = []
-    all_sums: list[list[int, int]] = []
+    k_sums: list[list[int, int]] = []
     heapq.heapify(all_sums_heap)
-    # lowest possible sum
-    default_sum: tuple[int, int, int] = (nums1[0] + nums2[0], 0, 0)
-    heapq.heappush(all_sums_heap, default_sum)
-    # every index we already met
+    # Starting lowest possible sum.
+    current_sum: tuple[int, int, int] = (nums1[0] + nums2[0], 0, 0)
+    heapq.heappush(all_sums_heap, current_sum)
+    # Used pairs of indexes.
     duplicates: set[tuple[int, int]] = {(0, 0)}
     while k and all_sums_heap:
-        # lowest pair so far
-        current_sum: tuple[int, int, int] = heapq.heappop(all_sums_heap)
+        current_sum = heapq.heappop(all_sums_heap)
         index_nums1: int = current_sum[1]
         index_nums2: int = current_sum[2]
-        # indexes of possible pairs higher than lowest, but lowest in what's left
+        # We're given arrays in ascending order, best option is to step +1 from lowest option so far.
         pair_1: tuple[int, int] = (index_nums1 + 1, index_nums2)
         pair_2: tuple[int, int] = (index_nums1, index_nums2 + 1)
-        all_sums.append([nums1[index_nums1], nums2[index_nums2]])
-        # if array still didn't exhausted and pair not used
-        # adding this sum() and mark pair as used.
-        if (index_nums1 + 1) < len(nums1) and pair_1 not in duplicates:
-            sum_pair: tuple[int, int, int] = (
-                nums1[index_nums1 + 1] + nums2[index_nums2],
-                index_nums1 + 1,
-                index_nums2
+        k_sums.append([nums1[index_nums1], nums2[index_nums2]])
+        # If array still didn't exhausted and index pair is not used,
+        #  adding this sum() and mark pair as used.
+        if pair_1 not in duplicates and pair_1[0] < len(nums1):
+            lowest_sum_pair: tuple[int, int, int] = (
+                nums1[pair_1[0]] + nums2[pair_1[1]],
+                pair_1[0],
+                pair_1[1],
             )
-            heapq.heappush(all_sums_heap, sum_pair)
+            heapq.heappush(all_sums_heap, lowest_sum_pair)
             duplicates.add(pair_1)
-        if (index_nums2 + 1) < len(nums2) and pair_2 not in duplicates:
-            sum_pair = (
-                nums1[index_nums1] + nums2[index_nums2 + 1],
-                index_nums1,
-                index_nums2 + 1
+        if pair_2 not in duplicates and pair_2[1] < len(nums2):
+            lowest_sum_pair = (
+                nums1[pair_2[0]] + nums2[pair_2[1]],
+                pair_2[0],
+                pair_2[1],
             )
-            heapq.heappush(all_sums_heap, sum_pair)
+            heapq.heappush(all_sums_heap, lowest_sum_pair)
             duplicates.add(pair_2)
         k -= 1
-    return all_sums
+    return k_sums
 
-# Time complexity: O(m * n) -> in the worst case, we're having k higher than all possible combinations, and we will
-# m - len of input_nums1^^|    use every index from nums1 and nums2 => O(m * n).
-# n - len of input_nums2^^|    ^^If we assume heapq operations ignored(constant), otherwise => O(m * n * log(m * n)).
-# Auxiliary space: O(m * n) -> every combination stored in all_sums => O(m * n).
+
+# Time complexity: O(m * n * log(m * n)) <- m - length of input array 'nums1', n - length of input array 'nums2'.
+# Worst case 'k' >= all possible combinations == m * n.
+# We will use every combination of indexes and push them into a heapq.
+# heapq() push(), pop() operations are log(len(heapq)) and in the end we can have heapq with all combinations.
+# ----------------
+# Auxiliary space: O(m * n).
+# 'all_sums_heap', 'k_sums', 'duplicates' with all combinations allocated => O(3 * m * n)
 # ----------------
 # Can be done with calculating every combination and their sum, but because we're given sorted nums1, nums2.
 # We can use heapq, to use sum of every possible pairs.
@@ -61,30 +65,26 @@ def k_smallest_pairs(nums1: list[int], nums2: list[int], k: int) -> list[list[in
 # No matter what we add into it, we just need to pop() K times, and add every possible pair into a heap on the way.
 
 
-test1_1 = [1, 7, 11]
-test1_2 = [2, 4, 6]
-test1_k = 3
-test1_out = [[1, 2], [1, 4], [1, 6]]
-print(k_smallest_pairs(test1_1, test1_2, test1_k))
-assert test1_out == k_smallest_pairs(test1_1, test1_2, test1_k)
+test_nums1: list[int] = [1, 7, 11]
+test_nums2: list[int] = [2, 4, 6]
+test_k: int = 3
+test_out: list[list[int]] = [[1, 2], [1, 4], [1, 6]]
+assert test_out == k_smallest_pairs(test_nums1, test_nums2, test_k)
 
-test2_1 = [1, 1, 2]
-test2_2 = [1, 2, 3]
-test2_k = 2
-test2_out = [[1, 1], [1, 1]]
-print(k_smallest_pairs(test2_1, test2_2, test2_k))
-assert test2_out == k_smallest_pairs(test2_1, test2_2, test2_k)
+test_nums1 = [1, 1, 2]
+test_nums2 = [1, 2, 3]
+test_k = 2
+test_out = [[1, 1], [1, 1]]
+assert test_out == k_smallest_pairs(test_nums1, test_nums2, test_k)
 
-test3_1 = [1, 2]
-test3_2 = [3]
-test3_k = 3
-test3_out = [[1, 3], [2, 3]]
-print(k_smallest_pairs(test3_1, test3_2, test3_k))
-assert test3_out == k_smallest_pairs(test3_1, test3_2, test3_k)
+test_nums1 = [1, 2]
+test_nums2 = [3]
+test_k = 3
+test_out = [[1, 3], [2, 3]]
+assert test_out == k_smallest_pairs(test_nums1, test_nums2, test_k)
 
-test4_1 = [1]
-test4_2 = [2]
-test4_k = 100
-test4_out = [[1, 2]]
-print(k_smallest_pairs(test4_1, test4_2, test4_k))
-assert test4_out == k_smallest_pairs(test4_1, test4_2, test4_k)
+test_nums1 = [1]
+test_nums2 = [2]
+test_k = 100
+test_out = [[1, 2]]
+assert test_out == k_smallest_pairs(test_nums1, test_nums2, test_k)
