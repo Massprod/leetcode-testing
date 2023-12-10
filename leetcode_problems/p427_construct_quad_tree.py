@@ -68,6 +68,8 @@ def construct(grid: list[list[int]]) -> Node:
             if grid[row][col] != base_val:
                 leaf = False
                 break
+        if not leaf:
+            break
     if leaf:
         return Node(
             val=True if base_val == 1 else False,
