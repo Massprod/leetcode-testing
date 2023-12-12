@@ -8,7 +8,7 @@
 
 
 def max_points(points: list[list[int]]) -> int:
-    # working_sol (92.92%, 90.30%) -> (64ms, 16.23mb)  time: O(n ** 2) | space: O(n)
+    # working_sol (96.59%, 90.30%) -> (61ms, 16.23mb)  time: O(n ** 2) | space: O(n)
     # 1 point == 1 line.
     # 2 points == 1 line.
     if len(points) <= 2:
@@ -42,7 +42,7 @@ def max_points(points: list[list[int]]) -> int:
         point1_: tuple[int, int] = (points[x][0], points[x][1])
         # All lines with `point1_` on them.
         # Same slope == same line.
-        lines: dict[tuple[int, int] | str, int] = {
+        lines: dict[float | str, int] = {
             'vertical': 1,
             'duplicates': 0,
         }
@@ -55,8 +55,7 @@ def max_points(points: list[list[int]]) -> int:
                 continue
             # New line between 2 points == 2 points on it.
             lines[slope] = 2
-        if lines:
-            max_on_line = max(max_on_line, lines.pop('duplicates') + max(lines.values()))
+        max_on_line = max(max_on_line, lines.pop('duplicates') + max(lines.values()))
     return max_on_line
 
 
