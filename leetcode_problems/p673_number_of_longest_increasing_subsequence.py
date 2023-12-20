@@ -11,19 +11,18 @@ def find_numbers_of_lis(nums: list[int]) -> int:
     if len(nums) == 1:
         return 1
     # All values can be counted as SUBSEQ by themselves, and PATHS to them is 1.
-    # [maximum size of sequences ending on this index, number of sequences with this size ending on this index]
-    subseq_lens: list[list[int, int]] = [[1, 1] for _ in nums]
+    # (maximum size of sequences ending on this index, number of sequences with this size ending on this index)
+    subseq_lens: list[tuple[int, int]] = [(1, 1) for _ in nums]
     # Starting from 1 index, because first value is always SUBSEQ by itself and there's only 1 PATH to it.
     for x in range(1, len(nums)):
-        # Starting from 0, because we counted every value as subseq of 1 by themselves.
+        # Starting from 0, because we counted every value as subsequence of size 1 by themselves.
         max_seq: int = 0
-        # All correct PATHS leading to this index, always at least 1 path.
+        # All correct paths to build subsequences with maximum size, always at least 1 path.
         paths: int = 1
-        # All equal values on continuous streak will have same paths:
+        # All equal values on continuous streak will have the same paths:
         # 1, 2, 3, 3 -> 1, 2, 3 | 1, 2, 3
         if nums[x] == nums[x - 1]:
-            subseq_lens[x][0] = subseq_lens[x - 1][0]
-            subseq_lens[x][1] = subseq_lens[x - 1][1]
+            subseq_lens[x] = subseq_lens[x - 1]
         # Otherwise, try to continue previous or build a new one.
         else:
             y: int = x - 1
@@ -33,7 +32,7 @@ def find_numbers_of_lis(nums: list[int]) -> int:
                 # Equal can't either, because there's something incorrect between.
                 # Only care about subsequences we can continue with nums[x].
                 if nums[x] > nums[y]:
-                    # Same maximum subsequence size => just continue these paths.
+                    # Same maximum subsequence size => just continue these paths(subsequences) with our nums[x].
                     if max_seq == subseq_lens[y][0]:
                         paths += subseq_lens[y][1]
                     # Bigger subsequence size => new maximum size + new paths to continue.
@@ -41,15 +40,14 @@ def find_numbers_of_lis(nums: list[int]) -> int:
                         max_seq = subseq_lens[y][0]
                         paths = subseq_lens[y][1]
                 y -= 1
-            # (1 + max_seq) <- 1 our `x` element + maximum subsequence size on the left side.
-            subseq_lens[x][0] += max_seq
-            # All subsequences with length == `max_seq`, we have on the left side.
-            subseq_lens[x][1] = paths
+            # (1 + max_seq) <- 1 our `x` element + maximum subsequence size we found.
+            subseq_lens[x] = (subseq_lens[x][0] + max_seq, paths)
     max_len: int = 0
     max_paths: int = 0
     for sub_length, paths in subseq_lens:
-        # Same maximum length => continuation of previous subsequences with this size.
-        # [1, 1, 1, 2, 2, 2, 3, 3, 3] -> there's 9 PATHS leading to every '3'.
+        # Same maximum length => same paths to build subsequences with this size.
+        # [1, 1, 1, 2, 2, 2, 3, 3, 3]
+        # There's 9 PATHS leading to every '3' == 27 paths to build [1, 2, 3].
         if max_len == sub_length:
             max_paths += paths
         # New maximum size + paths.
