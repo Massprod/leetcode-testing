@@ -9,41 +9,35 @@ from random import choice
 
 
 def max_score(s: str) -> int:
-    # working_sol (86.87%, 5.69%) -> (36ms, 17.20mb)  time: O(n) | space: O(n)
-    # [left side score of '0', for every index]
-    prefixes: list[int] = [0]
-    prefix: int = 0
-    # Calc prefix for last index, to check if there's '0' present in case like '1110'.
-    for x in range(1, len(s) + 1):
-        prefix = prefix + (1 if s[x - 1] == '0' else 0)
-        prefixes.append(prefix)
-    suffix: int = 0
-    # There's no '0' present, but we still need to slice in 2 substrings => -1 element.
-    if not prefixes[-1]:
+    # working_sol (98.91%, 5.69%) -> (29ms, 17.24mb)  time: O(n) | space: O(1)
+    cur_score: int = s.count('1')
+    # '0' not present.
+    if cur_score == len(s):
         return len(s) - 1
-    out: int = prefixes[-2] + int(s[-1])  # last index only have prefix and itself as score, if we slice on left.
-    # Calc suffix for 0 index, to check if there's '1' present in case like '01111'.
-    for x in range(len(s) - 2, -2, -1):
-        suffix = suffix + (1 if s[x + 1] == '1' else 0)
-        if x > 0:
-            # Every index except 0, can be sliced on both sides, so we can include it as +1 in score.
-            out = max(out, prefixes[x] + suffix + 1)
-        elif x == 0:
-            # 0 index can't be sliced on left side and only counted in score if it's '0'.
-            out = max(out, suffix + (1 if s[x] == '0' else 0))
-    # There's no '1' present.
-    if not suffix:
+    # '1' not present.
+    if cur_score == 0:
         return len(s) - 1
+    # We have maximum score of right side == '1'.
+    # If we slice from the right index side:
+    #  every '0' => +1 to maximum score of left side
+    #  every '1' => -1 to maximum score of right side.
+    # Last index doesn't matter, it's either already counted as '1'
+    #  or it's '0' and we can't include it.
+    out: int = 0
+    for x in range(len(s) - 1):
+        if s[x] == '0':
+            cur_score += 1
+        else:
+            cur_score -= 1
+        out = max(out, cur_score)
     return out
 
 
 # Time complexity: O(n) <- n - length of input string `s`.
-# Single traverse of every index of `s` to get all prefixes => O(n).
-# Extra traverse to calculate maximum score => O(n).
-# Auxiliary space: O(n).
-# Extra array `prefixes` with size of (n + 1), because we calculate prefix for the last index.
-# Which we don't need, but it's shorter than extra check of [-1] being '1' or '0', same for suffix.
-# And 3 extra constant INTs, none of them depends on input => O(1).
+# Single traverse of `s` to count() all '1' => O(n).
+# Extra traverse to get maximum score `out` => O(n - 1).
+# Auxiliary space: O(1).
+# Only 2 extra INTs used, none of them depends on input => O(1).
 
 
 test: str = "011101"
