@@ -64,7 +64,7 @@ def construct_from_pre_post(preorder: list[int], postorder: list[int]) -> TreeNo
     right_sub: list[int] = []
     if left_limit < len(postorder):
         right: int = postorder.index(preorder[left_limit])
-        right_sub: list[int] = postorder[left + 1:right + 1]
+        right_sub = postorder[left + 1:right + 1]
     # But, we can have preorder with len == 2, and only left subtree.
     # We need to ignore right sub in this case.
     if right_sub:
