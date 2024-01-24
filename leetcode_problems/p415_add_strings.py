@@ -10,7 +10,7 @@
 
 
 def add_strings(num1: str, num2: str) -> str:
-    # working_sol (97.28%, 77.43%) -> (32ms, 16.67mb)  time: O(n) | space: O(n)
+    # working_sol (97.28%, 77.43%) -> (32ms, 16.67mb)  time: O(max(num1, num2)) | space: O(max(num1, num2))
     # Assume we can't use int() at all.
     # But we know that ascii for 0 -> 9 is 48 -> 57.
     # So, we can get any digit with: ord('digit') - ord('0').
@@ -57,7 +57,7 @@ def add_strings(num1: str, num2: str) -> str:
 # Extra, we're reversing sum, which can be max(num1, num2) + 1 size, if we have remainder to add.
 # O(max(num1, num2) + 1)
 # ------------------------
-# Auxiliary space: O(O(max(num1, num2)).
+# Auxiliary space: O(max(num1, num2)).
 # Same, we can get string `out` of size max(num1, num2) + 1 if we have remainder => O(max(num1, num2) + 1).
 
 
