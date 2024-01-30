@@ -14,35 +14,38 @@
 
 
 def eval_rpn(tokens: list[str]) -> int:
-    # working_sol (75.48%, 93.17%) -> (70ms, 16.58mb)  time: O(n) | space: O(log n)
+    # working_sol (82.29%, 93.17%) -> (63ms, 16.58mb)  time: O(n) | space: O(n)
+    new: int
     path: list[int] = []
-    for x in range(len(tokens)):
-        if tokens[x] == "+":
-            new: int = path[-2] + path[-1]
+    for token in tokens:
+        if '+' == token:
+            new = path[-2] + path[-1]
             path.pop()
             path[-1] = new
-        elif tokens[x] == "-":
-            new: int = path[-2] - path[-1]
+        elif '-' == token:
+            new = path[-2] - path[-1]
             path.pop()
             path[-1] = new
-        elif tokens[x] == "*":
-            new: int = int(path[-2] * path[-1])
+        elif '*' == token:
+            new = int(path[-2] * path[-1])
             path.pop()
             path[-1] = new
-        elif tokens[x] == "/":
-            new: int = int(path[-2] / path[-1])
+        elif '/' == token:
+            new = int(path[-2] / path[-1])
             path.pop()
             path[-1] = new
         else:
-            path.append(int(tokens[x]))
+            path.append(int(token))
     return path[-1]
 
 
-# Time complexity: O(n) -> traversing whole input array, once => O(n).
-# n - length of input array^^|
-# Auxiliary space: O(log n) -> only part with integers of input_list will be stored in path => O(log n)
+# Time complexity: O(n) <- length of input array `tokens`.
+# Traversing whole input array to get all values and calc them => O(n).
+# Worsts case: 1,2,3,4,5,6,+ <- something like values and only 1 operation.
+# In this case our stack will be a size of (n - 1) and we will extra use every index => O(n).
 # -----------------------------
-# Wow, they didn't trick us in the description. Rare occasion.
+# Auxiliary space: O(n).
+# In this worst case, we will allocate space for (n - 1) values in stack => O(n).
 # -----------------------------
 # Should I check for errors?
 # Because in the description => | The input represents a valid arithmetic expression in a reverse polish notation. | ->
@@ -77,6 +80,6 @@ test = ["1"]
 test_out = 1
 assert test_out == eval_rpn(test)
 
-test5 = ["3", "4", "*", "5", "6", "*", "+"]
-test5_out = 42
+test = ["3", "4", "*", "5", "6", "*", "+"]
+test_out = 42
 assert test_out == eval_rpn(test)
