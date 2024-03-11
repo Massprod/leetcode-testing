@@ -24,8 +24,9 @@ def custom_sort_string(order: str, s: str) -> str:
 # Time complexity: O(n * log n) n - length of input string `s`
 # Basic built in sort() => O(n * log n).
 # ----------------------------
-# Auxiliary space: O(n).
+# Auxiliary space: O(n + m) <- m - length of input string `order`
 # Creating extra array of size `n` and creating string `out` from it with the same size `n` => O(n).
+# Extra dictionary `cor_order` with the size of `order`.
 
 
 test: str = "cba"
