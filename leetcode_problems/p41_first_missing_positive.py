@@ -1,32 +1,38 @@
-# Given an unsorted integer array nums, return the smallest missing positive integer.
-#
-# You must implement an algorithm that runs in O(n) time and uses constant extra space.
+# Given an unsorted integer array nums.
+# Return the smallest positive integer that is not present in nums.
+# You must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space.
+# -----------------------
+# 1 <= nums.length <= 10 ** 5
+# -2 ** 31 <= nums[i] <= 2 ** 31 - 1
+from random import randint
 
-# Add metrics in a future % is good but numbers should be here. Maybe revisit other's will see.
 
 def first_positive_const(nums: list[int]) -> int:
-    # working_sol (26.1%, 64.75%) time: O(n) | space: O(1)
-    max_pos = len(nums)  # max_positive_integer which can be placed into only_positive_list
+    # working_sol (38.23%, 55.57%) -> (304ms, 30.30mb)  time: O(n) | space: O(1)
+    # max_pos == integer which can be placed into only_positive_list
+    max_pos = len(nums)
+    mark: int = 100
     for x in range(max_pos):
         if nums[x] <= 0:
-            nums[x] = max_pos + 10
+            nums[x] = max_pos + mark
         elif nums[x] > max_pos:
-            nums[x] = max_pos + 10
+            nums[x] = max_pos + mark
     for x in range(max_pos):
-        cursor = abs(nums[x])
-        if cursor > max_pos:
+        index: int = abs(nums[x]) - 1
+        if index >= max_pos:
             continue
-        if nums[cursor - 1] < 0:  # ignoring already busy indexes for duplicated values
+        if nums[index] < 0:  # ignoring already busy indexes for duplicated values
             continue
-        nums[cursor - 1] = -1 * nums[cursor - 1]
+        nums[index] = -1 * nums[index]
     for x in range(max_pos):
         if nums[x] > 0:
             return x + 1
     return max_pos + 1
 
+
 # Time complexity: O(n) -> 1 + 1 + 1 - 3 loops == 3n, worst case looping through n elements of input.
 # Space complexity: O(1) -> no extra space used.
-
+# -----------------------------
 # First of all we need to change our list to a type of 1.......n only positive values.
 # It's cant be done without sorting which takes extra space. Python sort() is at lowest (n * log n).
 # List need's to be changed inplace without using anything extra.
@@ -46,64 +52,27 @@ def first_positive_const(nums: list[int]) -> int:
 # Returning max_pos + 1 as highest integer -> length == last_index - 1 ->
 # integer which can be placed at this index in only positive list 1......n -> last_index + 1 == length ->
 # which leave us with next integer last_index + 1 + 1 == length + 1
-# -----------------------------
-# Well now, it's HARD problem.
 
 
-def first_positive(nums: list[int]) -> int:
-    # working_sol (52.42%, 46.58%) -> (372ms, 27.9mb) time: O(n * log n) | space O(n)
-    min_pos = 1
-    nums.sort()
-    for x in range(len(nums)):
-        if nums[x] <= 0:
-            continue
-        if nums[x] == min_pos:
-            min_pos += 1
-            continue
-        if nums[x] > min_pos:
-            return min_pos
-    return min_pos
+test: list[int] = [1, 2, 0]
+test_out: int = 3
+assert test_out == first_positive_const(test)
 
-# Time complexity: O(n * log n) -> worst case we loop through whole list of nums and min_pos will be (nums[-1] + 1)
-# Space complexity: O(n) -> one constant min_pos, and doesn't depend on input, and O(n) for sort()
-#
-# Ok. Python sort() takes at lowest Ω(n), violating the rule with memory. Found the catch.
-# -----------------------------
-# ! "No extra space" implies some amount of space,
-# usually exactly n, is available via the input, and no more should be used !
-# -> Ok. That's a catch I guess, not available to use min_pos as a constant.
-# -----------------------------
-# ! a space complexity of O(1) means that the space required by the algorithm to process data is constant;
-# it does not grow with the size of the data on which the algorithm is operating. !
-# -----------------------------
-# ! For an algorithm to take constant extra space,
-# the extra variables used to solve it should not change with the input size !
-# But all googled solution's at least uses LEN(NUMS) as constant n, which depends on input size. Hmm
-# -----------------------------
-# Where's the catch? Hard problem, can't be so easy...
-# We allowed to sort, and minimal positive int is 1
-# If there's not presented any value equal to 1 it's always return 1,
-# and if there's 1, next 2 with same logic. Hmm
+test = [3, 4, -1, 1]
+test_out = 2
+assert test_out == first_positive_const(test)
 
+test = [7, 8, 9, 11, 12]
+test_out = 1
+assert test_out == first_positive_const(test)
 
-test1 = [1, 2, 0]
-test1_out = 3
-# print(first_positive(test1))
-print(first_positive_const(test1))
+test = [1, 1]
+test_out = 2
+assert test_out == first_positive_const(test)
 
-test2 = [3, 4, -1, 1]
-test2_out = 2
-# print(first_positive(test2))
-print(first_positive_const(test2))
+test = [1, 2, 3, 4, 5]
+test_out = 6
+assert test_out == first_positive_const(test)
 
-test3 = [7, 8, 9, 11, 12]
-test3_out = 1
-# print(first_positive(test3))
-print(first_positive_const(test3))
-
-test4 = [1, 1]
-test4_out = 2
-print(first_positive_const(test4))
-
-test5 = [1, 2, 3, 4, 5]
-print(first_positive_const(test5))
+test = [randint(-2 ** 31, 2 ** 31 - 1) for _ in range(10 ** 3)]
+print(test)
