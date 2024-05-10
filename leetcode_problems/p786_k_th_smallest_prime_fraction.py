@@ -45,7 +45,7 @@ def kth_smallest_prime_fraction(arr: list[int], k: int) -> list[int]:
     return out
 
 
-# Time complexity: O(((k + n) * log n) + n
+# Time complexity: O(((k + n) * log n) + n) <- length of the input array `arr`.
 # Always traversing whole input array `arr` once => O(n).
 # Extra using `heapq.heappop()` and `heapq.heappush()`, `k` times on a `heap` with `n` elements in it.
 # Every push(), pop() operations is O(log n) => O(((k + n) * log n) + n)
