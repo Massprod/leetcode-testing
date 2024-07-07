@@ -66,7 +66,6 @@ def shortest_completing_word(license_plate: str, words: list[str]) -> str:
 # `word_chars` will allocate space for a maximum sized word from `words` => O(n + max(words)).
 
 
-
 test_plate: str = "1s3 PSt"
 test_words: list[str] = ["step", "steps", "stripe", "stepple"]
 test_out: str = "steps"
