@@ -10,7 +10,7 @@ from random import randint
 
 
 def is_one_bit_character(bits: list[int]) -> bool:
-    # working_sol (67.89%, 93.12%) -> (49ms, 16.46mb)  time: O(n) | space: O(1)
+    # working_sol (93.58%, 99.24%) -> (43ms, 16.36mb)  time: O(n) | space: O(1)
     # We build from left -> right.
     # And we care only about, how we build last char of the string.
     # If we're using to build two-bit char => False
