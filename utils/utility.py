@@ -18,6 +18,12 @@ def gcd(higher: int, lower: int) -> int:
     --------
     int
         The greatest common divisor of the two input integers.
+    Example:
+    --------
+    >>> gcd(10, 1)
+    1
+    >>> gcd(999, 1923)
+    3
     """
     if lower == 0:
         return higher
