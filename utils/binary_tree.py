@@ -44,3 +44,23 @@ def bt_from_level_order(nodes: list[int]) -> TreeNode:
                 cur_node.right = None
         index += 1
     return root
+
+
+def bst_from_preorder(
+        preorder: list[int],
+        index: list[int],
+        min_val: int | float = float('-inf'),
+        max_val: int | float = float('inf')
+) -> TreeNode | None:
+
+    if len(preorder) <= index[0]:
+        return None
+    cur_val: int = preorder[index[0]]
+    if not (min_val < cur_val < max_val):
+        return None
+    node: TreeNode = TreeNode(cur_val)
+    index[0] += 1
+    if index[0] < len(preorder):
+        node.left = bst_from_preorder(preorder, index, min_val, cur_val)
+        node.right = bst_from_preorder(preorder, index, cur_val, max_val)
+    return node
