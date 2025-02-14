@@ -1,0 +1,47 @@
+# Design an algorithm that accepts a stream of integers
+#  and retrieves the product of the last k integers of the stream.
+# Implement the ProductOfNumbers class:
+#  - ProductOfNumbers() Initializes the object with an empty stream.
+#  - void add(int num) Appends the integer num to the stream.
+#  - int getProduct(int k) Returns the product of the last k numbers
+#    in the current list. You can assume that always the current list
+#    has at least k numbers.
+# The test cases are generated so that, at any time,
+#  the product of any contiguous sequence of numbers will fit
+#  into a single 32-bit integer without overflowing.
+# -----------------------------
+# 0 <= num <= 100
+# 1 <= k <= 4 * 10 ** 4
+# At most 4 * 10 ** 4 calls will be made to add and getProduct.
+# The product of the stream at any point in time will fit in a 32-bit integer.
+
+
+class ProductOfNumbers:
+    # working_sol (72.91%, 61.64%) -> (32ms, 31.62mb)  time: O(1) | space: O(n)
+
+    def __init__(self) -> None:
+        # 1 <- for 1 indexed 
+        self.prefixes: list[int] = [1]
+
+    def add(self, num: int) -> None:
+        if 0 == num:
+            self.prefixes = [1]
+            return
+        self.prefixes.append(
+            self.prefixes[-1] * num
+        )
+
+    def getProduct(self, k: int) -> int:
+        if (len(self.prefixes) - 1) < k:
+            return 0
+        return self.prefixes[-1] // self.prefixes[
+            len(self.prefixes) - 1 - k]
+
+
+# Time complexity:
+#  __init__: O(1).
+#  add: O(1).
+#  getProduct: O(1).
+# -----------------------------
+# Auxiliary space:
+#  O(n) <- n - number of added values (in the worst case, there's no `0`s added)
