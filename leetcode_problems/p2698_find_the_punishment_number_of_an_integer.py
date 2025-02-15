@@ -43,6 +43,12 @@ def punishment_number(n: int) -> int:
     return out
 
 
+# Math descriptions from Editorial, too much to both on weekOff =)
+# Time complexity: O(n * 2 ** log_10_n)
+# ----------------------
+# Auxiliary space: O(log_10_n)
+
+
 test: int = 10
 test_out: int = 182
 assert test_out == punishment_number(test)
