@@ -1,0 +1,53 @@
+# Given a binary tree with the following rules:
+# 1. root.val == 0
+# 2. For any treeNode:
+#   1. If treeNode.val has a value x and treeNode.left != null,
+#      then treeNode.left.val == 2 * x + 1
+#   2. If treeNode.val has a value x and treeNode.right != null,
+#      then treeNode.right.val == 2 * x + 2
+# Now the binary tree is contaminated, which means all treeNode.val
+#  have been changed to -1.
+# Implement the FindElements class:
+#  - FindElements(TreeNode* root) Initializes the object with a contaminated
+#    binary tree and recovers it.
+#  - bool find(int target) Returns true if the target value exists
+#    in the recovered binary tree.
+# -------------------------
+# TreeNode.val == -1
+# The height of the binary tree is less than or equal to 20
+# The total number of nodes is between [1, 10 ** 4]
+# Total calls of find() is between [1, 10 ** 4]
+# 0 <= target <= 10 ** 6
+from utils.binary_tree import TreeNode
+
+
+class FindElements:
+    # working_sol (93.05%, 37.43%) -> (3ms, 22.22mb)  time: O(n) | space: O(n)
+
+    def __init__(self, root: TreeNode) -> None:
+        self.values: set[int] = set([0])
+        # root.val == 0
+        root.val = 0
+        self.restore(root)
+
+    def find(self, target: int) -> bool:
+        return target in self.values
+    
+    def restore(self, root: TreeNode) -> None:
+        if root.left:
+            root.left.val = 2 * root.val + 1
+            self.values.add(root.left.val)
+            self.restore(root.left)
+        
+        if root.right:
+            root.right.val = 2 * root.val + 2
+            self.values.add(root.right.val)
+            self.restore(root.right)
+
+
+# Time complexity: n - length of the input BT
+# restore: O(n) <- always traversing whole input BT, once => O(n).
+# find: O(1) <- constant time search in set => O(1).
+# -------------------------
+# Auxiliary space: 
+# __init__: O(n) <- always store every value from BT => O(n).
