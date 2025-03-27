@@ -1,0 +1,69 @@
+# An element x of an integer array arr of length m is dominant
+#  if more than half the elements of arr have a value of x.
+# You are given a 0-indexed integer array nums of length n with one dominant element.
+# You can split nums at an index i into two arrays nums[0, ..., i]
+#  and nums[i + 1, ..., n - 1], but the split is only valid if:
+#  - 0 <= i < n - 1
+#  - nums[0, ..., i], and nums[i + 1, ..., n - 1] have the same dominant element.
+# Here, nums[i, ..., j] denotes the subarray of nums starting at index i
+#  and ending at index j, both ends being inclusive.
+# Particularly, if j < i then nums[i, ..., j] denotes an empty subarray.
+# Return the minimum index of a valid split.
+# If no valid split exists, return -1.
+# ---------------------------
+# 1 <= nums.length <= 10 ** 5
+# 1 <= nums[i] <= 10 ** 9
+# nums has exactly one dominant element.
+from collections import Counter
+
+
+def minimum_index(nums: list[int]) -> int:
+    # working_sol (55.45%, 38.61%) -> (64ms, 34.53mb)  time: O(n) | space: O(n)
+    values: dict[int, int] = Counter(nums)
+    # ! have the same dominant element. !
+    # No matter the slice, we're always should have same dominant.
+    # Which is -> ! with one dominant element. !
+    # Because it will always be dominant in one of the subArrays.
+    dominant: int = max(values, key=lambda x: values[x])
+    left_count: int = 0
+    right_count: int = values[dominant]
+    right_limit: int = len(nums) - 1
+    for index in range(len(nums)):
+        # nums[0, ..., i]
+        left_slice: int = index + 1
+        # nums[i + 1, ..., n - 1]
+        right_slice: int = right_limit - index
+        val: int = nums[index]
+        if val == dominant:
+            left_count += 1
+            right_count = values[dominant] - left_count
+        # Dominant == more than half.
+        # Dominant * 2 > count of elements in the slice
+        if (left_count * 2 > left_slice
+            and right_count * 2 > right_slice):
+            return index
+    
+    return -1
+
+
+# Time complexity: O(n) <- n - length of the input array `nums`.
+# First traversing to count all element occurrences => O(n).
+# Every value can't be unique, so it's always (n // 2 + 1) - odd (n // 2) even.
+# Extra traverse to get max() => O(n + n // 2).
+# Final traverse to get correct split => O(2 * n + n // 2).
+# ---------------------------
+# Auxiliary space: O(n)
+# `values` <- allocates space for (n // 2) values => O(n).
+
+
+test: list[int] = [1, 2, 2, 2]
+test_out: int = 2
+assert test_out == minimum_index(test)
+
+test = [2, 1, 3, 1, 1, 1, 7, 1, 2, 1]
+test_out = 4
+assert test_out == minimum_index(test)
+
+test = [3, 3, 3, 3, 7, 2, 2]
+test_out = -1
+assert test_out == minimum_index(test)
