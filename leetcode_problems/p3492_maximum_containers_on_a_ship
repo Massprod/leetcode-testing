@@ -1,0 +1,43 @@
+# You are given a positive integer n representing an n x n cargo deck on a ship.
+# Each cell on the deck can hold one container with a weight of exactly w.
+# However, the total weight of all containers, if loaded onto the deck,
+#  must not exceed the ship's maximum weight capacity, maxWeight.
+# Return the maximum number of containers that can be loaded onto the ship.
+# ----------------------
+# 1 <= n <= 1000
+# 1 <= w <= 1000
+# 1 <= maxWeight <= 10 ** 9
+from math import ceil
+
+
+def max_containers(n: int, w: int, maxWeight: int) -> int:
+    # working_sol (100.00%, 38.11%) -> (0ms, 17.86mb)  time: O(1) | space: O(1)
+    all_cells: int = n * n
+    # If every cell is taken.
+    full_load: int = all_cells * w
+    if full_load <= maxWeight:
+        return all_cells
+    # Everything over the limit, should be deleted.
+    # And we know that every container_weight == weight.
+    # Cell == container.
+    over_limit: int = full_load - maxWeight
+    remove_containers: int = ceil(over_limit / w)
+    return all_cells - remove_containers
+
+
+# Time complexity: O(1)
+# ----------------------
+# Auxiliary space: O(1)
+
+
+test_n: int = 2
+test_w: int = 3
+test_weight: int = 15
+test_out: int = 4
+assert test_out == max_containers(test_n, test_w, test_weight)
+
+test_n = 3
+test_w = 5
+test_weight = 20
+test_out = 4
+assert test_out == max_containers(test_n, test_w, test_weight)
