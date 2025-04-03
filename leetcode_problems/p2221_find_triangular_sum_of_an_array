@@ -1,0 +1,40 @@
+# You are given a 0-indexed integer array nums,
+#  where nums[i] is a digit between 0 and 9 (inclusive).
+# The triangular sum of nums is the value of the only element present
+#  in nums after the following process terminates:
+# 1. Let nums comprise of n elements. If n == 1, end the process.
+#    Otherwise, create a new 0-indexed integer array newNums of length n - 1.
+# 2. For each index i, where 0 <= i < n - 1, assign the value of newNums[i]
+#    as (nums[i] + nums[i+1]) % 10, where % denotes modulo operator.
+# 3. Replace the array nums with newNums.
+# 4. Repeat the entire process starting from step 1.
+# Return the triangular sum of nums.
+# -----------------------
+# 1 <= nums.length <= 1000
+# 0 <= nums[i] <= 9
+
+
+def triangular_sum(nums: list[int]) -> int:
+    # working_sol (77.49%, 42.34%) -> (1166ms, 18.01mb)  time: O(n * n) | space: O(1)
+    while 1 != len(nums):
+        for index in range(len(nums) - 1):
+            nums[index] = (nums[index] + nums[index + 1]) % 10
+        nums.pop()
+
+    return nums[0]
+
+
+# Time complexity: O(n * n) <- n - length of the input array `nums`.
+# Always depleting whole input array `nums`.
+# -----------------------
+# Auxiliary space: O(1)
+# Reusing input array `nums`.
+
+
+test: list[int] = [1, 2, 3, 4, 5]
+test_out: int = 8
+assert test_out == triangular_sum(test)
+
+test = [5]
+test_out = 5
+assert test_out == triangular_sum(test)
