@@ -1,0 +1,60 @@
+# The score of an array is defined as the product of its sum and its length.
+# For example, the score of [1, 2, 3, 4, 5] is (1 + 2 + 3 + 4 + 5) * 5 = 75.
+# Given a positive integer array nums and an integer k,
+#  return the number of non-empty subarrays of nums whose score is strictly less than k.
+# A subarray is a contiguous sequence of elements within an array.
+# -------------------------
+# 1 <= nums.length <= 10 ** 5
+# 1 <= nums[i] <= 10 ** 5
+# 1 <= k <= 10 ** 15
+from random import randint
+
+from pyperclip import copy
+
+
+def count_subarrays(nums: list[int], k: int) -> int:
+    # working_sol (7.36%, 87.42%) -> (215ms, 30.36mb)  time: O(n) | space: O(1)
+    def get_sub_size(right: int, left: int) -> int:
+        return (right - left) + 1  # +1 for 0-indexed
+
+    out: int = 0
+    sub_score: int = 0
+    left_l: int = 0
+    right_l: int = 0
+    while left_l < len(nums) and right_l < len(nums):
+        sub_score += nums[right_l]
+        while (left_l <= right_l
+                and (sub_score * get_sub_size(right_l, left_l) >= k)):
+            sub_score -= nums[left_l]
+            left_l += 1
+        
+        # Every time we expand.
+        # We're going to a new subarray of the full size.
+        # And extra subarray for each element in the prev window.
+        # Because, prev window element + new element => subarray.
+        out += get_sub_size(right_l, left_l)
+        right_l += 1
+
+    return out
+
+
+# Time complexity: O(n) <- n - length of the input array `nums`.
+# Always traversing whole input array `nums` and using each index, twice => O(n).
+# -------------------------
+# Auxiliary space: O(1)
+# Only constant variable are used, none of them depends on input => O(1).
+
+
+test: list[int] = [2, 1, 4, 3, 5]
+test_k: int = 10
+test_out: int = 6
+assert test_out == count_subarrays(test, test_k)
+
+test = [1, 1, 1]
+test_k = 5
+test_out = 5
+assert test_out == count_subarrays(test, test_k)
+
+test = [randint(1, 10 ** 5) for _ in range(10 ** 5)]
+print(randint(1, 10 ** 15))
+copy(test)
