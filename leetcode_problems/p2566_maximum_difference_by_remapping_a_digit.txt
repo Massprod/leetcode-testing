@@ -1,0 +1,54 @@
+# You are given an integer num. You know that Bob will sneakily remap one
+#  of the 10 possible digits (0 to 9) to another digit.
+# Return the difference between the maximum and minimum values Bob
+#  can make by remapping exactly one digit in num.
+# Notes:
+#  - When Bob remaps a digit d1 to another digit d2,
+#     Bob replaces all occurrences of d1 in num with d2.
+#  - Bob can remap a digit to itself, in which case num does not change.
+#  - Bob can remap different digits for obtaining minimum
+#     and maximum values respectively.
+#  - The resulting number after remapping can contain leading zeroes.
+# -------------------------
+# 1 <= num <= 10 ** 8
+
+
+def min_max_difference(num: int) -> int:
+    # working_sol (100.00, 29.28%) -> (0ms, 17.90mb)  time: O(n) | space: O(n)
+    # Best option to get the highest:
+    #  change first digit to the highest we can use == `9`
+    #  if it's not already `9`, otherwise we would need to find the lower one
+    #  but still replace it with `9`.
+    str_num: str = str(num)
+    target_digit: str = ''
+    for dig in str_num:
+        if '9' != dig:
+            target_digit = dig
+            break
+    highest: str = str_num.replace(target_digit, '9') if target_digit else str_num
+    # Best option to get the lowest:
+    #  remove the first digit and any of it's occurrences.
+    lowest: str = str_num.replace(str_num[0], '0')
+
+    return int(highest) - int(lowest)
+
+
+# Time complexity: O(n) <- n - number of digits in the input value `num`.
+# Always converting `num` into string => O(n).
+# Extra traversing all the characters, once for 3 times => O(4 * n).
+# -------------------------
+# Auxiliary space: O(n)
+# `str_num` & `highest` & `lowest` <- allocates space for each digit => O(n).
+
+
+test: int = 11891
+test_out: int = 99009
+assert test_out == min_max_difference(test)
+
+test = 90
+test_out = 99
+assert test_out == min_max_difference(test)
+
+test = 99999
+test_out = 99999
+assert test_out == min_max_difference(test)
