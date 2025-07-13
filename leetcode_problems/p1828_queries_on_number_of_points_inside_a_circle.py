@@ -18,7 +18,7 @@
 
 
 def  count_poins(points: list[list[int]], queries: list[list[int]]) -> list[int]:
-    
+    # working_sol (80.41%, 38.68%) -> (362ms, 18.17mb)  time: O(n * m) | space: O(m)
     out: list[int] = []
     for circle_x, circle_y , circle_r in queries:
         square_r: int = circle_r ** 2
@@ -30,6 +30,14 @@ def  count_poins(points: list[list[int]], queries: list[list[int]]) -> list[int]
         out.append(points_inside)
     
     return out
+
+
+# Time complexity: O(n * m) <- n - length of the input array `points`,
+#                              m - length of the input array `queries`.
+# Double loop with every index of the both input arrays, used => O(n * m).
+# --------------------------
+# Auxiliary space: O(m)
+# We store answer for each query from the `queries` => O(m).
 
 
 test_points: list[list[int]] = [[1, 3], [3, 3], [5, 3], [2, 2]]
