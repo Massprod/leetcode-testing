@@ -1,0 +1,61 @@
+# You are given a 0-indexed integer array players,
+#  where players[i] represents the ability of the ith player.
+# You are also given a 0-indexed integer array trainers,
+#  where trainers[j] represents the training capacity of the jth trainer.
+# The ith player can match with the jth trainer if the player's ability is less than
+#  or equal to the trainer's training capacity.
+# Additionally, the ith player can be matched with at most one trainer,
+#  and the jth trainer can be matched with at most one player.
+# Return the maximum number of matchings between players
+#  and trainers that satisfy these conditions.
+# -----------------------------
+# 1 <= players.length, trainers.length <= 10 ** 5
+# 1 <= players[i], trainers[j] <= 10 ** 9
+
+
+def match_players_and_trainers(players: list[int], trainers: list[int]) -> int:
+    # working_sol (75.96%, 82.54%) -> (73ms, 33.6mb)  time: O(n * log n + m * log m + min(m, n))
+    #                                                 space: O(n + m)
+    out: int = 0
+    if not trainers or not players:
+        return out
+    # All we essentially care is to take the maximum capacity trainer
+    #  and match it to the maximum demanding player.
+    # And because we can only bound them 1 <-> 1 => sort and assign.
+    players.sort(reverse=True)
+    trainers.sort(reverse=True)
+    
+    player_index: int = 0
+    trainer_index: int = 0
+    while player_index < len(players) and trainer_index < len(trainers):
+        player_demand: int = players[player_index]
+        trainer_capacity: int = trainers[trainer_index]
+        # We can assign or there's no trainer which can handle this player.
+        if player_demand <= trainer_capacity:
+            out += 1
+            player_index += 1
+            trainer_index += 1
+        else:
+            player_index += 1
+
+    return out
+
+
+# Time complexity: O(n * log n + m * log m) <- n - length of the input array `players`,
+#                                              m - length of the input array `trainers`.
+# We're always sorting both input array `players` & `trainers` => O(n * log n + m * log m).
+# And extra traversing the minimum array after that => O(n * log n + m * log m + min(m, n)).
+# -----------------------------
+# Auxiliary space: O(n + m)
+# `sort` <- takes array length as an extra space => O(n + m).
+
+
+test: list[int] = [4, 7, 9] 
+test_trainers: list[int] = [8, 2, 5, 8]
+test_out: int = 2
+assert test_out == match_players_and_trainers(test,test_trainers)
+
+test = [1, 1, 1]
+test_trainers = [10]
+test_out = 1
+assert test_out == match_players_and_trainers(test,test_trainers)
