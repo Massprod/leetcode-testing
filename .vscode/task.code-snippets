@@ -1,0 +1,12 @@
+{
+	"task.preset.standard" : {
+		"scope": "python",
+		"prefix": "task",
+		"body": [
+			"# ${1:description}",
+			"# --- --- --- ---",
+			"# ${2:constraints}",
+		],
+		"description": "Standard task preset, with description and constraints",
+	}
+}
