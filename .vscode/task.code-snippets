@@ -1,12 +1,30 @@
 {
-	"task.preset.standard" : {
+	"task.standard.description" : {
 		"scope": "python",
-		"prefix": "task",
+		"prefix": "task.standard.description",
 		"body": [
 			"# ${1:description}",
 			"# --- --- --- ---",
 			"# ${2:constraints}",
 		],
-		"description": "Standard task preset, with description and constraints",
-	}
+		"description": "Standard task description",
+	},
+	"task.standard.complexity": {
+		"scope": "python",
+		"prefix": "task.standard.complexity",
+		"body": [
+			"# ${1:Time complexity: O( )}",
+			"# --- --- --- ---",
+			"# ${2:Space complexity: O( )}",
+		],
+		"description": "Standard task complexities",
+	},
+	"task.standard.performance": {
+		"scope": "python",
+		"prefix": "task.standard.performance",
+		"body": [
+			"# working_solution: (${1:100}%, ${2:100}%) -> (${3:0}ms, ${4:0}mb)  Time: O(${5:n}) Space: O(${6:n})"
+		],
+		"description": "Standard task performance line",
+	},
 }
