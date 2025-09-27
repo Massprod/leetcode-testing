@@ -1,0 +1,12 @@
+[project]
+name = "leetcode-testing"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "numpy>=2.3.3",
+    "pyperclip>=1.11.0",
+    "sqlalchemy>=2.0.43",
+    "sqlalchemy-utils>=0.42.0",
+]
