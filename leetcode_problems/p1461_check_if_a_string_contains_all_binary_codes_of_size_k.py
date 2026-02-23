@@ -7,24 +7,22 @@
 
 
 def has_all_codes(s: str, k: int) -> bool:
-    # working_solution: (17.34%, 11.56%) -> (395ms, 65.22mb)  Time: O(s ** k) Space: O(s ** 2)
+    # working_solution: (37.78%, 82.89%) -> (275ms, 44.10mb)  Time: O(s) Space: O(s ** 2)
     # All uniq subs should be equal to `2 ** k`.
     # Binary and we need uniques combos => 2 ** k.
-    left: int = 0
-    right: int = k
-    uniques: set[str] = set()
-    while right <= len(s):
-        sub: str = s[left: right]
-        if sub not in uniques:
-            uniques.add(sub)
-        left += 1
-        right += 1
-    
+    mask: int = (1 << k) - 1  # -1 <- shift all `0` to `1`.
+    index: int = k
+    sub: int = int(s[:k], base=2)
+    uniques: set[int] = {sub}
+    while index < len(s):
+        sub = ((sub << 1) & mask) | (s[index] == "1")
+        index += 1
+        uniques.add(sub)
+
     return 2 ** k == len(uniques)
 
 
-# Time complexity: O(s ** k)
-# Start from each indes and loop `k` size => O(s ** k).
+# Time complexity: O(s)
 # --- --- --- ---
 # Space complexity: O(s ** 2)
 # In the worst case, only unique subs and we store all of them in the `uniques`.
